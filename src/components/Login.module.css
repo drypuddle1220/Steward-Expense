@@ -1,0 +1,87 @@
+.login-page {
+	animation: fadeIn 0.5s ease; /* Modal fade-in animation */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 100vh;
+	background-color: #121212; /* Dark background for the page */
+}
+
+.login-modal {
+	background-color: #121212; /* Dark background like Vercel */
+	border: none; /* Remove the border */
+	padding: 40px; /* Increased padding for a more spacious feel */
+	width: 400px; /* Wider modal for a better layout */
+	margin: 0 auto;
+	border-radius: 8px;
+	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Softer shadow for a floating effect */
+	animation: slideIn 0.5s ease; /* Modal slide-in animation */
+	justify-content: center;
+}
+
+h2 {
+	color: white; /* Change heading color to white */
+	text-align: center;
+	margin-bottom: 20px; /* Add some space below the heading */
+}
+
+input {
+	width: 100%;
+	padding: 12px; /* Increased padding for input fields */
+	margin: 10px 0;
+	border: 1px solid #444; /* Darker border for inputs */
+	border-radius: 4px;
+	background-color: #222; /* Darker input background */
+	color: white; /* Input text color */
+	transition: border-color 0.3s ease; /* Smooth transition for input border */
+}
+
+input::placeholder {
+	color: #888; /* Placeholder text color */
+}
+
+label {
+	color: white; /* Change text color for the email label */
+}
+
+.password {
+	color: white; /* Change text color for the password label */
+}
+
+/* Button styles with hover effects */
+.btn {
+	padding: 10px; /* Padding for buttons */
+	border: 1px;
+	border: 1px solid transparent; /* Set a transparent border initially */
+	border-radius: 5px;
+	color: white;
+	background-color: transparent;
+	cursor: pointer;
+	transition: border-color 0.3s ease, background-color 0.3s ease,
+		transform 0.3s ease; /* Button animations */
+}
+
+.btn:hover {
+	border-color: white;
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes slideIn {
+	0% {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}

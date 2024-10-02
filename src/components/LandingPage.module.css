@@ -1,31 +1,23 @@
 /* General page layout */
-body,
-html {
-	margin: 0;
-	padding: 0;
-	font-family: "Arial", sans-serif;
-	background-color: #121212; /* Dark background for the body */
-	color: #e0e0e0; /* Light text color */
-}
-
-.landing-page {
+.landingPage {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	min-height: 100vh;
 	background-color: #121212; /* Dark background for the page */
 	text-align: center;
+	color: #e0e0e0; /* Light text color */
 }
 
-/* Navbar */
 .navbar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 20px;
-	position: absolute;
-	width: 100%;
-	background-color: transparent;
+	display: flex; /* Use flexbox for layout */
+	justify-content: space-between; /* Space items evenly */
+	align-items: center; /* Center items vertically */
+	padding: 20px; /* Add some padding */
+	position: absolute; /* Position at the top */
+	width: 100%; /* Full width */
+	background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+	z-index: 10; /* Ensure it appears above other elements */
 }
 
 .logo {
@@ -35,7 +27,8 @@ html {
 	color: #e0e0e0; /* Light color for logo */
 }
 
-.log-in-btn {
+.logInBtn,
+.signInBtn {
 	padding: 8px 16px;
 	margin-right: 20px;
 	font-size: 1rem;
@@ -48,40 +41,22 @@ html {
 		transform 0.3s ease;
 }
 
-.sign-in-btn {
-	padding: 8px 16px;
-	margin-right: 20px;
-	font-size: 1rem;
-	color: #fff;
-	background-color: transparent;
-	border: 1px solid transparent; /* Set a transparent border initially */
-	border-radius: 5px;
-	cursor: pointer;
-	transition: border-color 0.3s ease, background-color 0.3s ease,
-		transform 0.3s ease;
-}
-
-.log-in-btn:hover {
-	border-color: #ffffff; /* Highlight the border in white on hover */
-	transform: scale(1.05); /* Slightly enlarge the button */
-}
-
-.sign-in-btn:hover {
+.logInBtn:hover,
+.signInBtn:hover {
 	border-color: #ffffff; /* Highlight the border in white on hover */
 	transform: scale(1.05); /* Slightly enlarge the button */
 }
 
 /* Hero Section */
-.hero-section {
+.heroSection {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	padding: 50px;
-	background: url(".//assets/hero-image.png") no-repeat center center/cover,
+	background: url("../assets/hero-image.png") no-repeat center center/cover,
 		linear-gradient(to bottom right, #333333, #000000);
-	color: #e0e0e0;
 	opacity: 0.95; /* Adjust the opacity for a subtle effect */
 	animation: fadeIn 1s forwards;
 }
@@ -93,7 +68,8 @@ html {
 		transform: translateY(0); /* Move to original position */
 	}
 }
-.hero-section::before {
+
+.heroSection::before {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -104,30 +80,16 @@ html {
 	z-index: 1; /* Place it behind the text */
 }
 
-.hero-section h1,
-.hero-section p {
+.heroSection h1,
+.heroSection p {
 	position: relative; /* Bring text above the overlay */
 	z-index: 2; /* Ensure the text is above the overlay */
-}
-
-.cta-btn {
-	padding: 15px 30px;
-	font-size: 1.1rem;
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.cta-btn:hover {
-	background-color: #0056b3;
-	color: #fff;
+	transform: translateY(30px); /* Slightly move down */
+	animation: slideUp 0.7s forwards; /* Trigger slide-up animation */
 }
 
 /* Features Section */
-.features-section {
+.featuresSection {
 	display: flex;
 	justify-content: space-around;
 	padding: 50px;
@@ -176,24 +138,24 @@ html {
 /* Footer */
 .footer {
 	background-color: #333;
-	padding: 20px;
+	padding: 10px;
+}
+
+.footerLinks {
+	display: flex;
+	justify-content: center;
+}
+
+.footerLinks a {
+	color: #ffffff; /* White for links */
+	margin: 0 10px;
+	text-decoration: none;
 	opacity: 0; /* Start hidden */
 	transform: translateY(10px); /* Slightly move down */
 	animation: fadeIn 1s forwards; /* Trigger fade-in animation */
 	animation-delay: 0.8s; /* Delay so it appears after the main content */
 }
 
-.footer-links {
-	display: flex;
-	justify-content: center;
-}
-
-.footer-links a {
-	color: #ffffff; /* White for links */
-	margin: 0 10px;
-	text-decoration: none;
-}
-
-.footer-links a:hover {
+.footerLinks a:hover {
 	text-decoration: underline;
 }
