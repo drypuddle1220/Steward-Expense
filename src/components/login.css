@@ -1,0 +1,54 @@
+.login-modal {
+  background-color: #121212; /* Dark background like Vercel */
+  border: none; /* Remove the border */
+  padding: 40px; /* Increased padding for a more spacious feel */
+  width: 400px; /* Wider modal for a better layout */
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Softer shadow for a floating effect */
+}
+
+h2 {
+  color: white; /* Change heading color to white */
+  text-align: center;
+  margin-bottom: 20px; /* Add some space below the heading */
+}
+
+input {
+  width: 100%;
+  padding: 12px; /* Increased padding for input fields */
+  margin: 10px 0;
+  border: 1px solid #444; /* Darker border for inputs */
+  border-radius: 4px;
+  background-color: #222; /* Darker input background */
+  color: white; /* Input text color */
+}
+
+input::placeholder {
+  color: #888; /* Placeholder text color */
+}
+
+button {
+  background-color: #311251; /* Vercel's primary blue */
+  color: white; /* Change text color to white */
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 10px;
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+button:hover {
+  background-color: #005bb5; /* Darker shade for hover */
+}
+
+/* Add styles for different button types if needed */
+label {
+  color: white; /* Change text color for the email label */
+}
+
+.password {
+  color: white; /* Change text color for the password label */
+}

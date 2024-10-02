@@ -1,37 +1,29 @@
+import React, { useState } from 'react';
+import Login from './Login'; // Import the Login component
 
-// the Input Expense and Login buttons need a helper cmpnt that pops up with parameters.
+const ListGroup: React.FC = () => {
+  const [showLogin, setShowLogin] = useState(false); // State to control Login component visibility
 
-function ListGroup() {
-    
-    return (
+  const handleLoginClick = () => {
+    setShowLogin(true); // Show the Login component when button is clicked
+  };
+
+  const handleCloseLogin = () => {
+    setShowLogin(false); // Close the Login component
+  };
+
+  return (
     <>
-        <nav className = "navbar"> </nav>
-        <div className = "navbar-container">
-            <a href="about.html">
-                <button>
-                About us
-                </button>
-            </a>
+      <nav className="navbar"> </nav>
+      <div className="navbar-container">
+        {/* When this button is clicked, show the Login component */}
+        <button className="Login" onClick={handleLoginClick}>Login</button>
+      </div>
 
-            <a href="">
-                <button>
-                Input Expense Parameters
-                </button>
-            </a>
-
-        
-            <a href="">
-                <button>
-                Login 
-                </button>
-            </a>
-
-        </div>
+      {/* Conditionally render the Login component when showLogin is true */}
+      {showLogin && <Login showForm={showLogin} onClose={handleCloseLogin} />}
     </>
-    );
+  );
+};
 
-}
-
-
-export default ListGroup; 
-
+export default ListGroup;
