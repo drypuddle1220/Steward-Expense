@@ -1,7 +1,13 @@
 import ListGroup from "./components/ListGroup";
+import LandingPage from "./components/LandingPage";
 
 function App() {
-  return <header> <ListGroup></ListGroup> </header>; 
+	return (
+		<div>
+			{" "}
+			<LandingPage></LandingPage>
+		</div>
+	);
 }
 
 export default App;

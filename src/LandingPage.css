@@ -1,0 +1,199 @@
+/* General page layout */
+body,
+html {
+	margin: 0;
+	padding: 0;
+	font-family: "Arial", sans-serif;
+	background-color: #121212; /* Dark background for the body */
+	color: #e0e0e0; /* Light text color */
+}
+
+.landing-page {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 100vh;
+	background-color: #121212; /* Dark background for the page */
+	text-align: center;
+}
+
+/* Navbar */
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px;
+	position: absolute;
+	width: 100%;
+	background-color: transparent;
+}
+
+.logo {
+	font-size: 1.5rem;
+	font-weight: bold;
+	margin-left: 20px;
+	color: #e0e0e0; /* Light color for logo */
+}
+
+.log-in-btn {
+	padding: 8px 16px;
+	margin-right: 20px;
+	font-size: 1rem;
+	color: #fff;
+	background-color: transparent;
+	border: 1px solid transparent; /* Set a transparent border initially */
+	border-radius: 5px;
+	cursor: pointer;
+	transition: border-color 0.3s ease, background-color 0.3s ease,
+		transform 0.3s ease;
+}
+
+.sign-in-btn {
+	padding: 8px 16px;
+	margin-right: 20px;
+	font-size: 1rem;
+	color: #fff;
+	background-color: transparent;
+	border: 1px solid transparent; /* Set a transparent border initially */
+	border-radius: 5px;
+	cursor: pointer;
+	transition: border-color 0.3s ease, background-color 0.3s ease,
+		transform 0.3s ease;
+}
+
+.log-in-btn:hover {
+	border-color: #ffffff; /* Highlight the border in white on hover */
+	transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+.sign-in-btn:hover {
+	border-color: #ffffff; /* Highlight the border in white on hover */
+	transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+/* Hero Section */
+.hero-section {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 50px;
+	background: url(".//assets/hero-image.png") no-repeat center center/cover,
+		linear-gradient(to bottom right, #333333, #000000);
+	color: #e0e0e0;
+	opacity: 0.95; /* Adjust the opacity for a subtle effect */
+	animation: fadeIn 1s forwards;
+}
+
+/* Keyframes for fade-in effect */
+@keyframes fadeIn {
+	to {
+		opacity: 1; /* End fully visible */
+		transform: translateY(0); /* Move to original position */
+	}
+}
+.hero-section::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6); /* Adjust the alpha value for darkness */
+	z-index: 1; /* Place it behind the text */
+}
+
+.hero-section h1,
+.hero-section p {
+	position: relative; /* Bring text above the overlay */
+	z-index: 2; /* Ensure the text is above the overlay */
+}
+
+.cta-btn {
+	padding: 15px 30px;
+	font-size: 1.1rem;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cta-btn:hover {
+	background-color: #0056b3;
+	color: #fff;
+}
+
+/* Features Section */
+.features-section {
+	display: flex;
+	justify-content: space-around;
+	padding: 50px;
+	background-color: #1e1e1e; /* Dark background */
+}
+
+.feature {
+	flex: 1;
+	padding: 20px;
+	opacity: 0; /* Start hidden */
+	transform: translateY(20px); /* Slightly move down */
+	animation: slideUp 0.5s forwards; /* Trigger slide-up animation */
+}
+
+.feature:nth-child(1) {
+	animation-delay: 0.2s; /* Delay for the first feature */
+}
+
+.feature:nth-child(2) {
+	animation-delay: 0.4s; /* Delay for the second feature */
+}
+
+.feature:nth-child(3) {
+	animation-delay: 0.6s; /* Delay for the third feature */
+}
+
+/* Keyframes for slide-up effect */
+@keyframes slideUp {
+	to {
+		opacity: 1; /* End fully visible */
+		transform: translateY(0); /* Move to original position */
+	}
+}
+
+.feature h3 {
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	color: #ffffff; /* White for better contrast */
+}
+
+.feature p {
+	font-size: 1rem;
+	color: #cccccc; /* Lighter gray for readability */
+}
+
+/* Footer */
+.footer {
+	background-color: #333;
+	padding: 20px;
+	opacity: 0; /* Start hidden */
+	transform: translateY(10px); /* Slightly move down */
+	animation: fadeIn 1s forwards; /* Trigger fade-in animation */
+	animation-delay: 0.8s; /* Delay so it appears after the main content */
+}
+
+.footer-links {
+	display: flex;
+	justify-content: center;
+}
+
+.footer-links a {
+	color: #ffffff; /* White for links */
+	margin: 0 10px;
+	text-decoration: none;
+}
+
+.footer-links a:hover {
+	text-decoration: underline;
+}
