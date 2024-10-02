@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import Login from './Login'; // Import the Login component
 
@@ -25,5 +26,10 @@ const ListGroup: React.FC = () => {
     </>
   );
 };
+=======
+// the Input Expense and Login buttons need a helper cmpnt that pops up with parameters.
+
+function ListGroup() {}
+>>>>>>> Stashed changes
 
 export default ListGroup;
