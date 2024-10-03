@@ -1,22 +1,42 @@
 .login-page {
-	animation: fadeIn 0.5s ease; /* Modal fade-in animation */
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	min-height: 100vh;
+	justify-content: center; /* Center horizontally */
+	align-items: center; /* Center vertically */
+	height: 100vh; /* Full viewport height */
+	width: 100vw; /* Full viewport width */
 	background-color: #121212; /* Dark background for the page */
+	background: url("../assets/hero-image.png") center/cover no-repeat, #121212;
+	background-blend-mode: overlay;
+	background-size: 200% 200%;
+	animation: gradientAnimation 40s ease infinite; /* Slow down the movement */
+}
+
+@keyframes gradientAnimation {
+	0% {
+		background-position: 0% 0%; /* Start at the top-left */
+	}
+	25% {
+		background-position: 50% 0%; /* Move to top-center */
+	}
+	50% {
+		background-position: 100% 50%; /* Move to center-right */
+	}
+	75% {
+		background-position: 50% 100%; /* Move to bottom-center */
+	}
+	100% {
+		background-position: 0% 50%; /* Return to left-center */
+	}
 }
 
 .login-modal {
-	background-color: #121212; /* Dark background like Vercel */
+	background-color: #121212;
 	border: none; /* Remove the border */
 	padding: 40px; /* Increased padding for a more spacious feel */
 	width: 400px; /* Wider modal for a better layout */
-	margin: 0 auto;
 	border-radius: 8px;
 	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Softer shadow for a floating effect */
 	animation: slideIn 0.5s ease; /* Modal slide-in animation */
-	justify-content: center;
 }
 
 h2 {
@@ -27,7 +47,7 @@ h2 {
 
 input {
 	width: 100%;
-	padding: 12px; /* Increased padding for input fields */
+	padding: 8px; /* Increased padding for input fields */
 	margin: 10px 0;
 	border: 1px solid #444; /* Darker border for inputs */
 	border-radius: 4px;
@@ -50,10 +70,11 @@ label {
 
 /* Button styles with hover effects */
 .btn {
-	padding: 10px; /* Padding for buttons */
+	padding: 6px; /* Padding for buttons */
 	border: 1px;
 	border: 1px solid transparent; /* Set a transparent border initially */
 	border-radius: 5px;
+	margin-top: 3px;
 	color: white;
 	background-color: transparent;
 	cursor: pointer;

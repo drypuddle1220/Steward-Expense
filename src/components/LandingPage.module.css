@@ -13,7 +13,7 @@
 	display: flex; /* Use flexbox for layout */
 	justify-content: space-between; /* Space items evenly */
 	align-items: center; /* Center items vertically */
-	padding: 20px; /* Add some padding */
+	padding: 2px; /* Add some padding */
 	position: absolute; /* Position at the top */
 	width: 100%; /* Full width */
 	background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
@@ -25,6 +25,13 @@
 	font-weight: bold;
 	margin-left: 20px;
 	color: #e0e0e0; /* Light color for logo */
+	display: flex;
+	align-items: center;
+}
+
+.stewardlogo {
+	height: 3.5rem; /* Adjust size as needed */
+	margin-right: 10px; /* Space between logo and text */
 }
 
 .logInBtn,
@@ -56,9 +63,28 @@
 	align-items: center;
 	padding: 50px;
 	background: url("../assets/hero-image.png") no-repeat center center/cover,
-		linear-gradient(to bottom right, #333333, #000000);
-	opacity: 0.95; /* Adjust the opacity for a subtle effect */
-	animation: fadeIn 1s forwards;
+		linear-gradient(to bottom right, #1c1c1c, #000000);
+
+	background-size: 200% 200%;
+	animation: gradientAnimation 40s ease infinite; /* Slow down the movement */
+}
+
+@keyframes gradientAnimation {
+	0% {
+		background-position: 0% 0%; /* Start at the top-left */
+	}
+	25% {
+		background-position: 50% 0%; /* Move to top-center */
+	}
+	50% {
+		background-position: 100% 50%; /* Move to center-right */
+	}
+	75% {
+		background-position: 50% 100%; /* Move to bottom-center */
+	}
+	100% {
+		background-position: 0% 50%; /* Return to left-center */
+	}
 }
 
 /* Keyframes for fade-in effect */
@@ -76,8 +102,12 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0.6); /* Adjust the alpha value for darkness */
+	background: rgba(0, 0, 0, 0.4); /* Adjust the alpha value for darkness */
 	z-index: 1; /* Place it behind the text */
+}
+
+.heroSection h1 {
+	font-size: 4rem;
 }
 
 .heroSection h1,

@@ -13,11 +13,18 @@ const LandingPage: React.FC = () => {
 		<div className={styles.landingPage}>
 			{/* Navbar */}
 			<nav className={styles.navbar}>
-				<div className={styles.logo}>Steward</div>
+				<div className={styles.logo}>
+					<img
+						src='src/assets/steward_logo.png'
+						alt='Steward Logo'
+						className={styles.stewardlogo}
+					/>
+					<div>Steward</div>
+				</div>
+
 				<div>
-					<button className={styles.logInBtn}>Log In</button>
-					<button className={styles.signInBtn} onClick={handleSignIn}>
-						Sign In
+					<button className={styles.logInBtn} onClick={handleSignIn}>
+						Log In
 					</button>
 				</div>
 			</nav>
