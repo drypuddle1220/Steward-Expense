@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import styles from "./Login.module.css"; // Import the CSS Module
 
 interface LoginProps {
@@ -13,16 +12,38 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
 		if (isCreatingAccount) {
-			console.log("Creating account: ", email, password, confirmPassword);
-			if (password != confirmPassword) {
+			if (password !== confirmPassword) {
 				alert("Passwords do not match!");
 				return;
 			}
-		} else {
-			console.log("Logging in: ", email, password);
+
+			try {
+				const response = await fetch("/api/register", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						email,
+						password,
+					}),
+				});
+
+				const data = await response.json();
+				if (response.ok) {
+					console.log("Account created successfully", data);
+					// Redirect to login or other page
+				} else {
+					alert("Error: " + data.message);
+				}
+			} catch (error) {
+				console.error("Error creating account:", error);
+				alert("There was an error creating the account.");
+			}
 		}
 	};
 
@@ -54,7 +75,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 								required
 							/>
 						</div>
-						{isCreatingAccount && (
+						{isCreatingAccount && ( //if isCreatingAccount is true, then we will render this extra input field
 							<div>
 								<label>Confirm Password</label>
 								<input
@@ -76,7 +97,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 						className={styles.btn}
 						onClick={toggleCreateAccount}
 					>
-						{isCreatingAccount
+						{isCreatingAccount //Here we use a ternary operator to toggle between the appropriate text.
 							? "Already have an account? Sign In"
 							: "Don't have an account? Create one"}
 					</button>
