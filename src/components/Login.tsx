@@ -1,54 +1,82 @@
 import React, { useState } from "react";
-import styles from "./Login.module.css"; // Import the CSS Module
+import styles from "./Login.module.css";
+import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+} from "firebase/auth";
+import { ref, set } from "firebase/database";
+import { auth, database } from "../../Backend/config/firebaseConfig";
 
 interface LoginProps {
-	showForm: boolean;
-	onClose: () => void;
+	showForm: boolean; // Whether the form is visible
+	onClose: () => void; // Function to close the form
 }
 
 const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
 	const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+		e.preventDefault(); // Prevent default form submission behavior
 
 		if (isCreatingAccount) {
+			// Handle account creation
+			console.log("Registering user...");
 			if (password !== confirmPassword) {
 				alert("Passwords do not match!");
 				return;
 			}
 
-			try {
-				const response = await fetch("/api/register", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email,
-						password,
-					}),
-				});
+			// Call the registration logic
+			await handleRegister();
+		} else {
+			await handleSignIn();
+		}
+	};
 
-				const data = await response.json();
-				if (response.ok) {
-					console.log("Account created successfully", data);
-					// Redirect to login or other page
-				} else {
-					alert("Error: " + data.message);
-				}
-			} catch (error) {
-				console.error("Error creating account:", error);
-				alert("There was an error creating the account.");
-			}
+	const handleRegister = async () => {
+		try {
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
+			const user = userCredential.user;
+
+			// Save user data to the Realtime Database
+			const userRef = ref(database, "users/" + user.uid);
+			await set(userRef, {
+				email: email,
+				firstName: firstName,
+				lastName: lastName,
+				last_login: Date.now(),
+			});
+
+			alert("User registered successfully");
+			onClose(); // Optionally close the form after successful registration
+		} catch (error) {
+			console.error("Error registering user:", error);
+			alert(error);
+		}
+	};
+
+	const handleSignIn = async () => {
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+			alert("Sign-in successful!");
+			//We can redirect here to the main dashboard page.... for now is empty.
+		} catch (error) {
+			console.error("Error signing in:", error);
+			alert(error);
 		}
 	};
 
 	const toggleCreateAccount = () => {
-		setIsCreatingAccount(!isCreatingAccount); // Toggle between sign in and create account
+		setIsCreatingAccount(!isCreatingAccount);
 	};
 
 	return (
@@ -75,7 +103,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 								required
 							/>
 						</div>
-						{isCreatingAccount && ( //if isCreatingAccount is true, then we will render this extra input field
+						{isCreatingAccount && (
 							<div>
 								<label>Confirm Password</label>
 								<input
@@ -83,6 +111,24 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 									value={confirmPassword}
 									onChange={(e) =>
 										setConfirmPassword(e.target.value)
+									}
+									required
+								/>
+								<label>First Name</label>
+								<input
+									type='text'
+									value={firstName}
+									onChange={(e) =>
+										setFirstName(e.target.value)
+									}
+									required
+								/>
+								<label>Last Name</label>
+								<input
+									type='text'
+									value={lastName}
+									onChange={(e) =>
+										setLastName(e.target.value)
 									}
 									required
 								/>
@@ -97,7 +143,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 						className={styles.btn}
 						onClick={toggleCreateAccount}
 					>
-						{isCreatingAccount //Here we use a ternary operator to toggle between the appropriate text.
+						{isCreatingAccount
 							? "Already have an account? Sign In"
 							: "Don't have an account? Create one"}
 					</button>
