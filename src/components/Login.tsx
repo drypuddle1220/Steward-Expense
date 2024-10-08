@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { ref, set } from "firebase/database";
 import { auth, database } from "../../Backend/config/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
 	showForm: boolean; // Whether the form is visible
@@ -13,6 +14,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -57,6 +59,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 			});
 
 			alert("User registered successfully");
+			navigate("/dashboard");
 			onClose(); // Optionally close the form after successful registration
 		} catch (error) {
 			console.error("Error registering user:", error);
@@ -67,7 +70,8 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
-			alert("Sign-in successful!");
+			console.log("Signed In Successfully!");
+			navigate("/dashboard");
 			//We can redirect here to the main dashboard page.... for now is empty.
 		} catch (error) {
 			console.error("Error signing in:", error);
