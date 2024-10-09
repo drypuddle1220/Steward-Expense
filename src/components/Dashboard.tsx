@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../Backend/config/firebaseConfig"; // Adjust import path
+import Visualizer from "./visualizer";
 
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
@@ -32,7 +33,10 @@ const Dashboard: React.FC = () => {
 			<h1>Welcome, {userData.firstName}!</h1>
 			{/* Render user-specific expense data */}
 			<p>Email: {userData.email}</p>
+			<Visualizer /> 
+			
 			{/* Add more personalized content here */}
+
 		</div>
 	);
 };
