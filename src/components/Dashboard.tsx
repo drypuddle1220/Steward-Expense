@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../Backend/config/firebaseConfig"; // Adjust import path
-
+import styles from "../components/Dashboard.module.css";
+import Visualizer from "./visualizer";
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const navigate = useNavigate();
@@ -28,11 +29,18 @@ const Dashboard: React.FC = () => {
 	if (!userData) return <p>Loading...</p>;
 
 	return (
-		<div>
-			<h1>Welcome, {userData.firstName}!</h1>
-			{/* Render user-specific expense data */}
-			<p>Email: {userData.email}</p>
-			{/* Add more personalized content here */}
+		<div className={styles.dashboard}>
+			<div className={styles.sidebar}>
+				<h3>Welcome, {userData.firstName}!</h3>
+				{/* Render user-specific expense data */}
+				<p>Email: {userData.email}</p>
+				<h5>sidebar</h5>
+			</div>
+			<div className={styles.mainComponent}>
+				<div className={styles.visualizerContainer}>
+					<Visualizer />
+				</div>
+			</div>
 		</div>
 	);
 };
