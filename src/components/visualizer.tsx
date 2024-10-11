@@ -14,10 +14,12 @@ import {
 	BarProps,
 	Bar,
 } from "recharts";
+
 import data from "./budgetData.json"; // Assuming the JSON file is in the same directory
 import styles from "./visualizer.module.css";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
 
 type IncomeData = {
 	source: string;
@@ -37,6 +39,7 @@ interface BudgetData {
 }
 
 export default class Visualizer extends React.Component {
+	
 	prepareLineChartData() {
 		// Cast the imported data as the BudgetData type
 		const budgetData = data as BudgetData;
@@ -65,6 +68,7 @@ export default class Visualizer extends React.Component {
 		let incomeTotal = 0;
 		let expenseTotal = 0;
 		let savingsTotal = 0;
+		let total_ovr = 0;
 	
 		// Step 1: Calculate total income
 		incomeTotal = budgetData.income.reduce((acc, income) => acc + income.amount, 0);
@@ -76,13 +80,16 @@ export default class Visualizer extends React.Component {
 			} else {
 				expenseTotal += expense.amount;
 			}
+			total_ovr += expense.amount
 		});
-	
+
+		total_ovr += incomeTotal
+
 		// Step 3: Return the aggregated data in the format for the pie chart
 		return [
-			{ category: "Income", amount: incomeTotal },
-			{ category: "Expenses", amount: expenseTotal },
-			{ category: "Savings", amount: savingsTotal }
+			{ category: "Income", amount: Math.round((incomeTotal/total_ovr)*100) },
+			{ category: "Expenses", amount: Math.round((expenseTotal/total_ovr)*100) },
+			{ category: "Savings", amount: Math.round((savingsTotal/total_ovr)*100) }
 		];
 	}
 	
@@ -114,8 +121,10 @@ export default class Visualizer extends React.Component {
 		
 		
 	}
+	
 
 	render() {
+
 		const lineChartData = this.prepareLineChartData();
 		const pieChartData = this.preparePieChartData();
 		const barChartData = this.prepareBarChartData();
@@ -153,7 +162,7 @@ export default class Visualizer extends React.Component {
 				<div className={styles.card}>
 					{" "}
 					{/* Card for Pie Chart */}
-					<h3>Expense Breakdown</h3>
+					<h3>Expense Breakdown (By percentage)</h3>
 					<div className={styles.chartContainer}>
 						<PieChart width={400} height={400}>
 							<Pie
