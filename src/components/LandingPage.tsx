@@ -9,9 +9,7 @@ const LandingPage: React.FC = () => {
 		navigate("/login"); // Redirect to the login page
 	};
 
-	const dummygraphql = () => {
-		navigate('/visualizer');
-	};
+	
 
 	return (
 		<div className={styles.landingPage}>
@@ -31,9 +29,6 @@ const LandingPage: React.FC = () => {
 						Log In
 					</button>
 
-					<button className= {styles.logInBtn}> onClick = {dummygraphql}
-						Visualize
-					</button>
 				</div>
 			</nav>
 
