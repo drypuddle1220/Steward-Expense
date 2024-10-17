@@ -1,26 +1,97 @@
+/* Layout container */
 .dashboard {
 	display: grid;
-	grid-template-columns: 1fr 5fr;
-	background-color: bisque;
-	height: 100vh;
-	width: 100vw;
+	grid-template-columns: 250px 1fr; /* Sidebar and main content */
+	height: 100vh; /* Full viewport height */
 }
 
+/* Sidebar styling */
 .sidebar {
-	border-color: black;
-	border-radius: 3px;
-	background-color: rgb(176, 122, 122);
+	background-color: #f8f9fa;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
-.mainComponent {
-	border-color: blue;
-	background-color: rgb(255, 255, 255);
-	height: 100vh;
-	width: 90vw;
+.logo {
+	font-size: 24px;
+	font-weight: bold;
 }
 
-.visualizerContainer {
-	background-color: rgb(0, 255, 255);
-	height: 100vh;
-	width: 100vw;
+.navigation ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+.navigation ul li {
+	margin: 20px 0;
+	font-size: 16px;
+}
+
+.userInfo {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.userInfo img {
+	border-radius: 50%;
+	margin-bottom: 10px;
+}
+
+/* Main content area */
+.dashboardContent {
+	padding: 20px;
+	display: grid;
+	grid-template-rows: auto 1fr;
+	grid-gap: 20px;
+}
+
+/* Top cards */
+.topCards {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 20px;
+}
+
+/* Cards styling */
+.card {
+	background-color: #fff;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fullWidthChart {
+	grid-column: span 2;
+}
+
+/* Charts section */
+.charts {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 20px;
+}
+
+.chart {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.topCards {
+		grid-template-columns: 1fr;
+	}
+
+	.charts {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard {
+		grid-template-columns: 1fr; /* Stack sidebar and main content */
+	}
 }

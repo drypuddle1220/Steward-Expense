@@ -7,7 +7,7 @@ General styles body {
 }
 
 /* Dashboard container */
-.dashboard {
+.container {
 	display: grid;
 	background-color: rgb(255, 255, 255);
 	grid-template-columns: repeat(3, 1fr);
@@ -58,6 +58,9 @@ General styles body {
 	}
 }
 
-h1,h2,h3, h4 {
+h1,
+h2,
+h3,
+h4 {
 	color: whitesmoke;
 }

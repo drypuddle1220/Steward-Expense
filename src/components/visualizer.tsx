@@ -20,7 +20,6 @@ import styles from "./visualizer.module.css";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-
 type IncomeData = {
 	source: string;
 	amount: number;
@@ -39,7 +38,6 @@ interface BudgetData {
 }
 
 export default class Visualizer extends React.Component {
-	
 	prepareLineChartData() {
 		// Cast the imported data as the BudgetData type
 		const budgetData = data as BudgetData;
@@ -63,16 +61,19 @@ export default class Visualizer extends React.Component {
 
 	preparePieChartData() {
 		const budgetData = data as BudgetData;
-	
+
 		// Initialize totals for each category
 		let incomeTotal = 0;
 		let expenseTotal = 0;
 		let savingsTotal = 0;
 		let total_ovr = 0;
-	
+
 		// Step 1: Calculate total income
-		incomeTotal = budgetData.income.reduce((acc, income) => acc + income.amount, 0);
-	
+		incomeTotal = budgetData.income.reduce(
+			(acc, income) => acc + income.amount,
+			0
+		);
+
 		// Step 2: Calculate total expenses and total savings
 		budgetData.expenses.forEach((expense) => {
 			if (expense.category === "Savings") {
@@ -80,25 +81,35 @@ export default class Visualizer extends React.Component {
 			} else {
 				expenseTotal += expense.amount;
 			}
-			total_ovr += expense.amount
+			total_ovr += expense.amount;
 		});
 
-		total_ovr += incomeTotal
+		total_ovr += incomeTotal;
 
 		// Step 3: Return the aggregated data in the format for the pie chart
 		return [
-			{ category: "Income", amount: Math.round((incomeTotal/total_ovr)*100) },
-			{ category: "Expenses", amount: Math.round((expenseTotal/total_ovr)*100) },
-			{ category: "Savings", amount: Math.round((savingsTotal/total_ovr)*100) }
+			{
+				category: "Income",
+				amount: Math.round((incomeTotal / total_ovr) * 100),
+			},
+			{
+				category: "Expenses",
+				amount: Math.round((expenseTotal / total_ovr) * 100),
+			},
+			{
+				category: "Savings",
+				amount: Math.round((savingsTotal / total_ovr) * 100),
+			},
 		];
 	}
-	
 
 	prepareBarChartData() {
-		const budgetData = data as BudgetData; 
+		const budgetData = data as BudgetData;
 
 		const expenseTotals = budgetData.expenses.reduce((acc, expense) => {
-			const existingCategory = acc.find((item) => item.category === expense.category);
+			const existingCategory = acc.find(
+				(item) => item.category === expense.category
+			);
 			if (existingCategory) {
 				existingCategory.amount += expense.amount;
 			} else {
@@ -109,28 +120,26 @@ export default class Visualizer extends React.Component {
 			}
 			return acc;
 		}, [] as { category: string; amount: number }[]);
-	
+
 		// Step 2: Sort categories by total amount spent in descending order
-		const sortedExpenses = expenseTotals.sort((a, b) => b.amount - a.amount);
-	
+		const sortedExpenses = expenseTotals.sort(
+			(a, b) => b.amount - a.amount
+		);
+
 		// Step 3: Select the top 5 categories
 		const top5Expenses = sortedExpenses.slice(0, 5);
-	
+
 		// Step 4: Return the prepared data for the bar chart
 		return top5Expenses;
-		
-		
 	}
-	
 
 	render() {
-
 		const lineChartData = this.prepareLineChartData();
 		const pieChartData = this.preparePieChartData();
 		const barChartData = this.prepareBarChartData();
 
 		return (
-			<div className={styles.dashboard}>
+			<div className={styles.container}>
 				{" "}
 				{/* Dashboard container */}
 				<div className={styles.card}>
@@ -187,20 +196,19 @@ export default class Visualizer extends React.Component {
 						</PieChart>
 					</div>
 				</div>
-
 				<div className={styles.card}>
-					<h4>
-						Top Expenses Paid
-					</h4>
-					<div className = {styles.chartContainer}>
-						
-					<BarChart width={600} height={300} data={barChartData}>
-					<XAxis dataKey="category" />
-					<YAxis />
-					<Tooltip />
-					<CartesianGrid stroke="#e0dfdf" strokeDasharray="5 5" />
-					<Bar dataKey="amount" fill="#8884d8" />
-					</BarChart>
+					<h4>Top Expenses Paid</h4>
+					<div className={styles.chartContainer}>
+						<BarChart width={600} height={300} data={barChartData}>
+							<XAxis dataKey='category' />
+							<YAxis />
+							<Tooltip />
+							<CartesianGrid
+								stroke='#e0dfdf'
+								strokeDasharray='5 5'
+							/>
+							<Bar dataKey='amount' fill='#8884d8' />
+						</BarChart>
 					</div>
 				</div>
 			</div>

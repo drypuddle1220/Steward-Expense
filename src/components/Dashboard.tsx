@@ -30,17 +30,47 @@ const Dashboard: React.FC = () => {
 
 	return (
 		<div className={styles.dashboard}>
-			<div className={styles.sidebar}>
-				<h3>Welcome, {userData.firstName}!</h3>
-				{/* Render user-specific expense data */}
-				<p>Email: {userData.email}</p>
-				<h5>sidebar</h5>
-			</div>
-			<div className={styles.mainComponent}>
-				<div className={styles.visualizerContainer}>
-					<Visualizer />
+			<aside className={styles.sidebar}>
+				<div className={styles.logo}>
+					<h3>Steward</h3>
 				</div>
-			</div>
+				<nav className={styles.navigation}>
+					<ul>
+						<li>Dashboard</li>
+						<li>Purchase</li>
+						<li>Accounts</li>
+						<li>Reports</li>
+					</ul>
+				</nav>
+				<div className={styles.userInfo}>
+					<img src='/path-to-avatar' alt='User Avatar' />
+					<h3>Welcome, {userData.firstName}!</h3>
+
+					<p>Email: {userData.email}</p>
+				</div>
+			</aside>
+
+			<main className={styles.dashboardContent}>
+				<section className={styles.topCards}>
+					<div className={styles.card}>Total Income</div>
+					<div className={styles.card}>Total Expense</div>
+					<div className={styles.card}>Total Savings</div>
+				</section>
+
+				<section className={styles.charts}>
+					<div
+						className={`${styles.chart} ${styles.card} ${styles.fullWidthChart}`}
+					>
+						Top 5 Expense Source
+					</div>
+					<div className={`${styles.chart} ${styles.card}`}>
+						Report Overview
+					</div>
+					<div className={`${styles.chart} ${styles.card}`}>
+						Expense Activity
+					</div>
+				</section>
+			</main>
 		</div>
 	);
 };
