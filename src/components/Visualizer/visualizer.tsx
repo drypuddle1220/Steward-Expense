@@ -11,11 +11,10 @@ import {
 	Legend,
 	Cell,
 	BarChart,
-	BarProps,
 	Bar,
 } from "recharts";
 
-import data from "../budgetData.json"; // Assuming the JSON file is in the same directory
+import data from "./budgetData.json";
 import styles from "./visualizer.module.css";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
@@ -38,8 +37,8 @@ interface BudgetData {
 }
 
 export default class Visualizer extends React.Component {
-	prepareLineChartData() {
-		// Cast the imported data as the BudgetData type
+	// Make data preparation methods static
+	static prepareLineChartData() {
 		const budgetData = data as BudgetData;
 
 		const incomeData = budgetData.income.map((item) => ({
@@ -59,22 +58,18 @@ export default class Visualizer extends React.Component {
 		);
 	}
 
-	preparePieChartData() {
+	static preparePieChartData() {
 		const budgetData = data as BudgetData;
-
-		// Initialize totals for each category
 		let incomeTotal = 0;
 		let expenseTotal = 0;
 		let savingsTotal = 0;
 		let total_ovr = 0;
 
-		// Step 1: Calculate total income
 		incomeTotal = budgetData.income.reduce(
 			(acc, income) => acc + income.amount,
 			0
 		);
 
-		// Step 2: Calculate total expenses and total savings
 		budgetData.expenses.forEach((expense) => {
 			if (expense.category === "Savings") {
 				savingsTotal += expense.amount;
@@ -86,7 +81,6 @@ export default class Visualizer extends React.Component {
 
 		total_ovr += incomeTotal;
 
-		// Step 3: Return the aggregated data in the format for the pie chart
 		return [
 			{
 				category: "Income",
@@ -103,7 +97,7 @@ export default class Visualizer extends React.Component {
 		];
 	}
 
-	prepareBarChartData() {
+	static prepareBarChartData() {
 		const budgetData = data as BudgetData;
 
 		const expenseTotals = budgetData.expenses.reduce((acc, expense) => {
@@ -121,96 +115,106 @@ export default class Visualizer extends React.Component {
 			return acc;
 		}, [] as { category: string; amount: number }[]);
 
-		// Step 2: Sort categories by total amount spent in descending order
 		const sortedExpenses = expenseTotals.sort(
 			(a, b) => b.amount - a.amount
 		);
 
-		// Step 3: Select the top 5 categories
 		const top5Expenses = sortedExpenses.slice(0, 5);
-
-		// Step 4: Return the prepared data for the bar chart
 		return top5Expenses;
 	}
 
-	render() {
-		const lineChartData = this.prepareLineChartData();
-		const pieChartData = this.preparePieChartData();
-		const barChartData = this.prepareBarChartData();
+	// Static Sub-component for LineChart
+	static LineChartComponent = () => {
+		const lineChartData = Visualizer.prepareLineChartData();
 
 		return (
-			<div className={styles.container}>
-				{" "}
-				{/* Dashboard container */}
-				<div className={styles.card}>
-					{" "}
-					{/* Card for Line Chart */}
-					<h3>Income vs. Expenses</h3>
-					<div className={styles.chartContainer}>
-						<LineChart
-							width={600}
-							height={300}
-							data={lineChartData}
+			<div className={styles.card}>
+				<h3>Income vs. Expenses</h3>
+				<div className={styles.chartContainer}>
+					<LineChart width={600} height={300} data={lineChartData}>
+						<XAxis dataKey='date' />
+						<YAxis />
+						<Tooltip />
+						<CartesianGrid stroke='#e0dfdf' strokeDasharray='5 5' />
+						<Line
+							type='monotone'
+							dataKey='amount'
+							stroke='#8884d8'
+							strokeWidth={2}
+						/>
+					</LineChart>
+				</div>
+			</div>
+		);
+	};
+
+	// Static Sub-component for PieChart
+	// Static Sub-component for PieChart
+	static PieChartComponent = () => {
+		const pieChartData = Visualizer.preparePieChartData();
+
+		return (
+			<div className={styles.card}>
+				<h3>Expense Breakdown</h3>
+				<div className={styles.chartContainer}>
+					<PieChart width={300} height={300}>
+						<Pie
+							data={pieChartData}
+							dataKey='amount'
+							nameKey='category'
+							cx='50%'
+							cy='50%'
+							outerRadius='90%'
+							fill='#8884d8'
+							label
 						>
-							<XAxis dataKey='date' />
-							<YAxis />
-							<Tooltip />
-							<CartesianGrid
-								stroke='#e0dfdf'
-								strokeDasharray='5 5'
-							/>
-							<Line
-								type='monotone'
-								dataKey='amount'
-								stroke='#8884d8'
-								strokeWidth={2}
-							/>
-						</LineChart>
-					</div>
+							{pieChartData.map((entry, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={COLORS[index % COLORS.length]}
+								/>
+							))}
+						</Pie>
+						<Tooltip />
+						<Legend
+							layout='vertical'
+							verticalAlign='top'
+							align='right'
+							margin={{ top: 20, left: 50, right: 0, bottom: 0 }}
+							// Adjust margin as needed
+						/>
+					</PieChart>
 				</div>
-				<div className={styles.card}>
-					{" "}
-					{/* Card for Pie Chart */}
-					<h3>Expense Breakdown (By percentage)</h3>
-					<div className={styles.chartContainer}>
-						<PieChart width={400} height={400}>
-							<Pie
-								data={pieChartData}
-								dataKey='amount'
-								nameKey='category'
-								cx='50%'
-								cy='50%'
-								outerRadius={150}
-								fill='#8884d8'
-								label
-							>
-								{pieChartData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Legend />
-							<Tooltip />
-						</PieChart>
-					</div>
+			</div>
+		);
+	};
+
+	// Static Sub-component for BarChart
+	static BarChartComponent = () => {
+		const barChartData = Visualizer.prepareBarChartData();
+
+		return (
+			<div className={styles.card}>
+				<h4>Top Expenses Paid</h4>
+				<div className={styles.chartContainer}>
+					<BarChart width={600} height={300} data={barChartData}>
+						<XAxis dataKey='category' />
+						<YAxis />
+						<Tooltip />
+						<CartesianGrid stroke='#e0dfdf' strokeDasharray='5 5' />
+						<Bar dataKey='amount' fill='#8884d8' />
+					</BarChart>
 				</div>
-				<div className={styles.card}>
-					<h4>Top Expenses Paid</h4>
-					<div className={styles.chartContainer}>
-						<BarChart width={600} height={300} data={barChartData}>
-							<XAxis dataKey='category' />
-							<YAxis />
-							<Tooltip />
-							<CartesianGrid
-								stroke='#e0dfdf'
-								strokeDasharray='5 5'
-							/>
-							<Bar dataKey='amount' fill='#8884d8' />
-						</BarChart>
-					</div>
-				</div>
+			</div>
+		);
+	};
+
+	render() {
+		return (
+			<div className={styles.container}>
+				<Visualizer.LineChartComponent />
+				<Visualizer.PieChartComponent />
+				<Visualizer.BarChartComponent />
 			</div>
 		);
 	}

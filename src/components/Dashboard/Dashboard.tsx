@@ -45,7 +45,6 @@ const Dashboard: React.FC = () => {
 				<div className={styles.userInfo}>
 					<img src='/path-to-avatar' alt='User Avatar' />
 					<h3>Welcome, {userData.firstName}!</h3>
-
 					<p>Email: {userData.email}</p>
 				</div>
 			</aside>
@@ -61,13 +60,13 @@ const Dashboard: React.FC = () => {
 					<div
 						className={`${styles.chart} ${styles.card} ${styles.fullWidthChart}`}
 					>
-						Top 5 Expense Source
+						<Visualizer.BarChartComponent />
 					</div>
 					<div className={`${styles.chart} ${styles.card}`}>
-						Report Overview
+						<Visualizer.PieChartComponent />
 					</div>
 					<div className={`${styles.chart} ${styles.card}`}>
-						Expense Activity
+						<Visualizer.LineChartComponent />
 					</div>
 				</section>
 			</main>

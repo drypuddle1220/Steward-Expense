@@ -1,12 +1,13 @@
-General styles body {
-	font-family: Arial, sans-serif;
-	background-color: whitesmoke; /* Dark background */
-	color: white; /* Light text color */
+/* Dashboard container */
+
+html,
+body {
+	height: 100%;
 	margin: 0;
-	padding: 20px;
+	padding: 0;
+	box-sizing: border-box; /* Ensure all elements use border-box sizing */
 }
 
-/* Dashboard container */
 .container {
 	display: grid;
 	background-color: rgb(255, 255, 255);
@@ -16,26 +17,34 @@ General styles body {
 
 /* Card styles */
 .card {
-	background-color: #2b2b4e; /* Card background color */
-	border-radius: 10px; /* Rounded corners */
+	justify-content: space-evenly;
+	background-color: #2b2b4ee3;
+	border-radius: 10px;
 	padding: 20px;
-	box-shadow: 0 4px 10px whitesmoke; /* Soft shadow */
-	transition: transform 0.3s; /* Animation on hover */
+	width: 100%; /* Make cards take full width */
+	min-height: 200px; /* Ensure enough height for charts */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .card:hover {
 	transform: translateY(-5px); /* Lift effect on hover */
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Chart title */
 .card h3 {
 	margin: 0;
 	font-size: 1.5rem; /* Title size */
+	color: #fff; /* Ensure title is readable */
 }
 
 /* Chart container */
-.chart-container {
-	margin-top: 10px; /* Space above the chart */
+.chartContainer {
+	width: 100%; /* Full width for charts */
+	height: auto; /* Automatically adjust height */
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 /* Key metrics styles */
@@ -43,18 +52,21 @@ General styles body {
 	font-size: 2rem; /* Size for key metrics */
 	font-weight: bold;
 	margin: 10px 0;
+	color: #2b2b4e; /* Change to a color that contrasts well */
 }
-
 /* Small info text */
 .info-text {
 	font-size: 0.9rem;
-	color: #a0a0a0; /* Light gray for info text */
+	color: #606060; /* Adjusted color for better contrast */
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-	.dashboard {
+	.container {
 		grid-template-columns: 1fr; /* Stack cards on smaller screens */
+	}
+	.card {
+		padding: 15px; /* Adjust padding for smaller screens */
 	}
 }
 
