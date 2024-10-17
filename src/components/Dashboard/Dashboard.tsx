@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../Backend/config/firebaseConfig"; // Adjust import path
-import styles from "../components/Dashboard.module.css";
-import Visualizer from "./visualizer";
+import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
+import styles from "./Dashboard.module.css";
+import Visualizer from "../Visualizer/visualizer";
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const navigate = useNavigate();

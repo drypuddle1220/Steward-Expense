@@ -15,7 +15,7 @@ import {
 	Bar,
 } from "recharts";
 
-import data from "./budgetData.json"; // Assuming the JSON file is in the same directory
+import data from "../budgetData.json"; // Assuming the JSON file is in the same directory
 import styles from "./visualizer.module.css";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];

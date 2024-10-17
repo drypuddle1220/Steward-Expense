@@ -5,7 +5,7 @@ import {
 	signInWithEmailAndPassword,
 } from "firebase/auth";
 import { ref, set } from "firebase/database";
-import { auth, database } from "../../Backend/config/firebaseConfig";
+import { auth, database } from "../../../Backend/config/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 interface LoginProps {

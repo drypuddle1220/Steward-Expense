@@ -62,7 +62,7 @@
 	justify-content: center;
 	align-items: center;
 	padding: 50px;
-	background: url("../assets/hero-image.png") no-repeat center center/cover,
+	background: url("src/assets/hero-image.png") no-repeat center center/cover,
 		linear-gradient(to bottom right, #1c1c1c, #000000);
 
 	background-size: 200% 200%;

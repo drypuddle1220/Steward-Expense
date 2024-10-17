@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LandingPage from "./components/LandingPage";
-import Login from "./components/Login"; // Import your Login component
-import Dashboard from "./components/Dashboard";
+import LandingPage from "./components/LandingPage/LandingPage";
+import Login from "./components/Login/Login"; // Import your Login component
+import Dashboard from "./components/Dashboard/Dashboard";
 const App: React.FC = () => {
 	return (
 		<Router>

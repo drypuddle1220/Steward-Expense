@@ -9,8 +9,6 @@ const LandingPage: React.FC = () => {
 		navigate("/login"); // Redirect to the login page
 	};
 
-	
-
 	return (
 		<div className={styles.landingPage}>
 			{/* Navbar */}
@@ -28,7 +26,6 @@ const LandingPage: React.FC = () => {
 					<button className={styles.logInBtn} onClick={handleSignIn}>
 						Log In
 					</button>
-
 				</div>
 			</nav>
 
