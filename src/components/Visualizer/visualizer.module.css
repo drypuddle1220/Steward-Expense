@@ -10,7 +10,6 @@ body {
 
 .container {
 	display: grid;
-	background-color: rgb(255, 255, 255);
 	grid-template-columns: repeat(3, 1fr);
 	gap: 20px; /* Space between grid items */
 }
@@ -18,14 +17,14 @@ body {
 /* Card styles */
 .card {
 	justify-content: space-evenly;
-	background-color: #2b2b4ee3;
 	border-radius: 10px;
 	padding: 20px;
 	width: 100%; /* Make cards take full width */
 	min-height: 200px; /* Ensure enough height for charts */
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	/* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .card:hover {
 	transform: translateY(-5px); /* Lift effect on hover */
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -33,9 +32,10 @@ body {
 
 /* Chart title */
 .card h3 {
+	font-weight: 300;
 	margin: 0;
 	font-size: 1.5rem; /* Title size */
-	color: #fff; /* Ensure title is readable */
+	color: #212529; /* Ensure title is readable */
 }
 
 /* Chart container */
@@ -52,12 +52,12 @@ body {
 	font-size: 2rem; /* Size for key metrics */
 	font-weight: bold;
 	margin: 10px 0;
-	color: #2b2b4e; /* Change to a color that contrasts well */
+	color: #000000; /* Change to a color that contrasts well */
 }
 /* Small info text */
 .info-text {
 	font-size: 0.9rem;
-	color: #606060; /* Adjusted color for better contrast */
+	color: #000000; /* Adjusted color for better contrast */
 }
 
 /* Responsive adjustments */

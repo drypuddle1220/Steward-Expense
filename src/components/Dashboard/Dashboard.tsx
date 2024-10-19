@@ -4,6 +4,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
 import styles from "./Dashboard.module.css";
+import landing from "../LandingPage/LandingPage.module.css";
 import Visualizer from "../Visualizer/visualizer";
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
@@ -32,7 +33,12 @@ const Dashboard: React.FC = () => {
 		<div className={styles.dashboard}>
 			<aside className={styles.sidebar}>
 				<div className={styles.logo}>
-					<h3>Steward</h3>
+					<img
+						src='src/assets/steward_logo.png'
+						alt='Steward Logo'
+						className={styles.stewardlogo}
+					/>
+					<h5> Steward </h5>
 				</div>
 				<nav className={styles.navigation}>
 					<ul>
@@ -43,9 +49,13 @@ const Dashboard: React.FC = () => {
 					</ul>
 				</nav>
 				<div className={styles.userInfo}>
-					<img src='/path-to-avatar' alt='User Avatar' />
-					<h3>Welcome, {userData.firstName}!</h3>
-					<p>Email: {userData.email}</p>
+					<img
+						src='src/components/Dashboard/Avatars/Avatar1.png'
+						alt='User Avatar'
+						className={styles.stewardlogo}
+					/>
+					<h5>Welcome, {userData.firstName}!</h5>
+					<p>{userData.email}</p>
 				</div>
 			</aside>
 

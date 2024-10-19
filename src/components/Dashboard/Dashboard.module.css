@@ -9,9 +9,9 @@ body {
 	height: 100%; /* Ensure the root container takes full height */
 }
 .dashboard {
-	background-color: rgb(117, 131, 239);
+	background-color: #e5e5e5;
 	display: grid;
-	grid-template-columns: 250px 1fr; /* Sidebar and main content */
+	grid-template-columns: 230px 1fr; /* Sidebar and main content */
 	height: 100vh;
 	width: 100%;
 	overflow-y: hidden;
@@ -19,16 +19,27 @@ body {
 
 /* Sidebar styling */
 .sidebar {
-	background-color: #adc3ec3c;
+	background-color: #5caaf9;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
+.stewardlogo {
+	height: 3.5rem; /* Adjust size as needed */
+	margin-right: 10px; /* Space between logo and text */
+	margin-bottom: 15px;
+}
+
 .logo {
-	font-size: 24px;
+	font-size: 1.5rem;
+	margin-right: auto;
+	width: fit-content;
 	font-weight: bold;
+	color: #000000; /* Light color for logo */
+	display: flex;
+	align-items: center;
 }
 
 .navigation ul {
@@ -54,6 +65,7 @@ body {
 
 /* Main content area */
 .dashboardContent {
+	background-color: #adc3ec3c;
 	padding: 20px;
 	display: grid;
 	grid-template-rows: auto 1fr; /* Make rows adjust to content */
@@ -63,12 +75,13 @@ body {
 .topCards {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
+
 	grid-gap: 20px;
 }
 
 /* Cards styling */
 .card {
-	background-color: #adc3ec3c;
+	background-color: #ced7e9;
 	border-radius: 8px;
 	padding: 20px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

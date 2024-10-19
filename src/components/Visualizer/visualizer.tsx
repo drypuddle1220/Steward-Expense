@@ -131,15 +131,15 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Income vs. Expenses</h3>
 				<div className={styles.chartContainer}>
-					<LineChart width={600} height={300} data={lineChartData}>
+					<LineChart width={600} height={350} data={lineChartData}>
 						<XAxis dataKey='date' />
 						<YAxis />
 						<Tooltip />
-						<CartesianGrid stroke='#e0dfdf' strokeDasharray='5 5' />
+						<CartesianGrid stroke='##F9AB5C' strokeDasharray='0' />
 						<Line
 							type='monotone'
 							dataKey='amount'
-							stroke='#8884d8'
+							stroke='#5caaf9'
 							strokeWidth={2}
 						/>
 					</LineChart>
@@ -157,15 +157,15 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Expense Breakdown</h3>
 				<div className={styles.chartContainer}>
-					<PieChart width={300} height={300}>
+					<PieChart width={300} height={350}>
 						<Pie
 							data={pieChartData}
 							dataKey='amount'
 							nameKey='category'
 							cx='50%'
 							cy='50%'
-							outerRadius='90%'
-							fill='#8884d8'
+							outerRadius='100%'
+							fill='#5caaf9'
 							label
 						>
 							{pieChartData.map((entry, index) => (
@@ -195,14 +195,24 @@ export default class Visualizer extends React.Component {
 
 		return (
 			<div className={styles.card}>
-				<h4>Top Expenses Paid</h4>
+				<h3>Top Expenses</h3>
+				<br />
 				<div className={styles.chartContainer}>
-					<BarChart width={600} height={300} data={barChartData}>
+					<BarChart
+						width={1000}
+						height={400}
+						data={barChartData}
+						barCategoryGap={10} // Space between bars
+					>
 						<XAxis dataKey='category' />
 						<YAxis />
 						<Tooltip />
-						<CartesianGrid stroke='#e0dfdf' strokeDasharray='5 5' />
-						<Bar dataKey='amount' fill='#8884d8' />
+						<CartesianGrid stroke='#e0dfdf' strokeDasharray='0' />
+						<Bar
+							dataKey='amount'
+							fill='#5caaf9'
+							barSize={50} // Thinner bars
+						/>
 					</BarChart>
 				</div>
 			</div>
