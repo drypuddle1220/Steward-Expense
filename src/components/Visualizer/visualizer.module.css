@@ -16,18 +16,19 @@ body {
 
 /* Card styles */
 .card {
-	justify-content: space-evenly;
-	border-radius: 10px;
+	margin-top: 15px;
+	border-radius: 8px;
 	padding: 20px;
 	width: 100%; /* Make cards take full width */
 	min-height: 200px; /* Ensure enough height for charts */
 	/* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
 }
 
 .card:hover {
 	transform: translateY(-5px); /* Lift effect on hover */
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	border: 2px solid rgb(107, 187, 240);
 }
 
 /* Chart title */
