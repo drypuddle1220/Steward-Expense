@@ -37,7 +37,7 @@ export default function InputButton() {
 
             {IncomePage && (
                 <div className = {styles.inputcard}>
-                    hi
+                    <InputCard/>
                 </div>
             )}
         </div>
