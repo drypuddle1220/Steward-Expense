@@ -6,6 +6,9 @@ import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import 
 import styles from "./Dashboard.module.css";
 import landing from "../LandingPage/LandingPage.module.css";
 import Visualizer from "../Visualizer/visualizer";
+import InputButton from "../InputExpense/InputButton";
+
+
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const navigate = useNavigate();
@@ -32,6 +35,7 @@ const Dashboard: React.FC = () => {
 	return (
 		<div className={styles.dashboard}>
 			<aside className={styles.sidebar}>
+			
 				<div className={styles.logo}>
 					<img
 						src='src/assets/steward_logo.png'
@@ -40,6 +44,11 @@ const Dashboard: React.FC = () => {
 					/>
 					<h5> Steward </h5>
 				</div>
+
+				<div className = {styles.inputbutton}>
+					<InputButton/>
+				</div>
+				
 				<nav className={styles.navigation}>
 					<ul>
 						<li>Dashboard</li>

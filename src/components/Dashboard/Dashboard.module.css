@@ -122,3 +122,9 @@ body {
 		grid-template-columns: 1fr; /* Stack sidebar and main content */
 	}
 }
+
+.inputbutton {
+	height: 2.0rem; /* Adjust size as needed */
+	margin-right: 10px; /* Space between logo and text */
+	margin-bottom: 15px;
+}
