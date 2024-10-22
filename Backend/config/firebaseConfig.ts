@@ -1,6 +1,11 @@
-// firebaseConfig.ts
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+	getAuth,
+	GoogleAuthProvider,
+	setPersistence,
+	browserLocalPersistence,
+	browserSessionPersistence,
+} from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
@@ -17,6 +22,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app); // Firebase Authentication
+const googleProvider = new GoogleAuthProvider(); // Google Provider
 const database = getDatabase(app); // Firebase Realtime Database
 
-export { auth, database };
+// Set persistence (example with local persistence)
+setPersistence(auth, browserLocalPersistence)
+	.then(() => {
+		// Proceed to the sign-in logic
+		console.log("Persistence is set to 'local'.");
+	})
+	.catch((error) => {
+		console.error("Error setting persistence:", error);
+	});
+
+export { auth, googleProvider, database };

@@ -4,12 +4,14 @@ body {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box; /* Ensure all elements use border-box sizing */
+	background-color: #ffffff; /* White background */
+	color: #000000; /* Black text */
 }
 #root {
 	height: 100vh; /* Ensure the root container takes full height */
 }
 .dashboard {
-	background-color: #e5e5e5;
+	background-color: #f0f0f0; /* Light gray for dashboard background */
 	display: grid;
 	grid-template-columns: 230px 1fr; /* Sidebar and main content */
 	height: 100vh;
@@ -18,16 +20,19 @@ body {
 
 /* Sidebar styling */
 .sidebar {
-	background-color: #5caaf9;
+	background-color: #000000; /* Black sidebar background */
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
+	justify-items: center;
+	align-items: center;
 	justify-content: space-between;
 }
 
 .navigation ul li {
 	text-align: center;
 	font-weight: 500;
+	color: #ffffff; /* White text in sidebar */
 }
 
 .stewardlogo {
@@ -37,12 +42,13 @@ body {
 
 .logo {
 	font-size: 1.5rem;
-	margin-right: auto;
+	margin-right: 15px;
 	width: fit-content;
 	font-weight: bold;
-	color: #000000; /* Light color for logo */
+	color: #ffffff; /* White color for logo text */
 	display: flex;
 	align-items: center;
+	justify-self: center;
 }
 
 .navigation ul {
@@ -59,6 +65,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	color: #ffffff;
 }
 
 .userInfo img {
@@ -68,7 +75,7 @@ body {
 
 /* Main content area */
 .dashboardContent {
-	background-color: #adc3ec3c;
+	background-color: #ffffff; /* White background for main content */
 	padding: 20px;
 	display: grid;
 	grid-template-rows: auto 1fr; /* Make rows adjust to content */
@@ -84,10 +91,10 @@ body {
 
 /* Cards styling */
 .card {
-	background-color: #ced7e9;
+	background-color: #e5e5e5; /* Light gray for card background */
 	border-radius: 8px;
 	padding: 20px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
 	flex: 1; /* Allow the card to grow and fill available space */
 	min-width: 200px; /* Set a minimum width for better layout */
 }
@@ -105,7 +112,7 @@ body {
 }
 
 .chart {
-	background-color: #adc3ec3c;
+	background-color: #f0f0f0; /* Light gray for charts */
 	padding: 5px;
 	border-radius: 8px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -127,7 +134,11 @@ body {
 }
 
 .inputbutton {
-	height: 2.0rem; /* Adjust size as needed */
+	height: 2rem; /* Adjust size as needed */
 	margin-right: 10px; /* Space between logo and text */
 	margin-bottom: 15px;
+	background-color: #000000; /* Black button */
+	color: #ffffff; /* White text */
+	border: none;
+	border-radius: 4px;
 }

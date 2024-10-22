@@ -1,0 +1,23 @@
+/* Navbar.css */
+nav ul {
+	list-style-type: none; /* Remove bullet points */
+	padding: 0; /* Remove default padding */
+	margin: 0; /* Remove default margin */
+}
+
+nav li {
+	margin-right: 20px; /* Spacing between items */
+}
+
+nav a {
+	color: #fff; /* White text color */
+	text-decoration: none; /* Remove underline */
+	font-weight: bold; /* Make text bold */
+	padding: 8px 16px; /* Add padding for better click area */
+	border-radius: 4px; /* Rounded corners */
+	transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+nav a:hover {
+	color: #5caaf9; /* Change text color on hover */
+}

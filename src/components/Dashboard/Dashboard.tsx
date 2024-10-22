@@ -6,7 +6,7 @@ import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import 
 import styles from "./Dashboard.module.css";
 import Visualizer from "../Visualizer/visualizer";
 import InputButton from "../InputExpense/InputButton";
-
+import Navbar from "./Navbar";
 
 const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
@@ -34,7 +34,6 @@ const Dashboard: React.FC = () => {
 	return (
 		<div className={styles.dashboard}>
 			<aside className={styles.sidebar}>
-			
 				<div className={styles.logo}>
 					<img
 						src='src/assets/steward_logo.png'
@@ -44,17 +43,8 @@ const Dashboard: React.FC = () => {
 					<h5> Steward </h5>
 				</div>
 
-				<div className = {styles.inputbutton}>
-					<InputButton/>
-				</div>
-				
 				<nav className={styles.navigation}>
-					<ul>
-						<li>Dashboard</li>
-						<li>Purchase</li>
-						<li>Accounts</li>
-						<li>Reports</li>
-					</ul>
+					<Navbar />
 				</nav>
 				<div className={styles.userInfo}>
 					<img
@@ -69,9 +59,9 @@ const Dashboard: React.FC = () => {
 
 			<main className={styles.dashboardContent}>
 				<section className={styles.topCards}>
-					<div className={styles.card}>Total Income</div>
-					<div className={styles.card}>Total Expense</div>
-					<div className={styles.card}>Total Savings</div>
+					<div className={styles.card}>Total Income: $4,300</div>
+					<div className={styles.card}>Total Expense: $3,000</div>
+					<div className={styles.card}>Total Savings: $1,300</div>
 				</section>
 
 				<section className={styles.charts}>

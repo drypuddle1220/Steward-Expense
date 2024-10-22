@@ -3,9 +3,14 @@ import styles from "./Login.module.css";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	signInWithPopup,
 } from "firebase/auth";
 import { ref, set } from "firebase/database";
-import { auth, database } from "../../../Backend/config/firebaseConfig";
+import {
+	auth,
+	googleProvider,
+	database,
+} from "../../../Backend/config/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
@@ -27,13 +32,10 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 
 		if (isCreatingAccount) {
 			// Handle account creation
-			console.log("Registering user...");
 			if (password !== confirmPassword) {
 				alert("Passwords do not match!");
 				return;
 			}
-
-			// Call the registration logic
 			await handleRegister();
 		} else {
 			await handleSignIn();
@@ -70,12 +72,31 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
-			console.log("Signed In Successfully!");
 			navigate("/dashboard");
-			//We can redirect here to the main dashboard page.... for now is empty.
+			console.log("Signed In Successfully!");
 		} catch (error) {
 			console.error("Error signing in:", error);
 			alert(error);
+		}
+	};
+
+	const handleGoogleSignIn = async () => {
+		try {
+			const result = await signInWithPopup(auth, googleProvider);
+			const user = result.user;
+			const userRef = ref(database, "users/" + user.uid);
+
+			// Save user data to the Realtime Database if needed
+			await set(userRef, {
+				email: user.email,
+				displayName: user.displayName,
+				last_login: Date.now(),
+			});
+
+			navigate("/dashboard");
+		} catch (error) {
+			console.error("Error signing in with Google:", error);
+			alert("Google Sign-In failed!");
 		}
 	};
 
@@ -150,6 +171,11 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 						{isCreatingAccount
 							? "Already have an account? Sign In"
 							: "Don't have an account? Create one"}
+					</button>
+
+					{/* Add Google Sign In Button */}
+					<button className={styles.btn} onClick={handleGoogleSignIn}>
+						Sign In with Google
 					</button>
 				</div>
 			)}
