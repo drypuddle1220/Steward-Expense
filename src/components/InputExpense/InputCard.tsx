@@ -6,9 +6,9 @@ export default function InputCard() {
 	return (
 		<div>
 			<h4>Popup - GeeksforGeeks</h4>
-			<Popup trigger={<button>Click to open modal</button>} modal nested>
+			{/* <Popup trigger={<button>Click to open modal</button>} modal nested>
 				hi
-			</Popup>
+			</Popup> */}
 		</div>
 	);
 }

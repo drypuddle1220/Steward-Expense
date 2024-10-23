@@ -1,11 +1,13 @@
 /* Navbar.css */
 nav ul {
+	height: 100%;
 	list-style-type: none; /* Remove bullet points */
 	padding: 0; /* Remove default padding */
 	margin: 0; /* Remove default margin */
 }
 
 nav li {
+	height: fit-content;
 	margin-right: 20px; /* Spacing between items */
 }
 

@@ -29,6 +29,10 @@ body {
 	justify-content: space-between;
 }
 
+.navigation {
+	height: 200px;
+}
+
 .navigation ul li {
 	text-align: center;
 	font-weight: 500;
