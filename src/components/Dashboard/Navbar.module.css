@@ -23,3 +23,12 @@ nav a {
 nav a:hover {
 	color: #5caaf9; /* Change text color on hover */
 }
+
+.active {
+	background-color: #dce8e75c; /* Subtle background */
+	color: #5caaf9; /* Soft blue color */
+	font-weight: bold;
+	padding: 10px 20px;
+	border-radius: 4px;
+	transition: background-color 0.3s ease, color 0.3s ease, padding 0.3s ease; /* Smooth transitions */
+}

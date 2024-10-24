@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
 			if (!user.emailVerified) {
 				auth.signOut();
 				alert("Please verify your email address before logging in.");
-				navigate("/verify-email");
+				navigate("/dashboard");
 			} else {
 				// Fetch user-specific data
 				const database = getDatabase(); //Initialize database
@@ -63,6 +63,8 @@ const Dashboard: React.FC = () => {
 		return <div className={styles.progress_bar}></div>;
 	} // Add a progress bar component
 
+	//The following is the component of Dashboard:
+	//Leftside is navigation sidebar, right side is main container that contains the dashboard visuals.
 	return (
 		<div className={styles.dashboard}>
 			<aside className={styles.sidebar}>
@@ -72,7 +74,6 @@ const Dashboard: React.FC = () => {
 						alt='Steward Logo'
 						className={styles.stewardlogo}
 					/>
-					<h5> Steward </h5>
 				</div>
 
 				<nav className={styles.navigation}>

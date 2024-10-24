@@ -19,7 +19,6 @@ const LandingPage: React.FC = () => {
 						alt='Steward Logo'
 						className={styles.stewardlogo}
 					/>
-					<div>Steward</div>
 				</div>
 
 				<div>
