@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
+
 import {
 	createUserWithEmailAndPassword,
+	sendEmailVerification,
 	signInWithEmailAndPassword,
 	signInWithPopup,
 } from "firebase/auth";
-import { ref, set } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 import {
 	auth,
 	googleProvider,
@@ -60,6 +62,8 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 				last_login: Date.now(),
 			});
 
+			await sendEmailVerification(user);
+
 			alert("User registered successfully");
 			navigate("/dashboard");
 			onClose(); // Optionally close the form after successful registration
@@ -84,20 +88,69 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 		try {
 			const result = await signInWithPopup(auth, googleProvider);
 			const user = result.user;
+
+			const userEmail = user.email; // User's email
 			const userRef = ref(database, "users/" + user.uid);
 
-			// Save user data to the Realtime Database if needed
+			// Get userName and check for null
+			const userName = user.displayName;
+
+			// Initialize first and last name variables
+			let firstName = "";
+			let lastName = "";
+
+			if (userName) {
+				// Split the display name into first and last names
+				const nameParts = userName.split(" ");
+				firstName = nameParts[0]; // First name
+				lastName =
+					nameParts.length > 1 ? nameParts.slice(1).join(" ") : ""; // Last name (if exists)
+			} else {
+				// Handle the case where userName is null
+				firstName = "User"; // Default first name or any fallback logic
+				lastName = ""; // You can leave last name empty or set a default value
+			}
+
+			// Save user data to the Realtime Database
 			await set(userRef, {
-				email: user.email,
-				displayName: user.displayName,
-				last_login: Date.now(),
+				email: userEmail,
+				firstName: firstName,
+				lastName: lastName,
+				last_login: Date.now(), // Store the timestamp of the last login
 			});
 
+			// Optionally save user data separately, if needed
+			saveUserToDatabase(user.uid, firstName, lastName, userEmail); // Adjust the function to accept first and last names
+
+			// Navigate to the dashboard after successful login
 			navigate("/dashboard");
 		} catch (error) {
 			console.error("Error signing in with Google:", error);
 			alert("Google Sign-In failed!");
 		}
+	};
+
+	const saveUserToDatabase = (
+		userId: string,
+		firstName: string | null,
+		lastName: string | null,
+		email: string | null
+	) => {
+		const database = getDatabase();
+		const userRef = ref(database, "users/" + userId);
+
+		set(userRef, {
+			firstName: firstName || "", // Default to empty string if null
+			lastName: lastName || "", // Default to empty string if null
+			email: email || "", // Default to empty string if null
+			// Add any other information you want to store
+		})
+			.then(() => {
+				console.log("User data saved successfully!");
+			})
+			.catch((error) => {
+				console.error("Error saving user data:", error);
+			});
 	};
 
 	const toggleCreateAccount = () => {
