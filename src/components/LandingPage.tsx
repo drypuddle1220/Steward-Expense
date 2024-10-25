@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import styles from "./LandingPage.module.css"; // Importing the CSS module
 
 const LandingPage: React.FC = () => {
-	const navigate = useNavigate(); // Initialize useNavigate
+	const navigate = useNavigate(); // Initialize useNavigate from react-router-dom, for single page applications.
 
 	const handleSignIn = () => {
+		//Intitialize function to redirect page once Log in is clicked.
 		navigate("/login"); // Redirect to the login page
 	};
 

@@ -1,0 +1,34 @@
+/* Navbar.css */
+nav ul {
+	height: 100%;
+	list-style-type: none; /* Remove bullet points */
+	padding: 0; /* Remove default padding */
+	margin: 0; /* Remove default margin */
+}
+
+nav li {
+	height: fit-content;
+	margin-right: 20px; /* Spacing between items */
+}
+
+nav a {
+	color: #fff; /* White text color */
+	text-decoration: none; /* Remove underline */
+	font-weight: bold; /* Make text bold */
+	padding: 8px 16px; /* Add padding for better click area */
+	border-radius: 4px; /* Rounded corners */
+	transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+nav a:hover {
+	color: #5caaf9; /* Change text color on hover */
+}
+
+.active {
+	background-color: #414143; /* Subtle background */
+	color: #8dc2f6; /* Soft blue color */
+	font-weight: bold;
+	padding: 10px 20px;
+	border-radius: 4px;
+	transition: background-color 0.3s ease, color 0.3s ease, padding 0.3s ease; /* Smooth transitions */
+}
