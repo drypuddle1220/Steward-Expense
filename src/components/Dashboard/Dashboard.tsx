@@ -67,6 +67,10 @@ const Dashboard: React.FC = () => {
 	//Leftside is navigation sidebar, right side is main container that contains the dashboard visuals.
 	return (
 		<div className={styles.dashboard}>
+		
+			<div className = {styles.inputbutton}>
+				<InputButton/>
+			</div>
 			<aside className={styles.sidebar}>
 				<div className={styles.logo}>
 					<img

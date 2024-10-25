@@ -45,9 +45,7 @@ const Navbar: React.FC = () => {
 				<li>
 					<Link to='/savings-goals'>Savings Goals</Link>
 				</li>
-				<li>
-					<InputButton />
-				</li>
+				
 			</ul>
 		</nav>
 	);
