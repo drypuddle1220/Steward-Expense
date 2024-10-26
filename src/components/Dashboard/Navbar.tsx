@@ -29,9 +29,9 @@ const Navbar: React.FC = () => {
 				</li>
 				<li>
 					<Link
-						to='/transactions'
+						to='/transaction'
 						className={
-							location.pathname === "/transactions"
+							location.pathname === "/transaction"
 								? styles.active
 								: ""
 						}

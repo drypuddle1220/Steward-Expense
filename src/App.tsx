@@ -5,7 +5,7 @@ import LandingPage from "./components/LandingPage/LandingPage";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "../Backend/Routes/ProtectedRoute";
-
+import Transaction from "./components/Transactions/Transaction";
 const App: React.FC = () => {
 	return (
 		<Router>
@@ -16,9 +16,13 @@ const App: React.FC = () => {
 					element={<Login showForm={true} onClose={() => {}} />}
 				/>
 
-				{/* Wrap protected routes inside ProtectedRoute */}
+				{/** we want to use protected routes to protect the parts of the website that displayes personal info
+				 * Logic: The app checks whether a user is authenticated (logged in) before allowing them to access a protected page.
+				 * Redirecting: If the user is not authenticated, they are typically redirected to a login page or another public route.
+				 */}
 				<Route element={<ProtectedRoute auth={auth} />}>
 					<Route path='/dashboard' element={<Dashboard />} />
+					<Route path='/transaction' element={<Transaction />} />
 					{/* Add more protected routes here */}
 				</Route>
 			</Routes>

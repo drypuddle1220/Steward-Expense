@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
-
 import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
 	signInWithEmailAndPassword,
 	signInWithPopup,
 } from "firebase/auth";
+
+/**getDatabase() returns a reference to the firebase realtime database, we use it to establish a connection with the database.
+ *ref () creates a reference to a specific location in the database.(e.g. user specific node in the database);
+ set() uses ref() to target a specific location in database and replaces it. We use it to save data to the database. 
+ */
 import { getDatabase, ref, set } from "firebase/database";
+
 import {
 	auth,
 	googleProvider,
@@ -21,14 +26,22 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
-	const navigate = useNavigate();
+	const navigate = useNavigate(); //Function from react-router-dom
+	// The following useState hooks manage the state of the input fields,
+	// monitoring any changes in the form data (email, password, etc.)
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+	const [isCreatingAccount, setIsCreatingAccount] = useState(false); //The default state is saying setIsCreatingAccount is false, indicating the user by default is greated with sign-in option.
 
+	/**
+	 *
+	 * @param e React.FormEvent,this is a type provided by React that represents events associated with forms. Ex: submitting a form or making changes to input fields.
+	 * @returns alert if password doesn't match with confirmPassword.
+	 * This function is called when the form is submitted, Both log-in and register form.
+	 */
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault(); // Prevent default form submission behavior
 
@@ -38,34 +51,43 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 				alert("Passwords do not match!");
 				return;
 			}
+			//If password & confrimPassword matches, we can call handle register. Since we are under the creating account form.
 			await handleRegister();
 		} else {
-			await handleSignIn();
+			//
+			await handleSignIn(); //If we aren't in the creating account form, that means we are signing in, so directly call handleSignIn when form is submitted.
 		}
 	};
 
+	/**
+	 * This function handles creating a new user using the data collected in the registration form.
+	 * It uses Firebase Authentication to create the user's credentials and stores additional
+	 * user information in the Firebase Realtime Database.
+	 */
 	const handleRegister = async () => {
 		try {
 			const userCredential = await createUserWithEmailAndPassword(
+				//Here we are using built-in firebase function to create the user's data location in the database. Sort of like allocating space for the new user.
 				auth,
 				email,
 				password
 			);
-			const user = userCredential.user;
+			const user = userCredential.user; //Here we retreive the newly created user object
 
 			// Save user data to the Realtime Database
-			const userRef = ref(database, "users/" + user.uid);
+			const userRef = ref(database, "users/" + user.uid); //Access the specific user's data location in the database using user.uid
 			await set(userRef, {
+				//We write the info in the data space we just ref().
 				email: email,
 				firstName: firstName,
 				lastName: lastName,
 				last_login: Date.now(),
 			});
 
-			await sendEmailVerification(user);
+			await sendEmailVerification(user); //Use built-in function to ask user to verify via clicking the link in their inbox. This ensures user is using actual emails.
 
 			alert("User registered successfully");
-			navigate("/dashboard");
+			navigate("/dashboard"); //Automatically log-in new user .
 			onClose(); // Optionally close the form after successful registration
 		} catch (error) {
 			console.error("Error registering user:", error);
@@ -84,9 +106,22 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 		}
 	};
 
+	//This function enables users to sign-in directly with their existing Google's accoount.
 	const handleGoogleSignIn = async () => {
 		try {
-			const result = await signInWithPopup(auth, googleProvider);
+			const result = await signInWithPopup(auth, googleProvider); //The signInWithPopup function is google's built-in function
+			//Auth is an instance of firebase authentication. Tracks the state of the user's authentication and performs actions like signing in or out.
+			//googleProvider is an instance of GoogleAuthProvider,which is a class from firebase that specifically handles authentication with Google. It allows app to configure Google as a sign in provider.
+			//signInWithPopup returns a Promise that resolves a object typeUserCredential. The object contains importants info about the authenticated user.
+
+			/**
+			 * user: This is the most important property and contains the User object that represents the authenticated user. It holds various details such as:
+				uid: The unique identifier for the user.
+				displayName: The user's display name (if available).
+				email: The user's email address.
+				photoURL: The user's profile picture (if available).
+				emailVerified: A boolean indicating whether the email has been verified.
+			 */
 			const user = result.user;
 
 			const userEmail = user.email; // User's email
@@ -100,27 +135,30 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 			let lastName = "";
 
 			if (userName) {
+				//If userName is not empty, we will proceed to split the first and last name to be saved in the database.
 				// Split the display name into first and last names
 				const nameParts = userName.split(" ");
 				firstName = nameParts[0]; // First name
 				lastName =
 					nameParts.length > 1 ? nameParts.slice(1).join(" ") : ""; // Last name (if exists)
 			} else {
+				//Otherwise if it is empty, we will just fill-in default data for the name. User should later be able to change it.
 				// Handle the case where userName is null
 				firstName = "User"; // Default first name or any fallback logic
 				lastName = ""; // You can leave last name empty or set a default value
 			}
 
-			// Save user data to the Realtime Database
-			await set(userRef, {
-				email: userEmail,
-				firstName: firstName,
-				lastName: lastName,
-				last_login: Date.now(), // Store the timestamp of the last login
-			});
+			// // Save user data to the Realtime Database
+			// await set(userRef, {
+			// 	//userRef is the exact location in the database in which we will write our data. (Think of index)
+			// 	email: userEmail,
+			// 	firstName: firstName,
+			// 	lastName: lastName,
+			// 	last_login: Date.now(), // Store the timestamp of the last login
+			// });
 
 			// Optionally save user data separately, if needed
-			saveUserToDatabase(user.uid, firstName, lastName, userEmail); // Adjust the function to accept first and last names
+			saveUserToDatabase(user.uid, firstName, lastName, userEmail);
 
 			// Navigate to the dashboard after successful login
 			navigate("/dashboard");
@@ -143,7 +181,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 			firstName: firstName || "", // Default to empty string if null
 			lastName: lastName || "", // Default to empty string if null
 			email: email || "", // Default to empty string if null
-			// Add any other information you want to store
+			last_login: Date.now(),
 		})
 			.then(() => {
 				console.log("User data saved successfully!");
@@ -152,7 +190,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 				console.error("Error saving user data:", error);
 			});
 	};
-
+	//A toggle to display sign in page and create account form
 	const toggleCreateAccount = () => {
 		setIsCreatingAccount(!isCreatingAccount);
 	};

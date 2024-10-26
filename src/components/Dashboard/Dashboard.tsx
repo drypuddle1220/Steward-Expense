@@ -7,6 +7,7 @@ import styles from "./Dashboard.module.css";
 import Visualizer from "../Visualizer/visualizer";
 import InputButton from "../InputExpense/InputButton";
 import Navbar from "./Navbar";
+import nav from "./Navbar.module.css";
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -46,7 +47,7 @@ const Dashboard: React.FC = () => {
 				const database = getDatabase(); //Initialize database
 				const userRef = ref(database, "users/" + user.uid); //Create a reference to the user's data in the database.
 
-				//Set up a listener to respon to changes at user reference.
+				//Set up a listener to respond to changes at user reference.
 				onValue(userRef, (snapshot) => {
 					//This function is called whenever there is a change in userRef data, including when the inital fetch happens.
 					const data = snapshot.val(); //Records the data.
@@ -67,23 +68,23 @@ const Dashboard: React.FC = () => {
 	//Leftside is navigation sidebar, right side is main container that contains the dashboard visuals.
 	return (
 		<div className={styles.dashboard}>
-			<aside className={styles.sidebar}>
-				<div className={styles.logo}>
+			<aside className={nav.sidebar}>
+				<div className={nav.logo}>
 					<img
 						src='src/assets/steward_logo.png'
 						alt='Steward Logo'
-						className={styles.stewardlogo}
+						className={nav.stewardlogo}
 					/>
 				</div>
 
-				<nav className={styles.navigation}>
+				<nav className={nav.navigation}>
 					<Navbar />
 				</nav>
-				<div className={styles.userInfo}>
+				<div className={nav.userInfo}>
 					<img
 						src='src/components/Dashboard/Avatars/Avatar1.png'
 						alt='User Avatar'
-						className={styles.stewardlogo}
+						className={nav.stewardlogo}
 					/>
 					<h5>Welcome, {userData.firstName}!</h5>
 					<p>{userData.email}</p>
