@@ -112,3 +112,7 @@ body {
 		transform: translateX(100%);
 	}
 }
+
+.inputbutton{
+	position: absolute;
+}

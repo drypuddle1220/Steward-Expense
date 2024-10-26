@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styles from './InputButton.module.css';
-import InputCard from './InputCard';
+import IncomeCard from './IncomeCard';
+import ExpenseCard from './ExpenseCard';
 
 export default function InputButton() {
     const [showOptions, setShowOptions] = useState(false);
     const [IncomePage, setIncomePage] = useState(false); 
+    const [ExpensePage, setExpensePage] = useState(false);
   
 
     const toggleOptions = () => {
@@ -13,6 +15,9 @@ export default function InputButton() {
 
     const toggleOptions_input = () => {
         setIncomePage(!IncomePage);
+    };
+    const toggleOptions_input_expense = () => {
+        setExpensePage(!ExpensePage);
     };
 
 
@@ -31,15 +36,12 @@ export default function InputButton() {
                     <button className={styles.optionButton} onClick = {toggleOptions_input} >
                         Input Income
                     </button>
-                    <button className={styles.optionButton}>Input Expense</button>
+                    <button className={styles.optionButton} onClick = {toggleOptions_input_expense}>Input Expense</button>
                 </div>
             )}
 
-            {IncomePage && (
-                <div className = {styles.inputcard}>
-                    <InputCard/>
-                </div>
-            )}
+            <IncomeCard isVisible = {IncomePage} /> 
+            <ExpenseCard isVisible = {ExpensePage} />
         </div>
     );
 }
