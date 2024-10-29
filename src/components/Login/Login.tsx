@@ -5,6 +5,7 @@ import {
 	sendEmailVerification,
 	signInWithEmailAndPassword,
 	signInWithPopup,
+	fetchSignInMethodsForEmail,
 } from "firebase/auth";
 
 /**getDatabase() returns a reference to the firebase realtime database, we use it to establish a connection with the database.
@@ -19,6 +20,7 @@ import {
 	database,
 } from "../../../Backend/config/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { FirestoreService } from "../../../Backend/config/firestoreService";
 
 interface LoginProps {
 	showForm: boolean; // Whether the form is visible
@@ -62,36 +64,56 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 	/**
 	 * This function handles creating a new user using the data collected in the registration form.
 	 * It uses Firebase Authentication to create the user's credentials and stores additional
-	 * user information in the Firebase Realtime Database.
+	 * user information in the Firestore Database.
 	 */
 	const handleRegister = async () => {
 		try {
+			// Validate input fields first
+			if (!email || !password || !firstName || !lastName) {
+				alert("Please fill in all fields");
+				return;
+			}
+
 			const userCredential = await createUserWithEmailAndPassword(
-				//Here we are using built-in firebase function to create the user's data location in the database. Sort of like allocating space for the new user.
 				auth,
 				email,
 				password
 			);
-			const user = userCredential.user; //Here we retreive the newly created user object
+			const user = userCredential.user;
 
-			// Save user data to the Realtime Database
-			const userRef = ref(database, "users/" + user.uid); //Access the specific user's data location in the database using user.uid
-			await set(userRef, {
-				//We write the info in the data space we just ref().
-				email: email,
-				firstName: firstName,
-				lastName: lastName,
-				last_login: Date.now(),
-			});
+			try {
+				// Save user data to Firestore
+				await FirestoreService.saveUserData(user.uid, {
+					email: email,
+					firstName: firstName,
+					lastName: lastName,
+					last_login: Date.now()
+				});
+			} catch (firestoreError) {
+				// If Firestore save fails, delete the auth user
+				await user.delete();
+				throw new Error("Failed to save user data. Please try again.");
+			}
 
-			await sendEmailVerification(user); //Use built-in function to ask user to verify via clicking the link in their inbox. This ensures user is using actual emails.
-
-			alert("User registered successfully");
-			navigate("/dashboard"); //Automatically log-in new user .
-			onClose(); // Optionally close the form after successful registration
-		} catch (error) {
-			console.error("Error registering user:", error);
-			alert(error);
+			await sendEmailVerification(user);
+			alert("Registration successful! Please check your email for verification.");
+			navigate("/dashboard");
+			onClose();
+		} catch (error: any) {
+			console.error("Error during registration:", error);
+			switch (error.code) {
+				case 'auth/email-already-in-use':
+					alert("This email is already registered. Please try logging in instead.");
+					break;
+				case 'auth/invalid-email':
+					alert("Please enter a valid email address.");
+					break;
+				case 'auth/weak-password':
+					alert("Password should be at least 6 characters long.");
+					break;
+				default:
+					alert(error.message || "An error occurred during registration");
+			}
 		}
 	};
 
@@ -168,27 +190,23 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 		}
 	};
 
-	const saveUserToDatabase = (
+	const saveUserToDatabase = async (
 		userId: string,
 		firstName: string | null,
 		lastName: string | null,
 		email: string | null
 	) => {
-		const database = getDatabase();
-		const userRef = ref(database, "users/" + userId);
-
-		set(userRef, {
-			firstName: firstName || "", // Default to empty string if null
-			lastName: lastName || "", // Default to empty string if null
-			email: email || "", // Default to empty string if null
-			last_login: Date.now(),
-		})
-			.then(() => {
-				console.log("User data saved successfully!");
-			})
-			.catch((error) => {
-				console.error("Error saving user data:", error);
+		try {
+			await FirestoreService.saveUserData(userId, {
+				firstName: firstName || "",
+				lastName: lastName || "",
+				email: email || "",
+				last_login: Date.now()
 			});
+			console.log("User data saved successfully!");
+		} catch (error) {
+			console.error("Error saving user data:", error);
+		}
 	};
 	//A toggle to display sign in page and create account form
 	const toggleCreateAccount = () => {

@@ -1,11 +1,12 @@
 import React from 'react';
 import styles from './ExpenseCard.module.css';
 
-type InputCardProps = {
+interface InputCardProps {
 	isVisible: boolean;
+	onClose: () => void;
 }
 
-export default function ExpenseCard({isVisible}: InputCardProps) {
+export default function ExpenseCard({isVisible, onClose}: InputCardProps) {
   return (
     <div>
 			<div className= {`${styles.cardform} ${isVisible ? styles.visible : styles.hidden}`}>

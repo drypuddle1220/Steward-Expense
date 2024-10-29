@@ -6,6 +6,7 @@ import {
 	browserSessionPersistence,
 } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { getFirestore } from 'firebase/firestore';
 
 /**Steward Expense app's Firebase configuration, 
 which helps firebase identify which database we need to connect to. 
@@ -25,6 +26,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app); // Firebase Authentication
 const googleProvider = new GoogleAuthProvider(); // Google Provider, gives us the ability to use google sign in.
 const database = getDatabase(app); // Firebase Realtime Database
+const db = getFirestore(app); // Initialize Firestore
 
 // Set persistence (example with local persistence)
 
@@ -45,4 +47,4 @@ setPersistence(auth, browserSessionPersistence)
  * 	-> none = persists with page cycle, refresh = re-login
  */
 
-export { auth, googleProvider, database };
+export { auth, googleProvider, database, db };

@@ -1,6 +1,6 @@
 // Dashboard.tsx
 import React, { useEffect, useState } from "react"; //Reach hooks (UseState, useEffect)
-import { getDatabase, ref, onValue } from "firebase/database"; //Firebase database functions.
+import { getDatabase, ref, onValue, set } from "firebase/database"; //Firebase database functions.
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
 import styles from "./Dashboard.module.css";
@@ -8,6 +8,7 @@ import Visualizer from "../Visualizer/visualizer";
 import InputButton from "../InputExpense/InputButton";
 import Navbar from "./Navbar";
 import nav from "./Navbar.module.css";
+import { FirestoreService } from "../../../Backend/config/firestoreService";
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -43,19 +44,20 @@ const Dashboard: React.FC = () => {
 				alert("Please verify your email address before logging in.");
 				navigate("/dashboard");
 			} else {
-				// Fetch user-specific data
-				const database = getDatabase(); //Initialize database
-				const userRef = ref(database, "users/" + user.uid); //Create a reference to the user's data in the database.
-
-				//Set up a listener to respond to changes at user reference.
-				onValue(userRef, (snapshot) => {
-					//This function is called whenever there is a change in userRef data, including when the inital fetch happens.
-					const data = snapshot.val(); //Records the data.
-					setUserData(data); //Update the component state with fetched user data. Put into userData above.
-				});
+				// Fetch user data from Firestore
+				const loadUserData = async () => {
+					try {
+						const userData = await FirestoreService.getUserData(user.uid);
+						if (userData) {
+							setUserData(userData);
+						}
+					} catch (error) {
+						console.error('Error loading user data:', error);
+					}
+				};
+				loadUserData();
 			}
 		} else {
-			// Redirect to login if no user is signed in
 			navigate("/login");
 		}
 	}, [navigate]);
@@ -79,6 +81,7 @@ const Dashboard: React.FC = () => {
 
 				<nav className={nav.navigation}>
 					<Navbar />
+					<InputButton />
 				</nav>
 				<div className={nav.userInfo}>
 					<img

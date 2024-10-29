@@ -15,93 +15,171 @@ body {
 .transaction {
 	display: grid;
 	grid-template-columns: 230px 1fr;
-	background-color: #ffffff;
-	height: 100vh;
-	width: 100%;
+	min-height: 100vh;
+	background-color: #f8f9fa;
 }
 
-.parent {
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	grid-template-rows: repeat(5, 1fr);
-	gap: 8px;
+.mainContent {
+	padding: 2rem;
+	overflow-y: auto;
 }
 
-.transaction_menu {
-	background-color: rgb(226, 240, 235);
-	grid-column: span 3 / span 5;
-	grid-column-start: 1;
-	grid-row-start: 1;
+.header {
+	margin-bottom: 2rem;
 }
 
-.transactions_container {
-	background-color: rgb(228, 228, 228);
-	grid-column: span 3 / span 5;
-	grid-row: span 3 / span 4;
-	grid-column-start: 1;
-	grid-row-start: 2;
-	margin: 30px;
-	padding: 20px;
-	background-color: #f9f9f9; /* Light background for visibility */
-	border: 1px solid #ccc; /* Border around the transactions section */
-	border-radius: 5px; /* Rounded corners */
+.header h1 {
+	font-size: 2rem;
+	color: #2d3436;
+	margin-bottom: 1.5rem;
 }
-h2 {
+
+.controls {
 	display: flex;
-	align-self: flex-start;
-	color: black;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 2rem;
 }
 
-.transactions_table {
+.searchBar input {
+	padding: 0.75rem 1rem;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	width: 300px;
+	font-size: 0.9rem;
+	transition: all 0.3s ease;
+	background-color: white;
+}
+
+.searchBar input:focus {
+	outline: none;
+	border-color: #74b9ff;
+	box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+}
+
+.filterButtons {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.filterBtn {
+	padding: 0.75rem 1.5rem;
+	border: none;
+	border-radius: 8px;
+	background-color: white;
+	color: #636e72;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.filterBtn:hover {
+	background-color: #f0f0f0;
+}
+
+.filterBtn.active {
+	background-color: #74b9ff;
+	color: white;
+}
+
+.transactionList {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.transactionCard {
+	display: flex;
+	align-items: center;
+	padding: 1.25rem;
+	background-color: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	transition: transform 0.2s ease;
+}
+
+.transactionCard:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.transactionIcon {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background-color: #f0f0f0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 1rem;
+	font-size: 1.25rem;
+}
+
+.transactionDetails {
+	flex: 1;
+}
+
+.transactionDetails h3 {
+	font-size: 1rem;
+	color: #2d3436;
+	margin: 0;
+}
+
+.transactionDetails p {
+	color: #636e72;
+	margin: 0.25rem 0;
+	font-size: 0.9rem;
+}
+
+.date {
+	font-size: 0.8rem;
+	color: #b2bec3;
+}
+
+.transactionAmount {
+	text-align: right;
+}
+
+.income {
+	color: #00b894;
+	font-weight: 600;
+	font-size: 1.1rem;
+}
+
+.expense {
+	color: #ff7675;
+	font-weight: 600;
+	font-size: 1.1rem;
+}
+
+.paymentMethod {
+	display: block;
+	font-size: 0.8rem;
+	color: #b2bec3;
+	margin-top: 0.25rem;
+}
+
+.progress_bar {
 	width: 100%;
-	border-collapse: collapse;
+	height: 3px;
+	background: #f3f3f3;
+	overflow: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
 }
 
-.transactions_table th,
-.transactions_table td {
-	padding: 10px;
-	text-align: left;
-	border-bottom: 1px solid #6e6d6d;
+.progress_bar::after {
+	content: '';
+	display: block;
+	width: 40%;
+	height: 100%;
+	background: #74b9ff;
+	animation: loading 1s infinite ease-in-out;
 }
 
-.transactions_table th {
-	background-color: #f4f4f4;
-}
-
-.icon {
-	display: inline-block;
-	margin-right: 5px;
-}
-
-.sent {
-	color: #ff5c5c;
-}
-
-.received {
-	color: #4caf50;
-}
-
-.converted {
-	color: #3e82f7;
-}
-
-.status {
-	padding: 3px 10px;
-	border-radius: 15px;
-	font-size: 0.9em;
-}
-
-.status.success {
-	background-color: #e0f7e0;
-	color: #4caf50;
-}
-
-.status.failed {
-	background-color: #fbe9e9;
-	color: #ff5c5c;
-}
-
-.status.incomplete {
-	background-color: #f1f1f1;
-	color: #777;
+@keyframes loading {
+	0% { transform: translateX(-100%); }
+	100% { transform: translateX(250%); }
 }

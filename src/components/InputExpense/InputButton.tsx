@@ -5,43 +5,43 @@ import ExpenseCard from './ExpenseCard';
 
 export default function InputButton() {
     const [showOptions, setShowOptions] = useState(false);
-    const [IncomePage, setIncomePage] = useState(false); 
-    const [ExpensePage, setExpensePage] = useState(false);
-  
+    const [showIncomeForm, setShowIncomeForm] = useState(false);
+    const [showExpenseForm, setShowExpenseForm] = useState(false);
 
-    const toggleOptions = () => {
-        setShowOptions(!showOptions);
+    const handleAddTransaction = (type: 'income' | 'expense') => {
+        setShowOptions(false);
+        if (type === 'income') {
+            setShowIncomeForm(true);
+        } else {
+            setShowExpenseForm(true);
+        }
     };
-
-    const toggleOptions_input = () => {
-        setIncomePage(!IncomePage);
-    };
-    const toggleOptions_input_expense = () => {
-        setExpensePage(!ExpensePage);
-    };
-
-
-    
 
     return (
         <div className={styles.container}>
-            <div className={styles.myButton} onClick={toggleOptions}>
-            <img
-						src='src\components\InputExpense\button.png'
-                        className={styles.stewardlogo}
-					/>
-            </div>
+            <button className={styles.addButton} onClick={() => setShowOptions(!showOptions)}>
+                <span>+</span> Add Transaction
+            </button>
+            
             {showOptions && (
-                <div className={styles.options}>
-                    <button className={styles.optionButton} onClick = {toggleOptions_input} >
-                        Input Income
+                <div className={styles.optionsMenu}>
+                    <button onClick={() => handleAddTransaction('income')}>
+                        Add Income
                     </button>
-                    <button className={styles.optionButton} onClick = {toggleOptions_input_expense}>Input Expense</button>
+                    <button onClick={() => handleAddTransaction('expense')}>
+                        Add Expense
+                    </button>
                 </div>
             )}
 
-            <IncomeCard isVisible = {IncomePage} /> 
-            <ExpenseCard isVisible = {ExpensePage} />
+            <IncomeCard 
+                isVisible={showIncomeForm} 
+                onClose={() => setShowIncomeForm(false)}
+            />
+            <ExpenseCard 
+                isVisible={showExpenseForm} 
+                onClose={() => setShowExpenseForm(false)}
+            />
         </div>
     );
 }
