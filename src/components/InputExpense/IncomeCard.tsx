@@ -7,17 +7,27 @@ type InputCardProps = {
 	isVisible: boolean;
 	onClose: () => void;
 }
-
+//This is the component for the income card, where the user can add their income. 
+//isVisible is a boolean that determines if the component is visible or not.
+///onClose is a function that closes the component.
+//if isVisible is true, the component is visible, and if it is false, the component is hidden, by calling the onClose function.
 export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
+	//formData contains the data that the user inputs into the form.
+	//setFormData is a function that updates the form data. setFormData is a function from the useState hook.
 	const [formData, setFormData] = useState({
+		//Here we define the form data, we can add more fields. 
 		amount: '',
 		category: '',
 		description: '',
 		paymentMethod: '',
-		date: new Date().toISOString().split('T')[0]
+		date: new Date().toISOString().split('T')[0] //The date is the current date, in the format of YYYY-MM-DD
 	});
+	//isSubmitting is a boolean that determines if the form is submitting or not.
+	//setIsSubmitting is a function that updates the isSubmitting boolean. setIsSubmitting is a function from the useState hook.
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	//handleSubmit is a function that handles the submission of the form.
+	//e is the event that triggers the function.
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		

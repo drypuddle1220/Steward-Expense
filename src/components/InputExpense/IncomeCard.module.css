@@ -87,10 +87,42 @@ h2{
 .visible {
   opacity: 1;
   visibility: visible;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  animation: fadeIn 0.3s ease-in-out;
+  transform: translate(-50%, -50%);
 }
 
 .hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from{
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    
+  }
+  to{
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes fadeOut {
+  from{
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  to{
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
 }

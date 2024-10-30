@@ -14,6 +14,7 @@ import { FirestoreService } from "../../../Backend/config/firestoreService";
 const Dashboard: React.FC = () => {
 	//State and navigation setput:
 	const [userData, setUserData] = useState<any>(null); //Here we create a state variable for user data. initialized to null to begin with
+	const [loading, setLoading] = useState(true); // Add loading state
 	const navigate = useNavigate(); //Used this to redirect user if not signed in.
 
 	/**
@@ -44,15 +45,17 @@ const Dashboard: React.FC = () => {
 				alert("Please verify your email address before logging in.");
 				navigate("/dashboard");
 			} else {
-				// Fetch user data from Firestore
 				const loadUserData = async () => {
 					try {
+						setLoading(true); // Set loading state
 						const userData = await FirestoreService.getUserData(user.uid);
 						if (userData) {
 							setUserData(userData);
 						}
 					} catch (error) {
 						console.error('Error loading user data:', error);
+					} finally {
+						setLoading(false); // Clear loading state
 					}
 				};
 				loadUserData();
@@ -62,12 +65,21 @@ const Dashboard: React.FC = () => {
 		}
 	}, [navigate]);
 
-	if (!userData) {
-		return <div className={styles.progress_bar}></div>;
-	} // Add a progress bar component
+	// Skeleton components
+	const CardSkeleton = () => (
+		<div className={`${styles.card} ${styles.skeleton}`}>
+			<div className={styles.skeletonText}></div>
+		</div>
+	);
 
-	//The following is the component of Dashboard:
-	//Leftside is navigation sidebar, right side is main container that contains the dashboard visuals.
+	const ChartSkeleton = () => (
+		<div className={`${styles.chart} ${styles.card} ${styles.skeleton}`}>
+			<div className={styles.skeletonChart}></div>
+		</div>
+	);
+	//This is the component for the dashboard.
+	//It displays the user's data, and the dashboard visuals.
+	//The left side is the navigation sidebar, and the right side is the main container that contains the dashboard visuals.
 	return (
 		<div className={styles.dashboard}>
 			<aside className={nav.sidebar}>
@@ -89,30 +101,59 @@ const Dashboard: React.FC = () => {
 						alt='User Avatar'
 						className={nav.stewardlogo}
 					/>
-					<h5>Welcome, {userData.firstName}!</h5>
-					<p>{userData.email}</p>
+					{loading ? (
+						<>
+							<div className={styles.skeletonText}></div>
+							<div className={styles.skeletonText}></div>
+						</>
+					) : (
+						<>
+							<h5>Welcome, {userData?.firstName}!</h5>
+							<p>{userData?.email}</p>
+						</>
+					)}
 				</div>
 			</aside>
 
 			<main className={styles.dashboardContent}>
 				<section className={styles.topCards}>
-					<div className={styles.card}>Total Income: $4,300</div>
-					<div className={styles.card}>Total Expense: $3,000</div>
-					<div className={styles.card}>Total Savings: $1,300</div>
+					{loading ? (
+						<>
+							<CardSkeleton />
+							<CardSkeleton />
+							<CardSkeleton />
+						</>
+					) : (
+						<>
+							<div className={styles.card}>Total Income: $4,300</div>
+							<div className={styles.card}>Total Expense: $3,000</div>
+							<div className={styles.card}>Total Savings: $1,300</div>
+						</>
+					)}
 				</section>
 
 				<section className={styles.charts}>
-					<div
-						className={`${styles.chart} ${styles.card} ${styles.fullWidthChart}`}
-					>
-						<Visualizer.BarChartComponent />
-					</div>
-					<div className={`${styles.chart} ${styles.card}`}>
-						<Visualizer.PieChartComponent />
-					</div>
-					<div className={`${styles.chart} ${styles.card}`}>
-						<Visualizer.LineChartComponent />
-					</div>
+					{loading ? (
+						<>
+							<ChartSkeleton />
+							<ChartSkeleton />
+							<ChartSkeleton />
+						</>
+					) : (
+						<>
+							<div
+								className={`${styles.chart} ${styles.card} ${styles.fullWidthChart}`}
+							>
+								<Visualizer.BarChartComponent />
+							</div>
+							<div className={`${styles.chart} ${styles.card}`}>
+								<Visualizer.PieChartComponent />
+							</div>
+							<div className={`${styles.chart} ${styles.card}`}>
+								<Visualizer.LineChartComponent />
+							</div>
+						</>
+					)}
 				</section>
 			</main>
 		</div>

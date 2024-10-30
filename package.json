@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/material": "^6.1.5",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.2.3",
     "classnames": "^2.5.1",

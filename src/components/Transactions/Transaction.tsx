@@ -8,18 +8,35 @@ import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { Transaction as TransactionType } from "../../types";
 import { getDatabase, ref, onValue } from "firebase/database";
 import InputButton from "../InputExpense/InputButton";
+import { 
+    AttachMoney, 
+    ShoppingCart, 
+    Home, 
+    DirectionsCar,
+    Restaurant,
+    LocalHospital,
+    School,
+    FlightTakeoff,
+    // ... import other icons as needed
+} from '@mui/icons-material';
 
 // Create a single instance of FirestoreService
 const firestoreService = new FirestoreService();
 
+//This is the component for the transactions page.
+//It displays all the transactions of the user, and allows the user to filter and search through the transactions.
+
 const Transaction: React.FC = () => {
+
+	//The following useState hooks manage the state of the transactions, user data, and loading.
 	const [transactions, setTransactions] = useState<TransactionType[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [userData, setUserData] = useState<any>(null);
-	const [filter, setFilter] = useState('all');
-	const [searchTerm, setSearchTerm] = useState('');
+	const [loading, setLoading] = useState(true); //This is the loading state, which is true by default.
+	const [userData, setUserData] = useState<any>(null); //This is the user data, which is null by default.
+	const [filter, setFilter] = useState('all'); //This is the default filter, which is all transactions.
+	const [searchTerm, setSearchTerm] = useState(''); //This is the search term, which is the search input in the search bar.
 	const navigate = useNavigate();
 
+	//The following useEffect hook loads the data from the database.
 	useEffect(() => {
 		const loadData = async () => {
 			if (auth.currentUser) {
@@ -51,17 +68,59 @@ const Transaction: React.FC = () => {
 
 		loadData();
 	}, []);
-
+	//This is the function that filters the transactions based on the filter and search term.
 	const filteredTransactions = transactions.filter(transaction => {
+		// Part 1: Filtering based on the filter state. filter is either all, income, or expense.
 		const matchesFilter = filter === 'all' || transaction.type === filter;
+		// Part 2: Filtering based on the search term. search term is the search input in the search bar.
 		const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+		// Part 3: Returning the transactions that match the filter and search term. Both conditions must be true.
 		return matchesFilter && matchesSearch;
 	});
 
-	if (loading) {
-		return <div className={styles.progress_bar}>Loading...</div>;
-	}
+	// Separate the layout rendering from the data loading 
+	
+	const renderTransactionSkeleton = () => (
+		<div className={styles.transactionCard}>
+			<div className={styles.transactionIcon}>
+				<div className={styles.skeleton}></div>
+			</div>
+			<div className={styles.transactionDetails}>
+				<div className={styles.skeleton}></div>
+				<div className={styles.skeleton}></div>
+			</div>
+			<div className={styles.transactionAmount}>
+				<div className={styles.skeleton}></div>
+			</div>
+		</div>
+	);
+
+	const getCategoryIcon = (category: string) => {
+		const lowerCategory = category.toLowerCase();
+		
+		switch (lowerCategory) {
+			case 'salary':
+				return <AttachMoney />;
+			case 'groceries':
+				return <ShoppingCart />;
+			case 'housing':
+				return <Home />;
+			case 'transportation':
+				return <DirectionsCar />;
+			case 'dining':
+				return <Restaurant />;
+			case 'medical':
+				return <LocalHospital />;
+			case 'education':
+				return <School />;
+			case 'travel':
+				return <FlightTakeoff />;
+			// ... add more cases
+			default:
+				return <AttachMoney />;
+		}
+	};
 
 	return (
 		<div className={styles.transaction}>
@@ -75,10 +134,15 @@ const Transaction: React.FC = () => {
 				</nav>
 				<div className={nav.userInfo}>
 					<img src='src/components/Dashboard/Avatars/Avatar1.png' alt='User Avatar' className={nav.stewardlogo} />
-					{userData && (
+					{userData ? (
 						<>
 							<h5>Welcome, {userData.firstName}!</h5>
 							<p>{userData.email}</p>
+						</>
+					) : (
+						<>
+							<div className={styles.skeleton}></div>
+							<div className={styles.skeleton}></div>
 						</>
 					)}
 				</div>
@@ -120,32 +184,41 @@ const Transaction: React.FC = () => {
 				</div>
 
 				<div className={styles.transactionList}>
-					{filteredTransactions.map((transaction) => (
-						<div 
-							key={transaction.id} 
-							className={`${styles.transactionCard} ${styles[transaction.type]}`}
-						>
-							<div className={styles.transactionIcon}>
-								{/* Add icon based on category */}
-								📊
+					{loading ? (
+						// Show skeleton loading state
+						Array(5).fill(null).map((_, index) => (
+							<React.Fragment key={index}>
+								{renderTransactionSkeleton()}
+							</React.Fragment>
+						))
+					) : (
+						// Show actual transactions when data is loaded
+						filteredTransactions.map((transaction) => (
+							<div 
+								key={transaction.id} 
+								className={`${styles.transactionCard} ${styles[transaction.type]}`}
+							>
+								<div className={styles.transactionIcon}>
+									{getCategoryIcon(transaction.category)}
+								</div>
+								<div className={styles.transactionDetails}>
+									<h3>{transaction.category}</h3>
+									<p>{transaction.description}</p>
+									<span className={styles.date}>
+										{transaction.date instanceof Date 
+											? transaction.date.toLocaleDateString() 
+											: transaction.date}
+									</span>
+								</div>
+								<div className={styles.transactionAmount}>
+									<span className={transaction.type === 'income' ? styles.income : styles.expense}>
+										{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+									</span>
+									<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
+								</div>
 							</div>
-							<div className={styles.transactionDetails}>
-								<h3>{transaction.category}</h3>
-								<p>{transaction.description}</p>
-								<span className={styles.date}>
-									{transaction.date instanceof Date 
-										? transaction.date.toLocaleDateString() 
-										: transaction.date}
-								</span>
-							</div>
-							<div className={styles.transactionAmount}>
-								<span className={transaction.type === 'income' ? styles.income : styles.expense}>
-									{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
-								</span>
-								<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
-							</div>
-						</div>
-					))}
+						))
+					)}
 				</div>
 			</main>
 		</div>

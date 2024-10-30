@@ -1,41 +1,122 @@
 /* inputCard.module.css */
 
 .cardform {
-    position: fixed; /* Use fixed positioning to cover the entire viewport */
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Center the element */
-    width: 900px;
-    height: 500px;
+    transform: translate(-50%, -50%);
+    width: 400px;
     background-color: white;
-    border: 1px solid #ccc;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+h2 {
+    color: #2d3436;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d3436;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.formGroup input,
+.formGroup select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 16px;
-    transition: opacity 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add shadow for better visibility */
-    z-index: 1; /* Ensure it appears on top */
-    color: black;
-  }
-  
-  .visible {
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: white;
+    color: #2d3436;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+    outline: none;
+    border-color: #74b9ff;
+    box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+}
+
+.formActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.submitBtn,
+.cancelBtn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.submitBtn {
+    background-color: #74b9ff;
+    color: white;
+}
+
+.submitBtn:hover {
+    background-color: #0984e3;
+}
+
+.cancelBtn {
+    background-color: #f5f6fa;
+    color: #2d3436;
+}
+
+.cancelBtn:hover {
+    background-color: #e9ecef;
+}
+
+.visible {
     opacity: 1;
-    z-index: 1; /* Make sure it appears on top */
-  }
-  
-  .hidden {
+    visibility: visible;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.hidden {
     opacity: 0;
-    z-index: -1; /* Hide it behind other elements */
-    pointer-events: none; /* Prevent interactions when hidden */
+    visibility: hidden;
+    pointer-events: none;
+    animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from{
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    
   }
-  
-  input {
-      width: 100%;
-      padding: 8px; /* Increased padding for input fields */
-      margin: 10px 0;
-      border: 1px solid #444; /* Darker border for inputs */
-      border-radius: 4px;
-      background-color: #222; /* Darker input background */
-      color: white; /* Input text color */
-      transition: border-color 0.3s ease; /* Smooth transition for input border */
+  to{
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
+}
+
+@keyframes fadeOut {
+  from{
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  to{
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+}
   
