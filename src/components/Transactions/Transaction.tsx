@@ -19,12 +19,9 @@ import {
     FlightTakeoff,
     // ... import other icons as needed
 } from '@mui/icons-material';
-
-// Create a single instance of FirestoreService
-const firestoreService = new FirestoreService();
-
-//This is the component for the transactions page.
-//It displays all the transactions of the user, and allows the user to filter and search through the transactions.
+import {DateRangePicker} from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 const Transaction: React.FC = () => {
 
@@ -35,6 +32,24 @@ const Transaction: React.FC = () => {
 	const [filter, setFilter] = useState('all'); //This is the default filter, which is all transactions.
 	const [searchTerm, setSearchTerm] = useState(''); //This is the search term, which is the search input in the search bar.
 	const navigate = useNavigate();
+	const [currentPage, setCurrentPage] = useState(1);
+
+	// State for date range picker
+	const [dateRange, setDateRange] = useState<{
+		startDate: Date;
+		endDate: Date;
+		key: string;
+	}[]>([
+		{
+			startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+			endDate: new Date(),
+			key: 'selection'
+		}
+	]);
+	const [showDatePicker, setShowDatePicker] = useState(false);
+
+	// Create a single instance of FirestoreService
+	const firestoreService = new FirestoreService();
 
 	//The following useEffect hook loads the data from the database.
 	useEffect(() => {
@@ -70,14 +85,29 @@ const Transaction: React.FC = () => {
 	}, []);
 	//This is the function that filters the transactions based on the filter and search term.
 	const filteredTransactions = transactions.filter(transaction => {
-		// Part 1: Filtering based on the filter state. filter is either all, income, or expense.
+		const transactionDate = new Date(transaction.date);
+		const withinDateRange = transactionDate >= dateRange[0].startDate && 
+							   transactionDate <= dateRange[0].endDate;
+		
 		const matchesFilter = filter === 'all' || transaction.type === filter;
-		// Part 2: Filtering based on the search term. search term is the search input in the search bar.
-		const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
-		// Part 3: Returning the transactions that match the filter and search term. Both conditions must be true.
-		return matchesFilter && matchesSearch;
+
+		const searchFields = [transaction.description,
+			transaction.category,
+			transaction.paymentMethod,
+			transaction.amount.toString(),
+			...transaction.tags || [] // Include tags if they exist]
+		 ]?.map((field: string) => field.toLowerCase());
+
+		 const matchesSearch = searchTerm.split(' ').every((term: string) => 
+			searchFields.some((field: string) => field.includes(term))
+		);
+
+		 
+		return matchesFilter && matchesSearch && withinDateRange;
 	});
+
+	//This line sorts the transactions by date, from newest to oldest.
+	filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); 
 
 	// Separate the layout rendering from the data loading 
 	
@@ -157,16 +187,37 @@ const Transaction: React.FC = () => {
 								type="text"
 								placeholder="Search transactions..."
 								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
+								onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
 							/>
 						</div>
 						<div className={styles.filterButtons}>
+							
 							<button 
 								className={`${styles.filterBtn} ${filter === 'all' ? styles.active : ''}`}
 								onClick={() => setFilter('all')}
 							>
 								All
 							</button>
+							<button 
+								className={styles.filterBtn}
+								onClick={() => setShowDatePicker(!showDatePicker)}
+							>
+								Date Range
+							</button>
+							{showDatePicker && (
+								<div className={styles.datePickerContainer}>
+									<DateRangePicker
+										ranges={dateRange}
+										onChange={(item: any) => {
+											if (item.selection.startDate && item.selection.endDate) {
+												setDateRange([item.selection]);
+											}
+										}}
+										months={2}
+										direction="horizontal"
+									/>
+								</div>
+							)}
 							<button 
 								className={`${styles.filterBtn} ${filter === 'income' ? styles.active : ''}`}
 								onClick={() => setFilter('income')}
@@ -186,38 +237,39 @@ const Transaction: React.FC = () => {
 				<div className={styles.transactionList}>
 					{loading ? (
 						// Show skeleton loading state
-						Array(5).fill(null).map((_, index) => (
+						Array(10).fill(null).map((_, index) => (
 							<React.Fragment key={index}>
 								{renderTransactionSkeleton()}
 							</React.Fragment>
 						))
 					) : (
-						// Show actual transactions when data is loaded
-						filteredTransactions.map((transaction) => (
-							<div 
-								key={transaction.id} 
-								className={`${styles.transactionCard} ${styles[transaction.type]}`}
-							>
-								<div className={styles.transactionIcon}>
-									{getCategoryIcon(transaction.category)}
+						<>
+							{filteredTransactions.map((transaction) => (
+								<div 
+									key={transaction.id} 
+									className={`${styles.transactionCard} ${styles[transaction.type]}`}
+								>
+									<div className={styles.transactionIcon}>
+										{getCategoryIcon(transaction.category)}
+									</div>
+									<div className={styles.transactionDetails}>
+										<h3>{transaction.category}</h3>
+										<p>{transaction.description}</p>
+										<span className={styles.date}>
+											{transaction.date instanceof Date 
+												? transaction.date.toLocaleDateString() 
+												: transaction.date}
+										</span>
+									</div>
+									<div className={styles.transactionAmount}>
+										<span className={transaction.type === 'income' ? styles.income : styles.expense}>
+											{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+										</span>
+										<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
+									</div>
 								</div>
-								<div className={styles.transactionDetails}>
-									<h3>{transaction.category}</h3>
-									<p>{transaction.description}</p>
-									<span className={styles.date}>
-										{transaction.date instanceof Date 
-											? transaction.date.toLocaleDateString() 
-											: transaction.date}
-									</span>
-								</div>
-								<div className={styles.transactionAmount}>
-									<span className={transaction.type === 'income' ? styles.income : styles.expense}>
-										{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
-									</span>
-									<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
-								</div>
-							</div>
-						))
+							))}
+						</>
 					)}
 				</div>
 			</main>

@@ -21,11 +21,15 @@ body {
 
 .mainContent {
 	padding: 2rem;
-	overflow-y: auto;
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 
 .header {
 	margin-bottom: 2rem;
+	flex-shrink: 0;
 }
 
 .header h1 {
@@ -88,6 +92,9 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	overflow-y: auto;
+	padding-right: 3px;
+	flex: 1;
 }
 
 .transactionCard {
@@ -199,4 +206,78 @@ body {
 	to {
 		background-position-x: -200%;
 	}
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pageButton {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    color: #636e72;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pageButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageButton:hover:not(:disabled) {
+    background-color: #74b9ff;
+    color: white;
+    border-color: #74b9ff;
+}
+
+.pageInfo {
+    font-size: 0.9rem;
+    color: #636e72;
+    font-weight: 500;
+}
+
+/* Add a subtle scrollbar style */
+.transactionList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.transactionList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.transactionList::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 4px;
+}
+
+.transactionList::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.datePickerContainer{
+	position: absolute;
+	top:100%;
+	right: 0;
+	z-index: 1000;
+	background-color: white;
+	padding: 1rem;
+	border-radius: 12px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterButtons{
+	position: relative;
 }

@@ -125,9 +125,15 @@ const Dashboard: React.FC = () => {
 						</>
 					) : (
 						<>
-							<div className={styles.card}>Total Income: $4,300</div>
-							<div className={styles.card}>Total Expense: $3,000</div>
-							<div className={styles.card}>Total Savings: $1,300</div>
+							<div className={styles.card}>
+								Total Income: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$4,300</span>
+							</div>
+							<div className={styles.card}>
+								Total Expense: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$3,000</span>
+							</div>
+							<div className={styles.card}>
+								Total Savings: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$1,300</span>
+							</div>
 						</>
 					)}
 				</section>
@@ -142,14 +148,14 @@ const Dashboard: React.FC = () => {
 					) : (
 						<>
 							<div
-								className={`${styles.chart} ${styles.card} ${styles.fullWidthChart}`}
+								className={`${styles.chart} ${styles.fullWidthChart}`}
 							>
 								<Visualizer.BarChartComponent />
 							</div>
-							<div className={`${styles.chart} ${styles.card}`}>
+							<div className={`${styles.chart}`}>
 								<Visualizer.PieChartComponent />
 							</div>
-							<div className={`${styles.chart} ${styles.card}`}>
+							<div className={`${styles.chart}`}>
 								<Visualizer.LineChartComponent />
 							</div>
 						</>

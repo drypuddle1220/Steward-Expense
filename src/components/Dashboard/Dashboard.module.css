@@ -1,10 +1,11 @@
 html,
 body {
-	height: 100vh;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box; /* Ensure all elements use border-box sizing */
 	color: #000000; /* Black text */
+	overflow: hidden;
 }
 #root {
 	height: 100vh; /* Ensure the root container takes full height */
@@ -12,8 +13,10 @@ body {
 .dashboard {
 	display: grid;
 	grid-template-columns: 230px 1fr; /* Sidebar and main content */
-	height: 100vh;
+	height: 100%;
 	width: 100%;
+	position: relative;
+	overflow: hidden;
 }
 
 /* Main content area */
@@ -23,6 +26,9 @@ body {
 	display: grid;
 	grid-template-rows: auto 1fr; /* Make rows adjust to content */
 	grid-gap: 20px;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
 }
 /* Top cards container */
 .topCards {
@@ -30,23 +36,40 @@ body {
 	grid-gap: 20px;
 	grid-template-columns: repeat(3, 1fr); /* 3 columns */
 	margin-bottom: 5px;
+	isolation: isolate; /* Creates a new stacking context */
 }
 
 /* Cards styling */
 .card {
 	background-color: #ffffff; /* White background for card */
 	border-radius: 12px; /* Slightly more rounded corners */
-	padding: 25px; /* More padding for better spacing */
-	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly larger shadow for more depth */
+	padding: 15px; /* More padding for better spacing */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 	flex: 1; /* Allow the card to grow and fill available space */
 	min-width: 220px; /* Slightly larger minimum width for better layout */
-	transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+	position: relative;
+	transition: box-shadow 0.2s ease;
+}
+
+.card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: 12px;
+	opacity: 0;
+	background-color: rgba(0, 0, 0, 0.02);
+	transition: opacity 0.2s ease;
+	pointer-events: none;
 }
 
 .card:hover {
-	transform: translateY(-5px); /* Lift the card slightly on hover */
-	box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* Larger shadow on hover for more emphasis */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
+
+.card:hover::after {
+	opacity: 1;
+}
+
 .fullWidthChart {
 	grid-column: span 2;
 	width: 100%; /* Ensure it takes full width of the grid */
@@ -58,6 +81,7 @@ body {
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 	width: 100%;
+	isolation: isolate; /* Creates a new stacking context */
 }
 
 .chart {

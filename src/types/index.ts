@@ -1,4 +1,5 @@
 export interface Transaction {
+  tags: never[];
   id: string;
   userId: string;
   type: 'expense' | 'income' | 'transfer';

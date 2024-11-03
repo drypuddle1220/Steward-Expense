@@ -12,6 +12,7 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 	const [formData, setFormData] = useState({
 		amount: '',
 		category: '',
+		tags: '',
 		description: '',
 		paymentMethod: '',
 		date: new Date().toISOString().split('T')[0]
@@ -33,6 +34,7 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 				type: 'expense',
 				amount: parseFloat(formData.amount),
 				category: formData.category,
+				tags: formData.tags.split(',').map(tag => tag.trim()),
 				description: formData.description,
 				paymentMethod: formData.paymentMethod,
 				date: new Date(formData.date),
@@ -47,6 +49,7 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 			setFormData({
 				amount: '',
 				category: '',
+				tags: '',
 				description: '',
 				paymentMethod: '',
 				date: new Date().toISOString().split('T')[0]
@@ -108,6 +111,17 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 						<option value="Healthcare">Healthcare</option>
 						<option value="Other">Other</option>
 					</select>
+				</div>
+
+				<div className={styles.formGroup}>
+					<label htmlFor="tags">Tags</label>
+					<input
+						placeholder='example: coffee, groceries, etc.'
+						type="text"
+						id="tags"
+						name="tags"
+						onChange={handleChange} //onChange is a React event handler that is called whenever the input value changes.
+					/>
 				</div>
 
 				<div className={styles.formGroup}>

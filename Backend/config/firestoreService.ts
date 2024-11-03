@@ -58,6 +58,7 @@ export class FirestoreService {
     type: 'income' | 'expense';
     amount: number;
     category: string;
+    tags: string[];
     date: Date;  // Accepts JavaScript Date object
     description: string;
     paymentMethod: string;
