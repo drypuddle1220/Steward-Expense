@@ -6,12 +6,13 @@ import styles from "./IncomeCard.module.css";
 type InputCardProps = {
 	isVisible: boolean;
 	onClose: () => void;
+	setTransactions: React.Dispatch<React.SetStateAction<any[]>>;
 }
 //This is the component for the income card, where the user can add their income. 
 //isVisible is a boolean that determines if the component is visible or not.
 ///onClose is a function that closes the component.
 //if isVisible is true, the component is visible, and if it is false, the component is hidden, by calling the onClose function.
-export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
+export default function IncomeCard({ isVisible, onClose, setTransactions }: InputCardProps) {
 	//formData contains the data that the user inputs into the form.
 	//setFormData is a function that updates the form data. setFormData is a function from the useState hook.
 	const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
 		amount: '',
 		category: '',
 		description: '',
+		tags: '',
 		paymentMethod: '',
 		date: new Date().toISOString().split('T')[0] //The date is the current date, in the format of YYYY-MM-DD
 	});
@@ -43,6 +45,7 @@ export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
 				amount: parseFloat(formData.amount),
 				category: formData.category,
 				description: formData.description,
+				tags: [],
 				paymentMethod: formData.paymentMethod,
 				date: new Date(formData.date),
 				currency: 'USD',
@@ -51,13 +54,30 @@ export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
 					tags: []
 				}
 			});
-			
+			//Here we create a new transaction object, that is added to the transactions state. which is then displayed in the transaction component. immediately updates the UI.
+			const newTransaction = {
+				type: 'income',
+				amount: parseFloat(formData.amount),
+				category: formData.category,
+				description: formData.description,
+				tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
+				paymentMethod: formData.paymentMethod,
+				date: new Date(formData.date),
+				currency: 'USD',
+				status: 'completed' as 'completed' | 'pending',
+				metadata: {
+					tags: []
+				}
+			};
+
+			setTransactions((prevTransactions: any) => [...prevTransactions, newTransaction]);	
 
 			// Reset form and close
 			setFormData({
 				amount: '',
 				category: '',
 				description: '',
+				tags: '',
 				paymentMethod: '',
 				date: new Date().toISOString().split('T')[0]
 			});
@@ -82,99 +102,116 @@ export default function IncomeCard({ isVisible, onClose }: InputCardProps) {
 	};
 
 	return (
-		<div className={`${styles.cardform} ${isVisible ? styles.visible : styles.hidden}`}>
-			<form onSubmit={handleSubmit}>
-				<h2>Add Income</h2>
-				
-				<div className={styles.formGroup}>
-					<label htmlFor="amount">Amount</label>
-					<input
-						type="number"
-						id="amount"
-						name="amount"
-						value={formData.amount}
-						onChange={handleChange}
-						required
-						min="0"
-						step="0.01"
-					/>
-				</div>
+		<>
+			{isVisible && (
+				<>
+					<div className={styles.overlay} />
+					<div className={styles.cardform}>
+						<form onSubmit={handleSubmit}>
+							<h2>Add Income</h2>
+							
+							<div className={styles.formGroup}>
+								<label htmlFor="amount">Amount</label>
+								<input
+									type="number"
+									id="amount"
+									name="amount"
+									value={formData.amount}
+									onChange={handleChange}
+									required
+									min="0"
+									step="0.01"
+								/>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="category">Category</label>
-					<select
-						id="category"
-						name="category"
-						value={formData.category}
-						onChange={handleChange}
-						required
-					>
-						<option value="">Select Category</option>
-						<option value="Salary">Salary</option>
-						<option value="Freelance">Freelance</option>
-						<option value="Investments">Investments</option>
-						<option value="Other">Other</option>
-					</select>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="category">Category</label>
+								<select
+									id="category"
+									name="category"
+									value={formData.category}
+									onChange={handleChange}
+									required
+								>
+									<option value="">Select Category</option>
+									<option value="Salary">Salary</option>
+									<option value="Freelance">Freelance</option>
+									<option value="Investments">Investments</option>
+									<option value="Other">Other</option>
+								</select>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="description">Description</label>
-					<input
-						type="text"
-						id="description"
-						name="description"
-						value={formData.description}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="description">Description</label>
+								<input
+									type="text"
+									id="description"
+									name="description"
+									value={formData.description}
+									onChange={handleChange}
+									required
+								/>
+							</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="tags">Tags</label>
+								<input
+									placeholder='example: coffee, groceries, etc.'
+									type="text"
+									id="tags"
+									name="tags"
+									onChange={handleChange} //onChange is a React event handler that is called whenever the input value changes.
+								/>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="paymentMethod">Payment Method</label>
-					<select
-						id="paymentMethod"
-						name="paymentMethod"
-						value={formData.paymentMethod}
-						onChange={handleChange}
-						required
-					>
-						<option value="">Select Payment Method</option>
-						<option value="Bank Transfer">Bank Transfer</option>
-						<option value="Cash">Cash</option>
-						<option value="Check">Check</option>
-						<option value="Other">Other</option>
-					</select>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="paymentMethod">Payment Method</label>
+								<select
+									id="paymentMethod"
+									name="paymentMethod"
+									value={formData.paymentMethod}
+									onChange={handleChange}
+									required
+								>
+									<option value="">Select Payment Method</option>
+									<option value="Bank Transfer">Bank Transfer</option>
+									<option value="Cash">Cash</option>
+									<option value="Check">Check</option>
+									<option value="Other">Other</option>
+								</select>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="date">Date</label>
-					<input
-						type="date"
-						id="date"
-						name="date"
-						value={formData.date}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="date">Date</label>
+								<input
+									type="date"
+									id="date"
+									name="date"
+									value={formData.date}
+									onChange={handleChange}
+									required
+								/>
+							</div>
 
-				<div className={styles.formActions}>
-					<button 
-						type="button" 
-						onClick={onClose}
-						className={styles.cancelBtn}
-					>
-						Cancel
-					</button>
-					<button 
-						type="submit" 
-						disabled={isSubmitting}
-						className={styles.submitBtn}
-					>
-						{isSubmitting ? 'Adding...' : 'Add Income'}
-					</button>
-				</div>
-			</form>
-		</div>
+							<div className={styles.formActions}>
+								<button 
+									type="button" 
+									onClick={onClose}
+									className={styles.cancelBtn}
+								>
+									Cancel
+								</button>
+								<button 
+									type="submit" 
+									disabled={isSubmitting}
+									className={styles.submitBtn}
+								>
+									{isSubmitting ? 'Adding...' : 'Add Income'}
+								</button>
+							</div>
+						</form>
+					</div>
+				</>
+			)}
+		</>
 	);
 }

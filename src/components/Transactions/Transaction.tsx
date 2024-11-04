@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import styles from "./Transaction.module.css";
 import Navbar from "../Dashboard/Navbar";
 import nav from "../Dashboard/Navbar.module.css";
-import { useNavigate } from "react-router-dom";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { Transaction as TransactionType } from "../../types";
-import { getDatabase, ref, onValue } from "firebase/database";
 import InputButton from "../InputExpense/InputButton";
 import { 
     AttachMoney, 
@@ -17,59 +15,71 @@ import {
     LocalHospital,
     School,
     FlightTakeoff,
+	TrendingUp,
     // ... import other icons as needed
 } from '@mui/icons-material';
 import {DateRangePicker} from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-
+import EditTransactionCard from "./EditTransactionCard";
 const Transaction: React.FC = () => {
 
-	//The following useState hooks manage the state of the transactions, user data, and loading.
+	// State Management
+	// ---------------
+	// Track all transactions loaded from Firestore
 	const [transactions, setTransactions] = useState<TransactionType[]>([]);
-	const [loading, setLoading] = useState(true); //This is the loading state, which is true by default.
-	const [userData, setUserData] = useState<any>(null); //This is the user data, which is null by default.
-	const [filter, setFilter] = useState('all'); //This is the default filter, which is all transactions.
-	const [searchTerm, setSearchTerm] = useState(''); //This is the search term, which is the search input in the search bar.
-	const navigate = useNavigate();
-	const [currentPage, setCurrentPage] = useState(1);
+	// Loading state for showing skeleton screens
+	const [loading, setLoading] = useState(true);
+	// Store user profile data
+	const [userData, setUserData] = useState<any>(null);
+	// Filter state: 'all', 'income', or 'expense'
+	const [filter, setFilter] = useState('all');
+	// Search input state for filtering transactions
+	const [searchTerm, setSearchTerm] = useState('');
+	
+	// Add these state variables after other state declarations
+	const [editingTransaction, setEditingTransaction] = useState<TransactionType | null>(null);
+	const [showEditForm, setShowEditForm] = useState(false);
 
-	// State for date range picker
+	// Date Range Picker Configuration
+	// ------------------------------
+	// State for managing date range selection
 	const [dateRange, setDateRange] = useState<{
 		startDate: Date;
 		endDate: Date;
 		key: string;
 	}[]>([
 		{
+			// Default to current month's start date
 			startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
 			endDate: new Date(),
 			key: 'selection'
 		}
 	]);
+	// Toggle visibility of date picker
 	const [showDatePicker, setShowDatePicker] = useState(false);
 
-	// Create a single instance of FirestoreService
-	const firestoreService = new FirestoreService();
-
-	//The following useEffect hook loads the data from the database.
+	// Data Loading Effect
+	// ------------------
 	useEffect(() => {
 		const loadData = async () => {
 			if (auth.currentUser) {
 				try {
-					// Load user data from Firestore
+					// Load user profile data
 					const userDataResult = await FirestoreService.getUserData(auth.currentUser.uid);
 					if (userDataResult) {
 						setUserData(userDataResult);
 					}
 
-					// Load transactions
+					// Load and transform transactions
+					// Adds default values and converts Firestore timestamps to Date objects
 					const transactions = await FirestoreService.getTransactions(auth.currentUser.uid);
 					setTransactions(transactions.map(t => ({
 						...t,
 						userId: auth.currentUser!.uid,
 						currency: t.currency || 'USD',
 						status: t.status || 'completed',
-						date: t.date.toDate() // Convert Firestore Timestamp to Date
+						date: t.date.toDate()
 					})) as TransactionType[]);
 				} catch (error) {
 					console.error('Error loading data:', error);
@@ -83,34 +93,42 @@ const Transaction: React.FC = () => {
 
 		loadData();
 	}, []);
-	//This is the function that filters the transactions based on the filter and search term.
+
+	// Transaction Filtering Logic
+	// -------------------------
 	const filteredTransactions = transactions.filter(transaction => {
+		// Convert transaction date for comparison
 		const transactionDate = new Date(transaction.date);
+		
+		// Check if transaction falls within selected date range
 		const withinDateRange = transactionDate >= dateRange[0].startDate && 
 							   transactionDate <= dateRange[0].endDate;
 		
+		// Check if transaction matches selected type filter
 		const matchesFilter = filter === 'all' || transaction.type === filter;
 
+		// Create searchable fields array and convert to lowercase
 		const searchFields = [transaction.description,
 			transaction.category,
 			transaction.paymentMethod,
 			transaction.amount.toString(),
-			...transaction.tags || [] // Include tags if they exist]
-		 ]?.map((field: string) => field.toLowerCase());
+			...transaction.tags || []
+		]?.map((field: string) => field.toLowerCase());
 
-		 const matchesSearch = searchTerm.split(' ').every((term: string) => 
+		// Multi-word search: each word must match at least one field
+		const matchesSearch = searchTerm.split(' ').every((term: string) => 
 			searchFields.some((field: string) => field.includes(term))
 		);
 
-		 
 		return matchesFilter && matchesSearch && withinDateRange;
 	});
 
-	//This line sorts the transactions by date, from newest to oldest.
-	filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); 
+	// Sort transactions by date (newest first)
+	filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-	// Separate the layout rendering from the data loading 
-	
+	// Loading State Components
+	// -----------------------
+	// Render skeleton loading placeholder for transactions
 	const renderTransactionSkeleton = () => (
 		<div className={styles.transactionCard}>
 			<div className={styles.transactionIcon}>
@@ -126,12 +144,17 @@ const Transaction: React.FC = () => {
 		</div>
 	);
 
+	// Category Icon Mapping
+	// --------------------
+	// Maps transaction categories to their corresponding Material-UI icons
 	const getCategoryIcon = (category: string) => {
 		const lowerCategory = category.toLowerCase();
 		
 		switch (lowerCategory) {
 			case 'salary':
-				return <AttachMoney />;
+				return <AttachMoney />;	
+			case 'food':
+				return <Restaurant />;
 			case 'groceries':
 				return <ShoppingCart />;
 			case 'housing':
@@ -142,6 +165,8 @@ const Transaction: React.FC = () => {
 				return <Restaurant />;
 			case 'medical':
 				return <LocalHospital />;
+			case 'investments':
+				return <TrendingUp />;
 			case 'education':
 				return <School />;
 			case 'travel':
@@ -152,6 +177,35 @@ const Transaction: React.FC = () => {
 		}
 	};
 
+	async function handleDelete(id: string): Promise<void> {
+		if (!auth.currentUser) {
+			alert("Please log in to delete transactions");
+			return;
+		}
+		
+		try {
+			await FirestoreService.deleteTransaction(auth.currentUser.uid, id);
+			setTransactions(prevTransactions => 
+				prevTransactions.filter(transaction => transaction.id !== id)
+			);
+		} catch (error) {
+			console.error('Error deleting transaction:', error);
+			alert('Failed to delete transaction');
+		}
+	}
+
+	// Add this handler function
+	const handleEdit = (transaction: TransactionType) => {
+		if (!transaction.id) {
+			console.error('Transaction ID is missing');
+			return;
+		}
+		setEditingTransaction(transaction);
+		setShowEditForm(true);
+	};
+
+	// Component Render
+	// ---------------
 	return (
 		<div className={styles.transaction}>
 			<aside className={nav.sidebar}>
@@ -160,7 +214,7 @@ const Transaction: React.FC = () => {
 				</div>
 				<nav className={nav.navigation}>
 					<Navbar />
-					<InputButton />
+					<InputButton setTransactions={setTransactions} />
 				</nav>
 				<div className={nav.userInfo}>
 					<img src='src/components/Dashboard/Avatars/Avatar1.png' alt='User Avatar' className={nav.stewardlogo} />
@@ -236,13 +290,14 @@ const Transaction: React.FC = () => {
 
 				<div className={styles.transactionList}>
 					{loading ? (
-						// Show skeleton loading state
+						// Show skeleton loading state while data is being fetched
 						Array(10).fill(null).map((_, index) => (
 							<React.Fragment key={index}>
 								{renderTransactionSkeleton()}
 							</React.Fragment>
 						))
 					) : (
+						// Render actual transactions once data is loaded
 						<>
 							{filteredTransactions.map((transaction) => (
 								<div 
@@ -255,17 +310,39 @@ const Transaction: React.FC = () => {
 									<div className={styles.transactionDetails}>
 										<h3>{transaction.category}</h3>
 										<p>{transaction.description}</p>
+										{transaction.tags && transaction.tags.length > 0 && (
+										<div className={styles.tagContainer}>
+											{transaction.tags.map((tag: string, index: number) => (
+												<span 
+													key={`${transaction.id}-tag-${index}`} 
+													className={styles.tag}
+												>
+													#{tag}
+												</span>
+											))}
+										</div>
+									)}
 										<span className={styles.date}>
 											{transaction.date instanceof Date 
 												? transaction.date.toLocaleDateString() 
 												: transaction.date}
 										</span>
 									</div>
+									
 									<div className={styles.transactionAmount}>
+										
 										<span className={transaction.type === 'income' ? styles.income : styles.expense}>
 											{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
 										</span>
 										<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
+										<button className={styles.deleteBtn} onClick={() => handleDelete(transaction.id)}>Delete</button> 
+										
+										<button 
+											className={styles.editBtn} 
+											onClick={() => handleEdit(transaction)}
+										>
+											Edit
+										</button>
 									</div>
 								</div>
 							))}
@@ -273,6 +350,16 @@ const Transaction: React.FC = () => {
 					)}
 				</div>
 			</main>
+			<EditTransactionCard
+				isVisible={showEditForm}
+				onClose={() => {
+					setShowEditForm(false);
+					setEditingTransaction(null);
+				}}
+				transaction={editingTransaction}
+				setTransactions={setTransactions}
+			/>
+			<div className={`${styles.overlay} ${showEditForm ? styles.visible : styles.hidden}`}></div>
 		</div>
 	);
 };

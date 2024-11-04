@@ -12,7 +12,8 @@ import { FirestoreService } from "../../../Backend/config/firestoreService";
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
-	//State and navigation setput:
+	//State and navigation setup:
+	const [transactions, setTransactions] = useState<any[]>([]);
 	const [userData, setUserData] = useState<any>(null); //Here we create a state variable for user data. initialized to null to begin with
 	const [loading, setLoading] = useState(true); // Add loading state
 	const navigate = useNavigate(); //Used this to redirect user if not signed in.
@@ -77,6 +78,7 @@ const Dashboard: React.FC = () => {
 			<div className={styles.skeletonChart}></div>
 		</div>
 	);
+
 	//This is the component for the dashboard.
 	//It displays the user's data, and the dashboard visuals.
 	//The left side is the navigation sidebar, and the right side is the main container that contains the dashboard visuals.
@@ -93,7 +95,7 @@ const Dashboard: React.FC = () => {
 
 				<nav className={nav.navigation}>
 					<Navbar />
-					<InputButton />
+					<InputButton setTransactions={setTransactions} />
 				</nav>
 				<div className={nav.userInfo}>
 					<img

@@ -6,9 +6,10 @@ import styles from './ExpenseCard.module.css';
 interface InputCardProps {
 	isVisible: boolean;
 	onClose: () => void;
+	setTransactions: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
+export default function ExpenseCard({ isVisible, onClose, setTransactions }: InputCardProps) {
 	const [formData, setFormData] = useState({
 		amount: '',
 		category: '',
@@ -44,6 +45,22 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 					tags: []
 				}
 			});
+			const newTransaction = {
+				type: 'income',
+				amount: parseFloat(formData.amount),
+				category: formData.category,
+				description: formData.description,
+				tags: [],
+				paymentMethod: formData.paymentMethod,
+				date: new Date(formData.date),
+				currency: 'USD',
+				status: 'completed' as 'completed' | 'pending',
+				metadata: {
+					tags: []
+				}
+			};
+
+			setTransactions((prevTransactions: any) => [...prevTransactions, newTransaction]);
 
 			// Reset form and close
 			setFormData({
@@ -75,114 +92,120 @@ export default function ExpenseCard({ isVisible, onClose }: InputCardProps) {
 	};
 
 	return (
-		<div className={`${styles.cardform} ${isVisible ? styles.visible : styles.hidden}`}>
-			<form onSubmit={handleSubmit}>
-				<h2>Add Expense</h2>
-				
-				<div className={styles.formGroup}>
-					<label htmlFor="amount">Amount</label>
-					<input
-						type="number"
-						id="amount"
-						name="amount"
-						value={formData.amount}
-						onChange={handleChange}
-						required
-						min="0"
-						step="0.01"
-					/>
-				</div>
+		<>
+			{isVisible && (
+				<>
+					<div className={styles.overlay} />
+					<div className={styles.cardform}>
+						<h2>Add Expense</h2>
+						<form onSubmit={handleSubmit}>
+							<div className={styles.formGroup}>
+								<label htmlFor="amount">Amount</label>
+								<input
+									type="number"
+									id="amount"
+									name="amount"
+									value={formData.amount}
+									onChange={handleChange}
+									required
+									min="0"
+									step="0.01"
+								/>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="category">Category</label>
-					<select
-						id="category"
-						name="category"
-						value={formData.category}
-						onChange={handleChange}
-						required
-					>
-						<option value="">Select Category</option>
-						<option value="Housing">Housing</option>
-						<option value="Transportation">Transportation</option>
-						<option value="Food">Food</option>
-						<option value="Utilities">Utilities</option>
-						<option value="Entertainment">Entertainment</option>
-						<option value="Healthcare">Healthcare</option>
-						<option value="Other">Other</option>
-					</select>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="category">Category</label>
+								<select
+									id="category"
+									name="category"
+									value={formData.category}
+									onChange={handleChange}
+									required
+								>
+									<option value="">Select Category</option>
+									<option value="Housing">Housing</option>
+									<option value="Transportation">Transportation</option>
+									<option value="Food">Food</option>
+									<option value="Utilities">Utilities</option>
+									<option value="Entertainment">Entertainment</option>
+									<option value="Healthcare">Healthcare</option>
+									<option value="Other">Other</option>
+								</select>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="tags">Tags</label>
-					<input
-						placeholder='example: coffee, groceries, etc.'
-						type="text"
-						id="tags"
-						name="tags"
-						onChange={handleChange} //onChange is a React event handler that is called whenever the input value changes.
-					/>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="tags">Tags</label>
+								<input
+									placeholder='example: coffee, groceries, etc.'
+									type="text"
+									id="tags"
+									name="tags"
+									onChange={handleChange}
+								/>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="description">Description</label>
-					<input
-						type="text"
-						id="description"
-						name="description"
-						value={formData.description}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="description">Description</label>
+								<input
+									type="text"
+									id="description"
+									name="description"
+									value={formData.description}
+									onChange={handleChange}
+									required
+								/>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="paymentMethod">Payment Method</label>
-					<select
-						id="paymentMethod"
-						name="paymentMethod"
-						value={formData.paymentMethod}
-						onChange={handleChange}
-						required
-					>
-						<option value="">Select Payment Method</option>
-						<option value="Credit Card">Credit Card</option>
-						<option value="Debit Card">Debit Card</option>
-						<option value="Cash">Cash</option>
-						<option value="Bank Transfer">Bank Transfer</option>
-						<option value="Other">Other</option>
-					</select>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="paymentMethod">Payment Method</label>
+								<select
+									id="paymentMethod"
+									name="paymentMethod"
+									value={formData.paymentMethod}
+									onChange={handleChange}
+									required
+								>
+									<option value="">Select Payment Method</option>
+									<option value="Credit Card">Credit Card</option>
+									<option value="Debit Card">Debit Card</option>
+									<option value="Cash">Cash</option>
+									<option value="Bank Transfer">Bank Transfer</option>
+									<option value="Other">Other</option>
+								</select>
+							</div>
 
-				<div className={styles.formGroup}>
-					<label htmlFor="date">Date</label>
-					<input
-						type="date"
-						id="date"
-						name="date"
-						value={formData.date}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+							<div className={styles.formGroup}>
+								<label htmlFor="date">Date</label>
+								<input
+									type="date"
+									id="date"
+									name="date"
+									value={formData.date}
+									onChange={handleChange}
+									required
+								/>
+							</div>
 
-				<div className={styles.formActions}>
-					<button 
-						type="button" 
-						onClick={onClose}
-						className={styles.cancelBtn}
-					>
-						Cancel
-					</button>
-					<button 
-						type="submit" 
-						disabled={isSubmitting}
-						className={styles.submitBtn}
-					>
-						{isSubmitting ? 'Adding...' : 'Add Expense'}
-					</button>
-				</div>
-			</form>
-		</div>
+							<div className={styles.formActions}>
+								<button 
+									type="button" 
+									onClick={onClose}
+									className={styles.cancelBtn}
+								>
+									Cancel
+								</button>
+								<button 
+									type="submit" 
+									disabled={isSubmitting}
+									className={styles.submitBtn}
+								>
+									{isSubmitting ? 'Adding...' : 'Add Expense'}
+								</button>
+							</div>
+						</form>
+					</div>
+				</>
+			)}
+		</>
 	);
 }

@@ -1,128 +1,204 @@
-/* inputCard.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
 
 .cardform {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 440px;
+  background-color: var(--bg-white);
+  border-radius: 24px;
+  padding: 32px 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  opacity: 0;
+  animation: formAppear 0.2s ease forwards;
 }
 
-h2{
-  color:#2d3436
+@keyframes formAppear {
+  from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.95);
+  }
+  to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+h2 {
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  letter-spacing: -0.5px;
 }
 
 .formGroup {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+  position: relative;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 8px;
-  color: #2d3436;
-  font-size: 14px;
-  font-weight: 500;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s;
 }
 
 .formGroup input,
 .formGroup select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.2s;
-  background-color: white;
-  color: #2d3436;
+  padding: 14px 18px;
+  border: 2px solid var(--border-light);
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: var(--bg-white);
+  color: var(--text-primary);
+}
+
+.formGroup input:hover,
+.formGroup select:hover {
+  border-color: var(--border-focus);
+  background-color: rgba(116, 185, 255, 0.03);
 }
 
 .formGroup input:focus,
 .formGroup select:focus {
   outline: none;
-  border-color: #74b9ff;
-  box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+  border-color: var(--btn-primary);
+  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.1);
+  background-color: var(--bg-white);
+}
+
+/* Style the select dropdown arrow */
+.formGroup select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23636e72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  padding-right: 48px;
 }
 
 .formActions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 16px;
+  margin-top: 36px;
 }
 
 .submitBtn,
 .cancelBtn {
   flex: 1;
-  padding: 10px;
+  padding: 14px;
   border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 14px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .submitBtn {
-  background-color: #74b9ff;
-  color: white;
+  background-color: var(--btn-primary);
+  color: var(--text-white);
+  box-shadow: 0 4px 12px rgba(116, 185, 255, 0.2);
 }
 
 .submitBtn:hover {
-  background-color: #0984e3;
+  background-color: var(--btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(116, 185, 255, 0.3);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
 }
 
 .cancelBtn {
-  background-color: #f5f6fa;
-  color: #2d3436;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 2px solid transparent;
 }
 
 .cancelBtn:hover {
-  background-color: #e9ecef;
+  background-color: var(--bg-white);
+  color: var(--text-primary);
+  border-color: var(--border-light);
 }
 
 .visible {
   opacity: 1;
   visibility: visible;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  animation: fadeIn 0.3s ease-in-out;
-  transform: translate(-50%, -50%);
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: fadeOut 0.3s ease-in-out;
+  animation: fadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {
-  from{
-    opacity: 0;
-    transform: translate(-50%, -50%);
-    
+  from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.95);
   }
-  to{
-    opacity: 1;
-    transform: translate(-50%, -50%);
+  to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
   }
 }
 
 @keyframes fadeOut {
-  from{
-    opacity: 1;
-    transform: translate(-50%, -50%);
+  from {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
   }
-  to{
-    opacity: 0;
-    transform: translate(-50%, -50%);
+  to {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.95);
+  }
+}
+
+@keyframes fadeBackdrop {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 520px) {
+  .cardform {
+      width: 90%;
+      padding: 24px;
+  }
+
+  h2 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .submitBtn,
+  .cancelBtn {
+      padding: 12px;
   }
 }

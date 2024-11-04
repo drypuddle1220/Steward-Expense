@@ -1,0 +1,34 @@
+:root {
+    /* Background Colors */
+    --bg-primary: #121212;        /* Login page, Modal background */
+    --bg-secondary: #F8F9FA;      /* Dashboard, Transaction list background */
+    --bg-white: #ffffff;          /* Cards, Buttons background */
+    --bg-input: #222;             /* Input fields background */
+    
+    /* Text Colors */
+    --text-primary: #17191a;      /* Headers, Main text */
+    --text-secondary: #636e72;    /* Secondary text, Filter buttons */
+    --text-light: #b2bec3;        /* Payment method, Dates */
+    --text-white: #ffffff;        /* Button text, Modal text */
+    
+    /* Border & Input Colors */
+    --border-light: #e0e0e0;      /* Input borders, Card borders */
+    --border-focus: #74b9ff;      /* Input focus, Button hover */
+    --border-dark: #444;          /* Dark input borders */
+    
+    /* Status Colors */
+    --income: #00b894;            /* Income amounts */
+    --expense: #ff7675;           /* Expense amounts, Delete button */
+    
+    /* Button & Interactive Colors */
+    --btn-primary: #74B9FF;       /* Primary buttons, Edit button */
+    --btn-primary-hover: #4d94ff; /* Button hover states */
+    --btn-danger: #ff7675;        /* Delete button */
+    --btn-danger-hover: #ff4d4d;  /* Delete button hover */
+    
+    /* Chart & UI Colors */
+    --chart-blue: #3498db;        /* Progress bars, Charts */
+    --skeleton-start: #ececec;     /* Skeleton loader start color */
+    --skeleton-middle: #f5f5f5;    /* Skeleton loader middle color */
+    --skeleton-end: #ececec;       /* Skeleton loader end color */
+}

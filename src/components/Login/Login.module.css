@@ -4,9 +4,9 @@
 	align-items: center; /* Center vertically */
 	height: 100vh; /* Full viewport height */
 	width: 100vw; /* Full viewport width */
-	background-color: #121212; /* Dark background for the page */
+	background-color: var(--bg-primary);
 	background: url("../Dashboard/assets/hero-image.png") center/cover no-repeat,
-		#121212;
+		var(--bg-primary);
 	background-blend-mode: overlay;
 	background-size: 200% 200%;
 	animation: gradientAnimation 40s ease infinite; /* Slow down the movement */
@@ -30,8 +30,10 @@
 	}
 }
 
-.login-modal {
-	background-color: #121212;
+
+
+.modalContent {
+	background-color: var(--bg-primary);
 	border: none; /* Remove the border */
 	padding: 40px; /* Increased padding for a more spacious feel */
 	width: 400px; /* Wider modal for a better layout */
@@ -42,44 +44,51 @@
 	z-index: 1; /* Add this */
 	border: 3px solid transparent;
 	background-clip: padding-box;
+	margin: 2px; /* Reduced from 3px to match new border thickness */
 }
 
-/* Add these new styles for the beam effect */
-.login-modal::before {
+/* Create a wrapper for the modal content */
+.modalWrapper {
+	position: relative;
+	width: fit-content;
+	padding: 2px; /* Reduced from 3px for thinner border */
+	border-radius: 10px;
+	background: var(--bg-primary);
+}
+
+/* Update the beam effect */
+.modalWrapper::before {
 	content: '';
 	position: absolute;
-	top: -3px;
-	left: -3px;
-	right: -3px;
-	bottom: -3px;
-	background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+	inset: 0;
+	padding: 2px; /* Reduced padding for thinner border */
+	background: linear-gradient(45deg, 
+		rgba(133, 198, 239, 0.817),    /* Soft blue */
+		rgba(142, 155, 254, 0.368),   /* Muted purple */
+		rgba(186, 185, 255, 0.706),   /* Soft lavender */
+		rgba(74, 185, 255, 0.3));   /* Back to soft blue */
 	border-radius: 10px;
-	z-index: -1;
-	animation: glowing 20s linear infinite;
-	background-size: 400%;
-	opacity: 1;
+	z-index: 0;
+	animation: glowing 6s linear infinite; /* Slower animation */
+	background-size: 300%; /* Reduced size for subtler movement */
 	-webkit-mask: 
 		linear-gradient(#fff 0 0) content-box, 
 		linear-gradient(#fff 0 0);
 	-webkit-mask-composite: xor;
 	mask-composite: exclude;
-	padding: 3px;
 }
 
 @keyframes glowing {
 	0% {
 		background-position: 0 0;
 	}
-	50% {
-		background-position: 400% 0;
-	}
 	100% {
-		background-position: 0 0;
+		background-position: 400% 0;
 	}
 }
 
-.login-modal h2 {
-	color: rgb(255, 255, 255); /* Change heading color to white */
+.modalContent h2 {
+	color: var(--text-white);
 	text-align: center;
 	margin-bottom: 20px; /* Add some space below the heading */
 }
@@ -88,23 +97,19 @@ input {
 	width: 100%;
 	padding: 8px; /* Increased padding for input fields */
 	margin: 10px 0;
-	border: 1px solid #444; /* Darker border for inputs */
+	border: 1px solid var(--border-dark);
 	border-radius: 4px;
-	background-color: #222; /* Darker input background */
-	color: white; /* Input text color */
+	background-color: var(--bg-input);
+	color: var(--text-white);
 	transition: border-color 0.3s ease; /* Smooth transition for input border */
 }
 
 input::placeholder {
-	color: #888; /* Placeholder text color */
+	color: var(--text-light);
 }
 
-label {
-	color: white; /* Change text color for the email label */
-}
-
-.password {
-	color: white; /* Change text color for the password label */
+label, .password {
+	color: var(--text-white);
 }
 
 /* Button styles with hover effects */
@@ -114,7 +119,7 @@ label {
 	border: 1px solid transparent; /* Set a transparent border initially */
 	border-radius: 5px;
 	margin-top: 3px;
-	color: white;
+	color: var(--text-white);
 	background-color: transparent;
 	cursor: pointer;
 	transition: border-color 0.3s ease, background-color 0.3s ease,
@@ -122,7 +127,7 @@ label {
 }
 
 .btn:hover {
-	border-color: white;
+	border-color: var(--text-white);
 }
 
 /* Keyframes for animations */

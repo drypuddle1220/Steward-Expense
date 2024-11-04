@@ -1,4 +1,4 @@
-import { doc, setDoc, collection, addDoc, Timestamp, getDocs, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, Timestamp, getDocs, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { 
     createUserWithEmailAndPassword, 
@@ -10,7 +10,7 @@ interface Transaction {
   status: string;
   currency: string;
   id: string;
-  type: 'income' | 'expense';
+  type: 'income' | 'expense' | 'transfer';
   amount: number;
   category: string;
   date: Timestamp;
@@ -107,6 +107,29 @@ export class FirestoreService {
       throw error;
     }
   }
+
+  static async deleteTransaction(userId: string, transactionId: string) {
+    try {
+        const transactionRef = doc(db, 'users', userId, 'transactions', transactionId);
+        await deleteDoc(transactionRef);
+        return true;
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        throw error;
+    }
+  }
+
+  static async updateTransaction(userId: string, transactionId: string, updatedData: any) {
+    try {
+        const transactionRef = doc(db, 'users', userId, 'transactions', transactionId);
+        await updateDoc(transactionRef, updatedData);
+        return true;
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        throw error;
+    }
+  }
+  
 
   // Deletes a user's document from Firestore
   //We use this when the user is deleted from the list of authenticated users, so that if the user try register again, they can do so. And it won't say the account already exists.

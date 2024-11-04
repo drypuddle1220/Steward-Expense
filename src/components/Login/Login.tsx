@@ -215,8 +215,8 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 
 	return (
 		<div className={styles["login-page"]}>
-			{showForm && (
-				<div className={styles["login-modal"]}>
+			<div className={styles.modalWrapper}>
+				<div className={styles.modalContent}>
 					<h2>{isCreatingAccount ? "Create Account" : "Login"}</h2>
 					<form onSubmit={handleSubmit}>
 						<div>
@@ -287,7 +287,7 @@ const Login: React.FC<LoginProps> = ({ showForm, onClose }) => {
 						Sign In with Google
 					</button>
 				</div>
-			)}
+			</div>
 		</div>
 	);
 };
