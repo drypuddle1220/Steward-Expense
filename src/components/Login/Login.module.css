@@ -71,9 +71,6 @@
 	z-index: 0;
 	animation: glowing 6s linear infinite; /* Slower animation */
 	background-size: 300%; /* Reduced size for subtler movement */
-	-webkit-mask: 
-		linear-gradient(#fff 0 0) content-box, 
-		linear-gradient(#fff 0 0);
 	-webkit-mask-composite: xor;
 	mask-composite: exclude;
 }

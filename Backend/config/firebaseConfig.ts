@@ -12,13 +12,13 @@ import { getFirestore } from 'firebase/firestore';
 which helps firebase identify which database we need to connect to. 
 */
 const firebaseConfig = {
-	apiKey: "AIzaSyD-BO9kO4cTYs4JDXxBh4gJkOclMnM9o9Y",
-	authDomain: "steward-expense-tracking.firebaseapp.com",
-	projectId: "steward-expense-tracking",
-	storageBucket: "steward-expense-tracking.appspot.com",
-	messagingSenderId: "742963302756",
-	appId: "1:742963302756:web:2908dcf19bbc4fe7642a71",
-	measurementId: "G-0Q6FLK0CVD",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
