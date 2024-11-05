@@ -181,12 +181,108 @@ const Dashboard: React.FC = () => {
 							>
 								<Visualizer.BarChartComponent />
 							</div>
-							<div className={`${styles.chart}`}>
+							<div className={styles.goals}>
+								<section className={styles.goalSection}>
+									<h3>Budget Goals</h3>
+									<div className={styles.goalsList}>
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Dining out expenses</span>
+												<span className={styles.goalValue}>$160/$200</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.warning}`} 
+													style={{ width: '80%' }}
+													title="80% of budget used"
+												/>
+											</div>
+										</div>
+
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Entertainment budget</span>
+												<span className={styles.goalValue}>$150/$200</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.success}`} 
+													style={{ width: '75%' }}
+													title="75% of budget used"
+												/>
+											</div>
+										</div>
+
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Grocery expenses</span>
+												<span className={styles.goalValue}>$450/$500</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.info}`} 
+													style={{ width: '90%' }}
+													title="90% of budget used"
+												/>
+											</div>
+										</div>
+									</div>
+								</section>
+
+								<section className={styles.goalSection}>
+									<h3>Savings Goals</h3>
+									<div className={styles.goalsList}>
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Emergency fund</span>
+												<span className={styles.goalValue}>$3,000/$5,000</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.primary}`} 
+													style={{ width: '60%' }}
+													title="60% of goal reached"
+												/>
+											</div>
+										</div>
+
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Retirement savings</span>
+												<span className={styles.goalValue}>$15,000/$20,000</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.success}`} 
+													style={{ width: '75%' }}
+													title="75% of goal reached"
+												/>
+											</div>
+										</div>
+
+										<div className={styles.goalItem}>
+											<div className={styles.goalInfo}>
+												<span className={styles.goalText}>Vacation fund</span>
+												<span className={styles.goalValue}>$800/$2,000</span>
+											</div>
+											<div className={styles.progressBar}>
+												<div 
+													className={`${styles.progressFill} ${styles.warning}`} 
+													style={{ width: '40%' }}
+													title="40% of goal reached"
+												/>
+											</div>
+										</div>
+									</div>
+								</section>
+							</div>
+							<div className={`${styles.chart}${styles.pieChart}`}>
 								<Visualizer.PieChartComponent />
 							</div>
-							<div className={`${styles.chart}`}>
+							<div className={`${styles.chart}${styles.lineChart}`}>
 								<Visualizer.LineChartComponent />
 							</div>
+							
 						</>
 					)}
 				</section>

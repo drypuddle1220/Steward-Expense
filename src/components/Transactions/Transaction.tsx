@@ -22,6 +22,9 @@ import {DateRangePicker} from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import EditTransactionCard from "./EditTransactionCard";
+import MeatballMenu from "./MeatballMenu";
+import { Pencil, Trash2 } from 'lucide-react';
+
 const Transaction: React.FC = () => {
 
 	// State Management
@@ -327,24 +330,35 @@ const Transaction: React.FC = () => {
 												? transaction.date.toLocaleDateString() 
 												: transaction.date}
 										</span>
+										
 									</div>
 									
 									<div className={styles.transactionAmount}>
-										
+										<div><MeatballMenu options={[
+												{
+													label: 'Edit',
+													onClick: () => handleEdit(transaction),
+													icon: <Pencil size={16} />,
+												},
+												{
+													label: 'Delete',
+													onClick: () => handleDelete(transaction.id),
+													icon: <Trash2 size={16} />,
+													variant: 'danger'
+												}
+											]} /></div>
+									
+										<div className={styles.actions}>
+											
+										</div>
 										<span className={transaction.type === 'income' ? styles.income : styles.expense}>
 											{transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
 										</span>
 										<span className={styles.paymentMethod}>{transaction.paymentMethod}</span>
-										<button className={styles.deleteBtn} onClick={() => handleDelete(transaction.id)}>Delete</button> 
-										
-										<button 
-											className={styles.editBtn} 
-											onClick={() => handleEdit(transaction)}
-										>
-											Edit
-										</button>
 									</div>
+									
 								</div>
+								
 							))}
 						</>
 					)}

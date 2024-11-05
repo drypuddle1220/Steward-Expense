@@ -1,11 +1,5 @@
 import { doc, setDoc, collection, addDoc, Timestamp, getDocs, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { 
-    createUserWithEmailAndPassword, 
-    sendEmailVerification,
-    fetchSignInMethodsForEmail 
-} from "firebase/auth";
-
 interface Transaction {
   status: string;
   currency: string;
@@ -86,15 +80,17 @@ export class FirestoreService {
   // Retrieves all transactions for a specific user
   //We use this to display the transactions in the dashboard
   static async getTransactions(userId: string): Promise<Transaction[]> {
-    // Gets reference to user's transactions subcollection
+    // 1. Get reference to the transactions subcollection
     const transactionsRef = collection(db, 'users', userId, 'transactions');
+    
+    // 2. Get all documents from this collection
     const querySnapshot = await getDocs(transactionsRef);
     
-    // Maps the documents to an array, adding the document ID to each transaction
+    // 3. Transform the documents into an array of Transaction objects
     return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Transaction[];
+      id: doc.id,          // Add the document ID
+      ...doc.data()        // Spread all other document data
+    })) as Transaction[];  // Type cast to Transaction array
   }
 
   // Checks if a user document exists in Firestore

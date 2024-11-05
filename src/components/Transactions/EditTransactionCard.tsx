@@ -42,33 +42,53 @@ export default function EditTransactionCard({ isVisible, onClose, transaction, s
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        // Prevent default form submission behavior
         e.preventDefault();
+        
+        // Early return if no user is logged in or no transaction to edit
         if (!auth.currentUser || !transaction) return;
 
         try {
+            // Create updated transaction object by spreading existing transaction
+            // and updating with new form values
             const updatedTransaction = {
-                ...transaction,
-                amount: parseFloat(formData.amount),
+                ...transaction,                    // Keep existing transaction properties
+                amount: parseFloat(formData.amount), // Convert amount string to number
                 category: formData.category,
                 description: formData.description,
-                tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [],
+                // Convert comma-separated tags string to array, trim whitespace, remove empty tags
+                tags: formData.tags 
+                    ? formData.tags.split(',')
+                        .map(tag => tag.trim())
+                        .filter(tag => tag !== '') 
+                    : [],
                 paymentMethod: formData.paymentMethod,
-                date: new Date(formData.date),
-                type: transaction.type
+                date: new Date(formData.date),     // Convert date string to Date object
+                type: transaction.type             // Keep original transaction type
             };
 
+            // Update transaction in Firestore database
             await FirestoreService.updateTransaction(
-                auth.currentUser.uid,
-                transaction.id,
-                updatedTransaction
+                auth.currentUser.uid,              // User ID
+                transaction.id,                    // Transaction ID
+                updatedTransaction                 // New transaction data
             );
 
+            // Update local state with the edited transaction
             setTransactions(prev => 
-                prev.map(t => t.id === transaction.id ? { ...updatedTransaction, tags: updatedTransaction.tags as never[] } : t)
+                prev.map(t => 
+                    // If this is the edited transaction, return updated version
+                    // Otherwise return the original transaction unchanged
+                    t.id === transaction.id 
+                        ? { ...updatedTransaction, tags: updatedTransaction.tags as never[] } 
+                        : t
+                )
             );
 
+            // Close the edit modal/form
             onClose();
         } catch (error) {
+            // Handle any errors during the update
             console.error('Error updating transaction:', error);
             alert('Failed to update transaction');
         }

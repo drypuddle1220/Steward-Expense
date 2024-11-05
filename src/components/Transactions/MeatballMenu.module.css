@@ -1,0 +1,120 @@
+.meatballMenu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .meatballButton {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+  }
+  
+  .meatballButton:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+  
+  .meatballButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--border-focus);
+  }
+  
+  .menuDropdown {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: slideInHorizontalLeft 0.2s ease;
+    white-space: nowrap;
+  }
+  
+  .menuItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .menuItem:hover {
+    background: var(--bg-secondary);
+  }
+  
+  .menuItem:focus {
+    outline: none;
+    background: var(--bg-secondary);
+  }
+  
+  .menuItemIcon {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    width: 16px;
+    height: 16px;
+  }
+  
+  .danger {
+    color: var(--btn-danger);
+  }
+  
+  .danger:hover {
+    background: var(--btn-danger);
+    color: var(--text-white);
+  }
+  
+  .danger:hover .menuItemIcon {
+    color: var(--text-white);
+  }
+  
+  @keyframes slideInHorizontalLeft {
+    from {
+      opacity: 0;
+      transform: translate(10px, -50%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+  }
+  
+  /* Optional: Add a subtle backdrop when menu is open */
+  .meatballMenu::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+  }
+  
+  .meatballMenu[data-state="open"]::after {
+    opacity: 1;
+    visibility: visible;
+  }

@@ -5,6 +5,7 @@
     --bg-secondary: #F8F9FA;      /* Dashboard, Transaction list background */
     --bg-white: #ffffff;          /* Cards, Buttons background */
     --bg-input: #222;             /* Input fields background */
+    --bg-footer: #999898;          /* Footer background */
     
     /* Text Colors */
     --text-primary: #17191a;      /* Headers, Main text */
@@ -62,7 +63,7 @@
 [data-theme='dark'] {
     --card-bg: rgba(30, 30, 30, 0.9);
     --card-border: rgba(0, 0, 0, 0.2);
-    --card-border-hover: rgba(97, 218, 251, 0.3);
+    --card-border-hover: rgba(97, 218, 251, 0.492);
     --chart-grid: #333;
     --chart-text: #999;
     --chart-tooltip-bg: rgba(30, 30, 30, 0.8);

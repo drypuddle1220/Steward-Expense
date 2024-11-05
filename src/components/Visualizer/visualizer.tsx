@@ -13,6 +13,7 @@ import {
 	BarChart,
 	Bar,
 	ResponsiveContainer,
+	Area,
 } from "recharts";
 
 import data from "./budgetData.json";
@@ -137,45 +138,101 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Income vs. Expenses</h3>
 				<div className={styles.chartContainer}>
-					<ResponsiveContainer width="100%" height={300}>
-						<LineChart data={lineChartData}>
+					<ResponsiveContainer width="100%" height="100%">
+						<LineChart 
+							data={lineChartData}
+							margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+						>
 							<defs>
+								{/* Gradient for the area under the line */}
 								<linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-									<stop offset="5%" stopColor="#61DAFB" stopOpacity={0.8}/>
-									<stop offset="95%" stopColor="#61DAFB" stopOpacity={0}/>
+									<stop offset="5%" stopColor="var(--chart-gradient-1)" stopOpacity={0.3}/>
+									<stop offset="95%" stopColor="var(--chart-gradient-1)" stopOpacity={0}/>
+								</linearGradient>
+								{/* Gradient for the line itself */}
+								<linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+									<stop offset="0%" stopColor="var(--chart-gradient-1)" />
+									<stop offset="100%" stopColor="var(--chart-gradient-2)" />
 								</linearGradient>
 							</defs>
+
+							{/* Background Grid */}
+							<CartesianGrid 
+								stroke="var(--chart-grid)" 
+								strokeDasharray="3 3"
+								vertical={false}
+								opacity={0.3}
+							/>
+
+							{/* Axes */}
 							<XAxis 
 								dataKey='date' 
 								axisLine={false}
 								tickLine={false}
-								style={{ fontSize: '12px' }}
+								style={{ 
+									fontSize: '12px',
+									fontFamily: 'Inter, sans-serif',
+									color: 'var(--text-secondary)'
+								}}
+								dy={10}
 							/>
 							<YAxis 
 								axisLine={false}
 								tickLine={false}
-								style={{ fontSize: '12px' }}
+								style={{ 
+									fontSize: '12px',
+									fontFamily: 'Inter, sans-serif',
+									color: 'var(--text-secondary)'
+								}}
+								dx={-10}
+								tickFormatter={(value) => `$${value}`}
 							/>
+
+							{/* Enhanced Tooltip */}
 							<Tooltip 
 								contentStyle={{ 
-									backgroundColor: 'var(--chart-tooltip-bg)',
-									borderRadius: 'var(--card-radius)',
+									backgroundColor: 'var(--bg-white)',
+									borderRadius: '12px',
 									border: 'none',
-									boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`
+									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+									padding: '12px 16px',
 								}}
+								labelStyle={{
+									color: 'var(--text-secondary)',
+									fontSize: '12px',
+									fontWeight: 600,
+									marginBottom: '4px'
+								}}
+								itemStyle={{
+									color: 'var(--text-primary)',
+									fontSize: '14px',
+									padding: '4px 0'
+								}}
+								formatter={(value) => [`$${value}`, 'Amount']}
 							/>
-							<CartesianGrid 
-								stroke="var(--chart-grid)" 
-								strokeDasharray="5 5"
-								vertical={false}
+
+							{/* Area under the line */}
+							<Area
+								type="monotone"
+								dataKey="amount"
+								stroke="none"
+								fill="url(#colorAmount)"
+								fillOpacity={1}
 							/>
+
+							{/* Main line */}
 							<Line
-								type='monotone'
-								dataKey='amount'
-								stroke="#61DAFB"
+								type="monotone"
+								dataKey="amount"
+								stroke="url(#lineGradient)"
 								strokeWidth={3}
 								dot={false}
-								fill="url(#colorAmount)"
+								activeDot={{
+									r: 6,
+									fill: 'var(--bg-white)',
+									stroke: 'var(--chart-gradient-1)',
+									strokeWidth: 3
+								}}
 							/>
 						</LineChart>
 					</ResponsiveContainer>
@@ -191,7 +248,7 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Expense Breakdown</h3>
 				<div className={styles.chartContainer}>
-					<ResponsiveContainer width="100%" height={300}>
+					<ResponsiveContainer width="100%" height="100%">
 						<PieChart>
 							<Pie
 								data={pieChartData}
@@ -265,47 +322,124 @@ export default class Visualizer extends React.Component {
 
 		return (
 			<div className={styles.card}>
-				<h3>Top Expenses</h3>
+				<div className={styles.chartHeader}>
+					<h3>Expense Categories</h3>
+					<div className={styles.chartLegend}>
+						<span className={styles.legendItem}>
+							<span className={styles.legendDot}></span>
+							Monthly Spending
+						</span>
+					</div>
+				</div>
 				<div className={styles.chartContainer}>
 					<ResponsiveContainer width="100%" height="100%">
-						<BarChart data={barChartData} barCategoryGap={15}>
+						<BarChart 
+							data={barChartData}
+							margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+							barSize={35}
+						>
 							<defs>
-								<linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0%" stopColor="#764ABC" stopOpacity={0.8}/>
-									<stop offset="100%" stopColor="#764ABC" stopOpacity={0.3}/>
+								{/* Modern gradient for bars */}
+								<linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="0%" stopColor="var(--chart-gradient-1)" stopOpacity={0.9} />
+									<stop offset="50%" stopColor="var(--chart-gradient-2)" stopOpacity={0.8} />
+									<stop offset="100%" stopColor="var(--chart-gradient-2)" stopOpacity={0.7} />
+								</linearGradient>
+								{/* Hover effect gradient */}
+								<linearGradient id="barHoverGradient" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="0%" stopColor="var(--chart-gradient-3)" stopOpacity={0.95} />
+									<stop offset="100%" stopColor="var(--chart-gradient-4)" stopOpacity={0.85} />
+								</linearGradient>
+								{/* Subtle background gradient for chart */}
+								<linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="0%" stopColor="#f8fafc" stopOpacity={0.5} />
+									<stop offset="100%" stopColor="#f1f5f9" stopOpacity={0.2} />
 								</linearGradient>
 							</defs>
-							<XAxis 
-								dataKey='category' 
-								axisLine={false}
-								tickLine={false}
-								style={{ fontSize: '12px' }}
+
+							{/* Refined Background */}
+							<rect 
+								width="100%" 
+								height="100%" 
+								fill="url(#bgGradient)" 
 							/>
-							<YAxis 
-								axisLine={false}
-								tickLine={false}
-								style={{ fontSize: '12px' }}
-							/>
-							<Tooltip 
-								cursor={{ fill: 'rgba(0,0,0,0.05)' }}
-								contentStyle={{ 
-									backgroundColor: 'var(--chart-tooltip-bg)',
-									borderRadius: 'var(--card-radius)',
-									border: 'none',
-									boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`
-								}}
-							/>
+
+							{/* Subtle Grid */}
 							<CartesianGrid 
-								stroke="var(--chart-grid)" 
-								strokeDasharray="5 5"
-								vertical={false}
+								strokeDasharray="3 3" 
+								vertical={false} 
+								stroke="var(--chart-grid)"
+								opacity={0.2}
 							/>
-							<Bar
-								dataKey='amount'
-								fill="url(#colorBar)"
-								radius={[8, 8, 0, 0]}
-								barSize={55}
+
+							{/* X Axis - Categories */}
+							<XAxis 
+								dataKey="category"
+								axisLine={false}
+								tickLine={false}
+								tick={{
+										fill: 'var(--text-secondary)',
+										fontSize: 12,
+										fontFamily: 'Inter, sans-serif',
+										fontWeight: 500
+								}}
+								dy={10}
+								tickFormatter={(value) => value.length > 10 ? `${value.substring(0, 10)}...` : value}
 							/>
+
+							{/* Y Axis - Amount */}
+							<YAxis
+								axisLine={false}
+								tickLine={false}
+								tick={{
+										fill: 'var(--text-secondary)',
+										fontSize: 12,
+										fontFamily: 'Inter, sans-serif',
+										fontWeight: 500
+								}}
+								dx={-10}
+								tickFormatter={(value) => `$${value.toLocaleString()}`}
+							/>
+
+							{/* Enhanced Tooltip */}
+							<Tooltip
+								cursor={{ fill: 'rgba(0, 0, 0, 0.02)' }}
+								contentStyle={{
+										backgroundColor: 'var(--bg-white)',
+										borderRadius: '16px',
+										border: 'none',
+										boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+										padding: '16px',
+								}}
+								labelStyle={{
+										color: 'var(--text-primary)',
+										fontSize: '14px',
+										fontWeight: 600,
+										marginBottom: '8px'
+								}}
+								itemStyle={{
+										color: 'var(--text-secondary)',
+										fontSize: '13px',
+										padding: '4px 0'
+								}}
+								formatter={(value) => [`$${value.toLocaleString()}`, 'Spent']}
+							/>
+
+							{/* Bars with enhanced styling */}
+							<Bar 
+								dataKey="amount"
+								fill="url(#barGradient)"
+								radius={[6, 6, 0, 0]}
+								maxBarSize={50}
+							>
+								{barChartData.map((entry, index) => (
+									<Cell 
+										key={`cell-${index}`}
+										cursor="pointer"
+										className={styles.barCell}
+									/>
+								))}
+							</Bar>
 						</BarChart>
 					</ResponsiveContainer>
 				</div>

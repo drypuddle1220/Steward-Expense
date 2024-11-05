@@ -1,7 +1,5 @@
 import React, { SetStateAction, useState } from 'react';
 import styles from './InputButton.module.css';
-import IncomeCard from './IncomeCard';
-import ExpenseCard from './ExpenseCard';
 import TransactionCard from './TransactionCard';
 
 //Props for the InputButton component, it is used to add a new transaction

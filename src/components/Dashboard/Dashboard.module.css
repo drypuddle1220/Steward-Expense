@@ -14,7 +14,7 @@ body {
 .dashboard {
 	display: grid;
 	grid-template-columns: 230px 1fr; /* Sidebar and main content */
-	height: 100vh;
+	height: 100%;
 	width: 100%;
 	position: relative;
 	overflow: hidden;
@@ -45,6 +45,7 @@ body {
 	background: var(--bg-white);
 	border-radius: var(--card-radius);
 	padding: 15px; /* Reduced padding */
+	height: 100%;
 	position: relative;
 	overflow: hidden;
 	transition: all 0.3s ease;
@@ -72,6 +73,9 @@ body {
 }
 
 .fullWidthChart {
+	grid-row-start: 1;
+	grid-column-start: 1;
+	grid-row: span 1;
 	grid-column: span 2;
 	width: 100%; /* Ensure it takes full width of the grid */
 }
@@ -79,9 +83,11 @@ body {
 /* Charts section */
 .charts {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
 	gap: 15px;
 	width: 100%;
+	height: 100%;
 	min-height: 0; /* Allow charts to shrink if needed */
 }
 
@@ -91,6 +97,110 @@ body {
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	min-height: 0;
+}
+
+.pieChart {
+	grid-row-start: 2;
+	grid-column-start: 1;
+	grid-row: span 1;
+	grid-column: span 1;
+}	
+
+.lineChart {
+	grid-row-start: 2;
+	grid-column-start: 2;
+	grid-row: span 1;
+	grid-column: span 1;
+}
+
+.goals {
+	display: grid;
+	grid-row: span 2;
+	grid-column: span 1;
+	gap: 15px;
+	background: var(--card-bg);
+	border-radius: var(--card-radius);
+	padding: 20px;
+	display: grid;
+	gap: 24px;
+	border: 1px solid var(--border-light);
+}
+
+.goalSection {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.goalSection h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0;
+}
+
+.goalsList {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.goalItem {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.goalInfo {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 0.875rem;
+}
+
+.goalText {
+	color: var(--text-primary);
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.goalValue {
+	color: var(--text-secondary);
+	font-size: 0.75rem;
+}
+
+.progressBar {
+	height: 6px;
+	background: var(--bg-secondary);
+	border-radius: 3px;
+	overflow: hidden;
+	position: relative;
+}
+
+.progressFill {
+	height: 100%;
+	border-radius: 3px;
+	transition: width 0.3s ease;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+/* Progress bar colors */
+.primary {
+	background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+}
+
+.success {
+	background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.warning {
+	background: linear-gradient(90deg, #f1c40f 0%, #f39c12 100%);
+}
+
+.info {
+	background: linear-gradient(90deg, #00cec9 0%, #00b894 100%);
 }
 
 /* Responsive adjustments */
@@ -182,6 +292,7 @@ body {
   .dashboard {
     grid-template-columns: 1fr;
     height: 100vh; /* Ensure full height on mobile */
+	overflow: scroll;
   }
 
   .dashboardContent {
@@ -189,6 +300,7 @@ body {
     padding: 60px 15px 15px 15px;
     overflow-y: auto;
     max-height: 100vh; /* Limit height to viewport */
+	overflow: scroll;
   }
 
   .topCards {

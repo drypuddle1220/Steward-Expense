@@ -6,9 +6,9 @@
 	flex-direction: column;
 	justify-content: space-between;
 	min-height: 100vh;
-	background-color: #5caaf9; /* Dark background for the page */
+	background-color: var(--btn-primary);
 	text-align: center;
-	color: #e0e0e0; /* Light text color */
+	color: var(--text-white);
 }
 
 .navbar {
@@ -18,7 +18,7 @@
 	padding: 2px; /* Add some padding */
 	position: absolute; /* Position at the top */
 	width: 100%; /* Full width */
-	background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+	background-color: var(--bg-primary); /* Semi-transparent background */
 	z-index: 10; /* Ensure it appears above other elements */
 }
 
@@ -26,7 +26,7 @@
 	font-size: 1.5rem;
 	font-weight: bold;
 	margin-left: 20px;
-	color: #e0e0e0; /* Light color for logo */
+	color: var(--text-white); /* Light color for logo */
 	display: flex;
 	align-items: center;
 }
@@ -41,10 +41,10 @@
 	padding: 8px 16px;
 	margin-right: 20px;
 	font-size: 1rem;
-	color: #fff;
+	color: var(--text-white);
 	background-color: transparent;
 	border: 1px solid transparent; /* Set a transparent border initially */
-	border-radius: 5px;
+	border-radius: var(--card-radius);
 	cursor: pointer;
 	transition: border-color 0.3s ease, background-color 0.3s ease,
 		transform 0.3s ease;
@@ -52,7 +52,7 @@
 
 .logInBtn:hover,
 .signInBtn:hover {
-	border-color: #ffffff; /* Highlight the border in white on hover */
+	border-color: var(--text-white); /* Highlight the border in white on hover */
 	transform: scale(1.05); /* Slightly enlarge the button */
 }
 
@@ -65,7 +65,7 @@
 	align-items: center;
 	padding: 50px;
 	background: url("src/assets/hero-image.png") no-repeat center center/cover,
-		linear-gradient(to bottom right, #1c1c1c, #000000);
+		linear-gradient(to bottom right, var(--bg-primary), var(--bg-input));
 
 	background-size: 200% 200%;
 	animation: gradientAnimation 40s ease infinite; /* Slow down the movement */
@@ -118,6 +118,7 @@
 	z-index: 2; /* Ensure the text is above the overlay */
 	transform: translateY(30px); /* Slightly move down */
 	animation: slideUp 0.7s forwards; /* Trigger slide-up animation */
+	color: var(--text-white);
 }
 
 /* Features Section */
@@ -125,7 +126,7 @@
 	display: flex;
 	justify-content: space-around;
 	padding: 50px;
-	background-color: #1e1e1e; /* Dark background */
+	background-color: var(--bg-primary); /* Dark background */
 }
 
 .feature {
@@ -156,20 +157,22 @@
 	}
 }
 
+
+
 .feature h3 {
 	font-size: 1.5rem;
 	margin-bottom: 10px;
-	color: #ffffff; /* White for better contrast */
+	color: var(--text-white); /* White for better contrast */
 }
 
 .feature p {
 	font-size: 1rem;
-	color: #cccccc; /* Lighter gray for readability */
+	color: var(--text-secondary); /* Lighter gray for readability */
 }
 
 /* Footer */
 .footer {
-	background-color: #333;
+	background-color: var(--bg-footer);
 	padding: 10px;
 }
 
@@ -179,7 +182,7 @@
 }
 
 .footerLinks a {
-	color: #ffffff; /* White for links */
+	color: var(--text-white); /* White for links */
 	margin: 0 10px;
 	text-decoration: none;
 	opacity: 0; /* Start hidden */

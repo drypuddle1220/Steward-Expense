@@ -27,7 +27,6 @@ body {
 }
 
 .header {
-	margin-bottom: 2rem;
 	flex-shrink: 0;
 }
 
@@ -335,5 +334,23 @@ body {
 
   .header h1 {
     font-size: 1.5rem;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.transaction:hover .actions {
+  opacity: 1;
+}
+
+/* If you want the menu to always be visible on mobile */
+@media screen and (max-width: 768px) {
+  .actions {
+    opacity: 1;
   }
 }
