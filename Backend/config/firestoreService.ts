@@ -15,6 +15,7 @@ interface Transaction {
   category: string;
   date: Timestamp;
   description: string;
+  tags: string[];
   paymentMethod: string;
 }
 

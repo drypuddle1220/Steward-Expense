@@ -1,4 +1,5 @@
 :root {
+    height: 100vh; /* Ensure the root container takes full height */
     /* Background Colors */
     --bg-primary: #121212;        /* Login page, Modal background */
     --bg-secondary: #F8F9FA;      /* Dashboard, Transaction list background */
@@ -31,4 +32,38 @@
     --skeleton-start: #ececec;     /* Skeleton loader start color */
     --skeleton-middle: #f5f5f5;    /* Skeleton loader middle color */
     --skeleton-end: #ececec;       /* Skeleton loader end color */
+    
+    /* Chart & Visualization Colors */
+    --chart-gradient-1: #61DAFB;
+    --chart-gradient-2: #764ABC;
+    --chart-gradient-3: #2ECC71;
+    --chart-gradient-4: #E74C3C;
+    
+    /* Card & Container Styles */
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: rgba(255, 255, 255, 0.2);
+    --card-border-hover: rgba(97, 218, 251, 0.5);
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    --card-radius: 16px;
+    
+    /* Chart Grid & Axis */
+    --chart-grid: #eee;
+    --chart-text: #666;
+    --chart-tooltip-bg: rgba(255, 255, 255, 0.8);
+    --chart-tooltip-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Spacing & Layout */
+    --grid-gap: 10px;
+    --card-padding: 24px;
+    --chart-padding: 10px;
+}
+
+/* Dark theme example (you can add this later) */
+[data-theme='dark'] {
+    --card-bg: rgba(30, 30, 30, 0.9);
+    --card-border: rgba(0, 0, 0, 0.2);
+    --card-border-hover: rgba(97, 218, 251, 0.3);
+    --chart-grid: #333;
+    --chart-text: #999;
+    --chart-tooltip-bg: rgba(30, 30, 30, 0.8);
 }

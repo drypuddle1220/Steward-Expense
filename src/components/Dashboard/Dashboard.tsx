@@ -9,6 +9,7 @@ import InputButton from "../InputExpense/InputButton";
 import Navbar from "./Navbar";
 import nav from "./Navbar.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
+import { ArrowUpCircle, ArrowDownCircle, PiggyBank } from 'lucide-react'; // Add this import
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -127,14 +128,40 @@ const Dashboard: React.FC = () => {
 						</>
 					) : (
 						<>
-							<div className={styles.card}>
-								Total Income: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$4,300</span>
+							<div className={`${styles.card} ${styles.incomeCard}`}>
+								<div className={styles.cardContent}>
+									<div className={styles.cardIcon}>
+										<ArrowUpCircle size={20} />
+									</div>
+									<div className={styles.cardInfo}>
+										<h3>Total Income</h3>
+										<p className={styles.amount}>$4,300</p>
+									</div>
+								</div>
 							</div>
-							<div className={styles.card}>
-								Total Expense: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$3,000</span>
+
+							<div className={`${styles.card} ${styles.expenseCard}`}>
+								<div className={styles.cardContent}>
+									<div className={styles.cardIcon}>
+										<ArrowDownCircle size={20} />
+									</div>
+									<div className={styles.cardInfo}>
+										<h3>Total Expense</h3>
+										<p className={styles.amount}>$3,000</p>
+									</div>
+								</div>
 							</div>
-							<div className={styles.card}>
-								Total Savings: <span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>$1,300</span>
+
+							<div className={`${styles.card} ${styles.savingsCard}`}>
+								<div className={styles.cardContent}>
+									<div className={styles.cardIcon}>
+										<PiggyBank size={20} />
+									</div>
+									<div className={styles.cardInfo}>
+										<h3>Total Savings</h3>
+										<p className={styles.amount}>$1,300</p>
+									</div>
+								</div>
 							</div>
 						</>
 					)}

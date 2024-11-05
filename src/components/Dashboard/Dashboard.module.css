@@ -1,6 +1,6 @@
 html,
 body {
-	height: 100%;
+	height: 100vh;
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box; /* Ensure all elements use border-box sizing */
@@ -9,11 +9,12 @@ body {
 }
 #root {
 	height: 100vh; /* Ensure the root container takes full height */
+	width: 100%;
 }
 .dashboard {
 	display: grid;
 	grid-template-columns: 230px 1fr; /* Sidebar and main content */
-	height: 100%;
+	height: 100vh;
 	width: 100%;
 	position: relative;
 	overflow: hidden;
@@ -25,30 +26,29 @@ body {
 	padding: 20px;
 	display: grid;
 	grid-template-rows: auto 1fr; /* Make rows adjust to content */
-	grid-gap: 20px;
+	gap: 20px;
 	height: 100%;
-	position: relative;
 	overflow: hidden;
+	width: 100%; /* Ensure full width */
 }
+
 /* Top cards container */
 .topCards {
 	display: grid;
-	grid-gap: 20px;
-	grid-template-columns: repeat(3, 1fr); /* 3 columns */
-	margin-bottom: 5px;
-	isolation: isolate; /* Creates a new stacking context */
+	grid-gap: 15px; /* Reduced gap */
+	grid-template-columns: repeat(3, 1fr);
+	margin-bottom: 0;
 }
 
 /* Cards styling */
 .card {
-	background-color: var(--bg-white);
-	border-radius: 12px; /* Slightly more rounded corners */
-	padding: 15px; /* More padding for better spacing */
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-	flex: 1; /* Allow the card to grow and fill available space */
-	min-width: 220px; /* Slightly larger minimum width for better layout */
+	background: var(--bg-white);
+	border-radius: var(--card-radius);
+	padding: 15px; /* Reduced padding */
 	position: relative;
-	transition: box-shadow 0.2s ease;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	border: 1px solid var(--border-light);
 }
 
 .card::after {
@@ -63,7 +63,8 @@ body {
 }
 
 .card:hover {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover::after {
@@ -79,16 +80,17 @@ body {
 .charts {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 10px;
+	gap: 15px;
 	width: 100%;
-	isolation: isolate; /* Creates a new stacking context */
+	min-height: 0; /* Allow charts to shrink if needed */
 }
 
 .chart {
 	background-color: var(--bg-white);
-	padding: 10px;
+	padding: 8px;
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	min-height: 0;
 }
 
 /* Responsive adjustments */
@@ -179,11 +181,14 @@ body {
 @media screen and (max-width: 768px) {
   .dashboard {
     grid-template-columns: 1fr;
+    height: 100vh; /* Ensure full height on mobile */
   }
 
   .dashboardContent {
     width: 100%;
     padding: 60px 15px 15px 15px;
+    overflow-y: auto;
+    max-height: 100vh; /* Limit height to viewport */
   }
 
   .topCards {
@@ -197,4 +202,53 @@ body {
   .fullWidthChart {
     grid-column: auto;
   }
+}
+
+.cardContent {
+	display: flex;
+	align-items: center;
+	gap: 12px; /* Reduced gap */
+	position: relative;
+	z-index: 1;
+}
+
+.cardIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px; /* Smaller icon container */
+	height: 40px; /* Smaller icon container */
+	border-radius: 10px; /* Slightly reduced border radius */
+	color: var(--text-white);
+}
+
+.cardInfo {
+	flex: 1;
+}
+
+.cardInfo h3 {
+	font-size: 0.8rem; /* Smaller title */
+	color: var(--text-secondary);
+	margin: 0 0 2px 0; /* Reduced margin */
+	font-weight: 500;
+}
+
+.amount {
+	font-size: 1.4rem; /* Smaller amount text */
+	font-weight: 600;
+	margin: 0;
+	color: var(--text-primary);
+}
+
+/* Card variants */
+.incomeCard .cardIcon {
+	background: linear-gradient(135deg, var(--income) 0%, #2ecc71 100%);
+}
+
+.expenseCard .cardIcon {
+	background: linear-gradient(135deg, var(--expense) 0%, #e74c3c 100%);
+}
+
+.savingsCard .cardIcon {
+	background: linear-gradient(135deg, var(--btn-primary) 0%, #3498db 100%);
 }

@@ -11,63 +11,66 @@ body {
 .container {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 20px; /* Space between grid items */
+	gap: var(--grid-gap);
 }
 
 /* Card styles */
 .card {
-	margin-top: 15px;
-	border-radius: 8px;
-	padding: 20px;
-	width: 100%; /* Make cards take full width */
-	min-height: 200px; /* Ensure enough height for charts */
-	/* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-	transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+	background: var(--card-bg);
+	backdrop-filter: blur(10px);
+	border-radius: var(--card-radius);
+	padding: var(--card-padding);
+	width: 100%;
+	border: 1px solid var(--card-border);
+	transition: all 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	height: 400px;
 }
 
 .card:hover {
-	transform: translateY(-5px); /* Lift effect on hover */
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-	border: 2px solid rgb(107, 187, 240);
+	transform: translateY(-5px);
+	box-shadow: 0 12px 24px var(--card-shadow);
+	border: 1px solid var(--card-border-hover);
 }
 
 /* Chart title */
 .card h3 {
-	font-weight: 300;
-	margin: 0;
-	font-size: 1.5rem; /* Title size */
-	color: #212529; /* Ensure title is readable */
+	font-weight: 600;
+	margin: 0 0 20px 0;
+	font-size: 1.2rem;
+	color: var(--text-primary);
 }
 
 /* Chart container */
 .chartContainer {
-	width: 100%; /* Full width for charts */
-	height: auto; /* Automatically adjust height */
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	width: 100%;
+	height: 300px;
+	padding: var(--chart-padding);
 }
 
 /* Key metrics styles */
-.key-metric {
-	font-size: 2rem; /* Size for key metrics */
+.keyMetric {
+	font-size: 2rem;
 	font-weight: bold;
 	margin: 10px 0;
-	color: #000000; /* Change to a color that contrasts well */
+	color: var(--text-primary);
 }
+
 /* Small info text */
-.info-text {
+.infoText {
 	font-size: 0.9rem;
-	color: #000000; /* Adjusted color for better contrast */
+	color: var(--text-secondary);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
 	.container {
-		grid-template-columns: 1fr; /* Stack cards on smaller screens */
+		grid-template-columns: 1fr;
 	}
+	
 	.card {
-		padding: 15px; /* Adjust padding for smaller screens */
+		padding: calc(var(--card-padding) * 0.625); /* 15px equivalent */
 	}
 }
 
@@ -75,5 +78,5 @@ h1,
 h2,
 h3,
 h4 {
-	color: whitesmoke;
+	color: var(--text-primary);
 }

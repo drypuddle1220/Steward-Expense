@@ -210,45 +210,6 @@ body {
 	}
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: var(--bg-white);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.pageButton {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--border-light);
-    border-radius: 8px;
-    background-color: var(--bg-white);
-    color: var(--text-secondary);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.pageButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.pageButton:hover:not(:disabled) {
-    background-color: var(--btn-primary);
-    color: var(--text-white);
-    border-color: var(--btn-primary);
-}
-
-.pageInfo {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
 
 /* Add a subtle scrollbar style */
 .transactionList::-webkit-scrollbar {

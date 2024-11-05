@@ -12,12 +12,18 @@ import {
 	Cell,
 	BarChart,
 	Bar,
+	ResponsiveContainer,
 } from "recharts";
 
 import data from "./budgetData.json";
 import styles from "./visualizer.module.css";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = [
+	'var(--chart-gradient-1)',
+	'var(--chart-gradient-2)',
+	'var(--chart-gradient-3)',
+	'var(--chart-gradient-4)'
+];
 
 type IncomeData = {
 	source: string;
@@ -35,9 +41,10 @@ interface BudgetData {
 	income: IncomeData[];
 	expenses: ExpenseData[];
 }
-
 export default class Visualizer extends React.Component {
 	// Make data preparation methods static
+	static COLORS = ['#61DAFB', '#764ABC', '#2ECC71', '#E74C3C'];
+
 	static prepareLineChartData() {
 		const budgetData = data as BudgetData;
 
@@ -123,7 +130,6 @@ export default class Visualizer extends React.Component {
 		return top5Expenses;
 	}
 
-	// Static Sub-component for LineChart
 	static LineChartComponent = () => {
 		const lineChartData = Visualizer.prepareLineChartData();
 
@@ -131,25 +137,53 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Income vs. Expenses</h3>
 				<div className={styles.chartContainer}>
-					<LineChart width={600} height={350} data={lineChartData}>
-						<XAxis dataKey='date' />
-						<YAxis />
-						<Tooltip />
-						<CartesianGrid stroke='##F9AB5C' strokeDasharray='0' />
-						<Line
-							type='monotone'
-							dataKey='amount'
-							stroke='#5caaf9'
-							strokeWidth={2}
-						/>
-					</LineChart>
+					<ResponsiveContainer width="100%" height={300}>
+						<LineChart data={lineChartData}>
+							<defs>
+								<linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="5%" stopColor="#61DAFB" stopOpacity={0.8}/>
+									<stop offset="95%" stopColor="#61DAFB" stopOpacity={0}/>
+								</linearGradient>
+							</defs>
+							<XAxis 
+								dataKey='date' 
+								axisLine={false}
+								tickLine={false}
+								style={{ fontSize: '12px' }}
+							/>
+							<YAxis 
+								axisLine={false}
+								tickLine={false}
+								style={{ fontSize: '12px' }}
+							/>
+							<Tooltip 
+								contentStyle={{ 
+									backgroundColor: 'var(--chart-tooltip-bg)',
+									borderRadius: 'var(--card-radius)',
+									border: 'none',
+									boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`
+								}}
+							/>
+							<CartesianGrid 
+								stroke="var(--chart-grid)" 
+								strokeDasharray="5 5"
+								vertical={false}
+							/>
+							<Line
+								type='monotone'
+								dataKey='amount'
+								stroke="#61DAFB"
+								strokeWidth={3}
+								dot={false}
+								fill="url(#colorAmount)"
+							/>
+						</LineChart>
+					</ResponsiveContainer>
 				</div>
 			</div>
 		);
 	};
 
-	// Static Sub-component for PieChart
-	// Static Sub-component for PieChart
 	static PieChartComponent = () => {
 		const pieChartData = Visualizer.preparePieChartData();
 
@@ -157,63 +191,123 @@ export default class Visualizer extends React.Component {
 			<div className={styles.card}>
 				<h3>Expense Breakdown</h3>
 				<div className={styles.chartContainer}>
-					<PieChart width={300} height={350}>
-						<Pie
-							data={pieChartData}
-							dataKey='amount'
-							nameKey='category'
-							cx='50%'
-							cy='50%'
-							outerRadius='100%'
-							fill='#5caaf9'
-							label
-						>
-							{pieChartData.map((entry, index) => (
-								<Cell
-									key={`cell-${index}`}
-									fill={COLORS[index % COLORS.length]}
-								/>
-							))}
-						</Pie>
-						<Tooltip />
-						<Legend
-							layout='vertical'
-							verticalAlign='top'
-							align='right'
-							margin={{ top: 20, left: 50, right: 0, bottom: 0 }}
-							// Adjust margin as needed
-						/>
-					</PieChart>
+					<ResponsiveContainer width="100%" height={300}>
+						<PieChart>
+							<Pie
+								data={pieChartData}
+								dataKey='amount'
+								nameKey='category'
+								cx='50%'
+								cy='50%'
+								innerRadius='60%'
+								outerRadius='80%'
+								paddingAngle={5}
+								label={({
+									cx,
+									cy,
+									midAngle,
+									innerRadius,
+									outerRadius,
+									value,
+									index
+								}) => {
+									const RADIAN = Math.PI / 180;
+									const radius = 25 + innerRadius + (outerRadius - innerRadius);
+									const x = cx + radius * Math.cos(-midAngle * RADIAN);
+									const y = cy + radius * Math.sin(-midAngle * RADIAN);
+									return (
+										<text
+											x={x}
+											y={y}
+											fill={COLORS[index % COLORS.length]}
+											textAnchor={x > cx ? 'start' : 'end'}
+											dominantBaseline="central"
+										>
+											{`${value}%`}
+										</text>
+									);
+								}}
+							>
+								{pieChartData.map((entry, index) => (
+									<Cell 
+										key={`cell-${index}`}
+										fill={COLORS[index % COLORS.length]}
+										stroke="none"
+									/>
+								))}
+							</Pie>
+							<Tooltip 
+								contentStyle={{ 
+									backgroundColor: 'var(--chart-tooltip-bg)',
+									borderRadius: 'var(--card-radius)',
+									border: 'none',
+									boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`
+								}}
+							/>
+							<Legend 
+								layout='vertical'
+								verticalAlign='middle'
+								align='right'
+								wrapperStyle={{
+									fontSize: '12px',
+									paddingLeft: '20px'
+								}}
+							/>
+						</PieChart>
+					</ResponsiveContainer>
 				</div>
 			</div>
 		);
 	};
 
-	// Static Sub-component for BarChart
 	static BarChartComponent = () => {
 		const barChartData = Visualizer.prepareBarChartData();
 
 		return (
 			<div className={styles.card}>
 				<h3>Top Expenses</h3>
-				<br />
 				<div className={styles.chartContainer}>
-					<BarChart
-						width={1000}
-						height={400}
-						data={barChartData}
-						barCategoryGap={10} // Space between bars
-					>
-						<XAxis dataKey='category' />
-						<YAxis />
-						<Tooltip />
-						<CartesianGrid stroke='#e0dfdf' strokeDasharray='0' />
-						<Bar
-							dataKey='amount'
-							fill='#5caaf9'
-							barSize={50} // Thinner bars
-						/>
-					</BarChart>
+					<ResponsiveContainer width="100%" height="100%">
+						<BarChart data={barChartData} barCategoryGap={15}>
+							<defs>
+								<linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="0%" stopColor="#764ABC" stopOpacity={0.8}/>
+									<stop offset="100%" stopColor="#764ABC" stopOpacity={0.3}/>
+								</linearGradient>
+							</defs>
+							<XAxis 
+								dataKey='category' 
+								axisLine={false}
+								tickLine={false}
+								style={{ fontSize: '12px' }}
+							/>
+							<YAxis 
+								axisLine={false}
+								tickLine={false}
+								style={{ fontSize: '12px' }}
+							/>
+							<Tooltip 
+								cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+								contentStyle={{ 
+									backgroundColor: 'var(--chart-tooltip-bg)',
+									borderRadius: 'var(--card-radius)',
+									border: 'none',
+									boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`
+								}}
+							/>
+							<CartesianGrid 
+								stroke="var(--chart-grid)" 
+								strokeDasharray="5 5"
+								vertical={false}
+							/>
+							<Bar
+								dataKey='amount'
+								fill="url(#colorBar)"
+								radius={[8, 8, 0, 0]}
+								barSize={55}
+							/>
+						</BarChart>
+					</ResponsiveContainer>
 				</div>
 			</div>
 		);

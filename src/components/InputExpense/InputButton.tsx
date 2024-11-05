@@ -2,6 +2,7 @@ import React, { SetStateAction, useState } from 'react';
 import styles from './InputButton.module.css';
 import IncomeCard from './IncomeCard';
 import ExpenseCard from './ExpenseCard';
+import TransactionCard from './TransactionCard';
 
 //Props for the InputButton component, it is used to add a new transaction
 interface InputButtonProps {
@@ -10,16 +11,13 @@ interface InputButtonProps {
 
 export default function InputButton({ setTransactions }: InputButtonProps) {
     const [showOptions, setShowOptions] = useState(false);
-    const [showIncomeForm, setShowIncomeForm] = useState(false);
-    const [showExpenseForm, setShowExpenseForm] = useState(false);
+    const [showTransactionForm, setShowTransactionForm] = useState(false);
+    const [transactionType, setTransactionType] = useState<'income' | 'expense'>('income');
 
     const handleAddTransaction = (type: 'income' | 'expense') => {
         setShowOptions(false);
-        if (type === 'income') {
-            setShowIncomeForm(true);
-        } else {
-            setShowExpenseForm(true);
-        }
+        setTransactionType(type);
+        setShowTransactionForm(true);
     };
 
     return (
@@ -39,15 +37,11 @@ export default function InputButton({ setTransactions }: InputButtonProps) {
                 </div>
             )}
 
-            <IncomeCard 
-                isVisible={showIncomeForm} 
-                onClose={() => setShowIncomeForm(false)}
+            <TransactionCard 
+                isVisible={showTransactionForm} 
+                onClose={() => setShowTransactionForm(false)}
                 setTransactions={setTransactions}
-            />
-            <ExpenseCard 
-                isVisible={showExpenseForm} 
-                onClose={() => setShowExpenseForm(false)}
-                setTransactions={setTransactions}
+                type={transactionType}
             />
         </div>
     );

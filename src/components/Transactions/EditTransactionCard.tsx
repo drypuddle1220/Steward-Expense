@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { Transaction } from '../../types';
-import styles from "../InputExpense/ExpenseCard.module.css";
+import styles from "../InputExpense/TransactionCard.module.css";
 
 interface EditTransactionCardProps {
     isVisible: boolean;
