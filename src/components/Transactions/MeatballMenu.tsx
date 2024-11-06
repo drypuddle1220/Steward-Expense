@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreHorizontal } from 'lucide-react'; // Changed from MoreVertical
+import { MoreHorizontal } from 'lucide-react';
 import styles from './MeatballMenu.module.css';
 
 interface MeatballMenuProps {
@@ -7,18 +7,29 @@ interface MeatballMenuProps {
     label: string;
     onClick: () => void;
     icon?: React.ReactNode;
-    variant?: 'default' | 'danger';
+    variant?: 'default' | 'danger' | 'edit';
   }[];
 }
 
 const MeatballMenu: React.FC<MeatballMenuProps> = ({ options }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setConfirmingDelete(false);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 300);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        handleClose();
       }
     };
 
@@ -26,8 +37,26 @@ const MeatballMenu: React.FC<MeatballMenuProps> = ({ options }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleOptionClick = (option: { label: string; onClick: () => void; variant?: string }) => {
+    if (option.variant === 'danger') {
+      if (!confirmingDelete) {
+        setConfirmingDelete(true);
+        setTimeout(() => {
+          setConfirmingDelete(false);
+        }, 3000);
+      } else {
+        option.onClick();
+        setConfirmingDelete(false);
+        handleClose();
+      }
+    } else {
+      option.onClick();
+      handleClose();
+    }
+  };
+
   return (
-    <div className={styles.meatballMenu} ref={menuRef}>
+    <div className={`${styles.meatballMenu} ${isClosing ? styles.closing : ''}`} ref={menuRef}>
       <button 
         className={styles.meatballButton}
         onClick={() => setIsOpen(!isOpen)}
@@ -37,20 +66,28 @@ const MeatballMenu: React.FC<MeatballMenuProps> = ({ options }) => {
       </button>
 
       {isOpen && (
-        <div className={styles.menuDropdown}>
-          {options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                option.onClick();
-                setIsOpen(false);
-              }}
-              className={`${styles.menuItem} ${option.variant === 'danger' ? styles.danger : ''}`}
-            >
-              {option.icon && <span className={styles.menuItemIcon}>{option.icon}</span>}
-              {option.label}
-            </button>
-          ))}
+        <div className={`${styles.menuDropdown} ${isClosing ? styles.closing : ''}`}>
+          {options
+            .sort((a, b) => (a.variant === 'danger' ? -1 : 1)) // Sort options to have delete button on the left
+            .map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleOptionClick(option)}
+                className={`
+                  ${styles.menuItem}
+                  ${option.variant === 'danger' ? styles.danger : ''}
+                  ${option.variant === 'edit' ? styles.edit : ''}
+                  ${confirmingDelete && option.variant !== 'danger' ? styles.disabled : ''}
+                  ${confirmingDelete && option.variant === 'danger' ? styles.confirming : ''}
+                `}
+                disabled={confirmingDelete && option.variant !== 'danger'}
+              >
+                {option.icon && <span className={styles.menuItemIcon}>{option.icon}</span>}
+                <span className={styles.menuItemLabel}>
+                  {option.variant === 'danger' && confirmingDelete ? 'Confirm Delete' : option.label}
+                </span>
+              </button>
+            ))}
         </div>
       )}
     </div>

@@ -265,37 +265,6 @@ body {
 	color: var(--text-white);
 }
 
-.deleteBtn{
-	background-color: var(--btn-danger);
-	color: var(--text-white);
-	border-radius: 1rem;
-	border: none;
-	padding: 0.3rem 0.5rem;
-	font-weight: 500;
-	margin-right: 2px;
-	margin-top:3px;
-	transition: all 0.3s ease;
-}
-
-.deleteBtn:hover{
-	background-color: var(--btn-danger-hover);
-}
-
-.editBtn{
-	background-color: var(--btn-primary);
-	color: var(--text-white);
-	border-radius: 1rem;
-	border: none;
-	padding: 0.3rem 0.5rem;
-	margin-top:3px;
-	font-weight: 500;
-	transition: all 0.3s ease;
-}
-
-.editBtn:hover{
-	background-color: var(--btn-primary-hover);
-}
-
 /* Add these media queries at the end of the file */
 @media screen and (max-width: 768px) {
   .transaction {

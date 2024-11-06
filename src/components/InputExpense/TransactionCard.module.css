@@ -1,12 +1,12 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 999;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  z-index: 100;
+  pointer-events: none;
 }
 
 .cardform {
@@ -27,7 +27,7 @@
 @keyframes formAppear {
   from {
       opacity: 0;
-      transform: translate(-50%, -48%) scale(0.95);
+      transform: translate(-50%, -50%) scale(0.95);
   }
   to {
       opacity: 1;
@@ -142,14 +142,13 @@ h2 {
 .visible {
   opacity: 1;
   visibility: visible;
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
 }
 
 .hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  animation: fadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {
@@ -201,4 +200,11 @@ h2 {
   .cancelBtn {
       padding: 12px;
   }
+}
+
+/* Add styles for the edit form container */
+.editFormContainer {
+  position: fixed;
+  z-index: 101;
+  /* ... other styles ... */
 }

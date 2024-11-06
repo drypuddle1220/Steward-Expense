@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Transaction.module.css";
+import editFormStyles from "../InputExpense/TransactionCard.module.css";
 import Navbar from "../Dashboard/Navbar";
 import nav from "../Dashboard/Navbar.module.css";
 import { auth } from "../../../Backend/config/firebaseConfig";
@@ -43,7 +44,7 @@ const Transaction: React.FC = () => {
 	// Add these state variables after other state declarations
 	const [editingTransaction, setEditingTransaction] = useState<TransactionType | null>(null);
 	const [showEditForm, setShowEditForm] = useState(false);
-
+	const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 	// Date Range Picker Configuration
 	// ------------------------------
 	// State for managing date range selection
@@ -61,37 +62,47 @@ const Transaction: React.FC = () => {
 	]);
 	// Toggle visibility of date picker
 	const [showDatePicker, setShowDatePicker] = useState(false);
+	// Add this near your other state declarations
+	const [error, setError] = useState<string | null>(null);
 
 	// Data Loading Effect
 	// ------------------
 	useEffect(() => {
 		const loadData = async () => {
-			if (auth.currentUser) {
-				try {
-					// Load user profile data
-					const userDataResult = await FirestoreService.getUserData(auth.currentUser.uid);
-					if (userDataResult) {
-						setUserData(userDataResult);
-					}
+			// Wait for auth to initialize
+			const unsubscribe = auth.onAuthStateChanged(async (user) => {
+				if (user) {
+					try {
+						setLoading(true);
+						// Load user profile data
+						const userDataResult = await FirestoreService.getUserData(user.uid);
+						if (userDataResult) {
+							setUserData(userDataResult);
+						}
 
-					// Load and transform transactions
-					// Adds default values and converts Firestore timestamps to Date objects
-					const transactions = await FirestoreService.getTransactions(auth.currentUser.uid);
-					setTransactions(transactions.map(t => ({
-						...t,
-						userId: auth.currentUser!.uid,
-						currency: t.currency || 'USD',
-						status: t.status || 'completed',
-						date: t.date.toDate()
-					})) as TransactionType[]);
-				} catch (error) {
-					console.error('Error loading data:', error);
-				} finally {
+						// Load transactions
+						const transactions = await FirestoreService.getTransactions(user.uid);
+						setTransactions(transactions.map(t => ({
+							...t,
+							userId: user.uid,
+							currency: t.currency || 'USD',
+							status: t.status || 'completed',
+							date: t.date.toDate()
+						})) as TransactionType[]);
+					} catch (error) {
+						console.error('Error loading data:', error);
+					} finally {
+						setLoading(false);
+					}
+				} else {
 					setLoading(false);
+					setTransactions([]);
+					setUserData(null);
 				}
-			} else {
-				setLoading(false);
-			}
+			});
+
+			// Cleanup subscription
+			return () => unsubscribe();
 		};
 
 		loadData();
@@ -179,6 +190,7 @@ const Transaction: React.FC = () => {
 				return <AttachMoney />;
 		}
 	};
+
 
 	async function handleDelete(id: string): Promise<void> {
 		if (!auth.currentUser) {
@@ -334,19 +346,24 @@ const Transaction: React.FC = () => {
 									</div>
 									
 									<div className={styles.transactionAmount}>
-										<div><MeatballMenu options={[
-												{
-													label: 'Edit',
-													onClick: () => handleEdit(transaction),
-													icon: <Pencil size={16} />,
-												},
-												{
-													label: 'Delete',
-													onClick: () => handleDelete(transaction.id),
-													icon: <Trash2 size={16} />,
-													variant: 'danger'
-												}
-											]} /></div>
+										<div className={styles.menuContainer}>
+											<MeatballMenu 
+												options={[
+													{
+														label: 'Edit',
+														onClick: () => handleEdit(transaction),
+														icon: <Pencil size={16} />,
+														variant: 'edit'
+													},
+													{
+														label: pendingDeleteId === transaction.id ? 'Confirm Delete' : 'Delete',
+														onClick: () => handleDelete(transaction.id),
+														icon: <Trash2 size={16} />,
+														variant: 'danger'
+													}
+												]} 
+											/>
+										</div>
 									
 										<div className={styles.actions}>
 											
@@ -373,7 +390,13 @@ const Transaction: React.FC = () => {
 				transaction={editingTransaction}
 				setTransactions={setTransactions}
 			/>
-			<div className={`${styles.overlay} ${showEditForm ? styles.visible : styles.hidden}`}></div>
+			<div className={`${editFormStyles.overlay} ${showEditForm ? editFormStyles.visible : editFormStyles.hidden}`}></div>
+			{error && (
+				<div className={styles.errorMessage}>
+					{error}
+					<button onClick={() => window.location.reload()}>Retry</button>
+				</div>
+			)}
 		</div>
 	);
 };

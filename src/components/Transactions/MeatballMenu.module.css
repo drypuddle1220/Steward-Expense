@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 0.5rem;
     height: 32px;
     width: 32px;
   }
@@ -35,39 +36,62 @@
     top: 50%;
     transform: translateY(-50%);
     display: flex;
-    flex-direction: row-reverse;
-    gap: 4px;
-    padding: 4px;
+    flex-direction: row;
+    gap: 8px;
+    padding: 3px;
     background: var(--bg-white);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     z-index: 1000;
-    animation: slideInHorizontalLeft 0.2s ease;
     white-space: nowrap;
+    animation: slideInLeft 0.2s ease;
+  }
+  
+  .closing .menuDropdown {
+    animation: slideOutRight 0.2s ease forwards;
   }
   
   .menuItem {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 12px;
+    padding: 8px 12px;
     border: none;
     background: transparent;
     color: var(--text-primary);
     font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.2s ease;
   }
   
-  .menuItem:hover {
-    background: var(--bg-secondary);
+  
+  .danger {
+    color: var(--text-primary);
   }
   
-  .menuItem:focus {
-    outline: none;
-    background: var(--bg-secondary);
+  .danger:hover {
+    background-color: var(--btn-danger);
+    color: white;
+  }
+
+  .edit:hover{
+    background-color: var(--btn-primary-hover);
+    color: var(--text-white);
+  }
+
+  .danger:hover .menuItemIcon {
+    color: white;
+  }
+
+  .edit:hover .menuItemIcon {
+    color: var(--text-white);
+  }
+  
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    
   }
   
   .menuItemIcon {
@@ -78,27 +102,45 @@
     height: 16px;
   }
   
-  .danger {
-    color: var(--btn-danger);
-  }
-  
-  .danger:hover {
-    background: var(--btn-danger);
-    color: var(--text-white);
-  }
-  
-  .danger:hover .menuItemIcon {
-    color: var(--text-white);
-  }
-  
-  @keyframes slideInHorizontalLeft {
+  @keyframes slideInLeft {
     from {
       opacity: 0;
-      transform: translate(10px, -50%);
+      transform: translate(20px, -50%);
     }
     to {
       opacity: 1;
       transform: translate(0, -50%);
+    }
+  }
+  
+  @keyframes slideOutRight {
+    0% {
+      opacity: 1;
+      transform: translate(0, -50%);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(30px, -50%);
+      filter: blur(2px);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateX(15px) scale(0.98);
+      filter: blur(2px);
+    }
+    60% {
+      opacity: 0.8;
+      transform: translateX(-2px) scale(1.01);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
     }
   }
   
@@ -112,9 +154,84 @@
     visibility: hidden;
     transition: all 0.2s ease;
     pointer-events: none;
+  } 
+
+  .meatballMenu[data-state="closed"] .menuDropdown {
+    animation: slideInHorizontalRight 0.2s ease;
   }
   
   .meatballMenu[data-state="open"]::after {
     opacity: 1;
     visibility: visible;
+  }
+
+  .menuItem:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .menuItem:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .closing .menuItem {
+    animation: pushIn 0.3s ease forwards;
+  }
+
+  .closing .menuItem:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .closing .menuItem:nth-child(2) {
+    animation-delay: 0s;
+  }
+
+  @keyframes pushOut {
+    0% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pushIn {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .confirming .menuItem:not(.danger) {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .confirming .menuItem.danger {
+    background-color: var(--danger-color);
+    color: white;
+  }
+
+  .confirming .menuItem.danger:hover {
+    background-color: var(--danger-hover-color);
+  }
+
+  .confirming {
+    background-color: var(--btn-danger);
+    color: white;
+  }
+
+  .confirming .menuItemIcon {
+    color: white;
   }

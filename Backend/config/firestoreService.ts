@@ -39,6 +39,8 @@ export class FirestoreService {
 
   // Retrieves a user's data from Firestore
   static async getUserData(userId: string) {
+    if (!userId) throw new Error('User ID is required');
+    
     try {
       const userDoc = await getDoc(doc(db, 'users', userId));
       return userDoc.exists() ? userDoc.data() : null;  // Returns null if user doesn't exist
@@ -80,6 +82,8 @@ export class FirestoreService {
   // Retrieves all transactions for a specific user
   //We use this to display the transactions in the dashboard
   static async getTransactions(userId: string): Promise<Transaction[]> {
+    if (!userId) throw new Error('User ID is required');
+    
     // 1. Get reference to the transactions subcollection
     const transactionsRef = collection(db, 'users', userId, 'transactions');
     
