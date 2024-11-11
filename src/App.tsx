@@ -24,7 +24,7 @@ const App: React.FC = () => {
 				<Route element={<ProtectedRoute auth={auth} />}>
 					<Route path='/dashboard' element={<Dashboard />} />
 					<Route path='/transaction' element={<Transaction />} />
-					<Route path='/budget' element={<Budget />} />
+					<Route path='/GoalsTracker' element={<Budget />} />
 					{/* Add more protected routes here */}
 				</Route>
 			</Routes>

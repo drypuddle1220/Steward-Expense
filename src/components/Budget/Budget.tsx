@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Budget.module.css";
 import Sidebar from "../Sidebar/sidebar";
-import ProgressBar from "./ProgressBar";
+import BudgetProgressBar from "./ProgressBar";
+import SavingsProgressBar from "./ProgressBar";
 import NewGoalForm from "./NewGoalForm";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import MeatballMenu from "../Transactions/MeatballMenu";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 interface BudgetGoal {
 	id: string;
@@ -23,7 +24,7 @@ interface BudgetGoal {
 interface NewGoalData {
 	title: string;
 	targetAmount: number;
-	tags: string[];
+	tags?: string[];
 }
 
 interface BudgetGoalData {
@@ -35,24 +36,34 @@ interface BudgetGoalData {
 	createdAt: Date;
 }
 
-interface NewGoalFormProps {
-	isVisible: boolean;
-	onClose: () => void;
-	onSubmit: (goalData: NewGoalData) => Promise<void>;
-	type: "budget" | "savings";
-	initialData?: BudgetGoal | null;
+interface SavingsGoalData {
+	id: string;
+	title: string;
+	targetAmount: number;
+	amountSaved: number;
+	createdAt: Date;
 }
+
+// interface NewGoalFormProps {
+// 	isVisible: boolean;
+// 	onClose: () => void;
+// 	onSubmit: (goalData: NewGoalData) => Promise<void>;
+// 	type: "budget" | "savings";
+// 	initialData?: BudgetGoal | null;
+// }
 
 const Budget: React.FC = () => {
 	const [budgetGoals, setBudgetGoals] = useState<BudgetGoal[]>([]);
+	const [savingsGoals, setSavingsGoals] = useState<SavingsGoalData[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [showNewBudgetForm, setShowNewBudgetForm] = useState(false);
 	const [showNewSavingsForm, setShowNewSavingsForm] = useState(false);
 	const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-	const [showEditForm, setShowEditForm] = useState(false);
 	const [editingGoal, setEditingGoal] = useState<BudgetGoal | null>(null);
+	const [editingSavingsGoal, setEditingSavingsGoal] =
+		useState<SavingsGoalData | null>(null);
 	useEffect(() => {
-		const loadBudgetData = async () => {
+		const loadAllData = async () => {
 			const user = auth.currentUser;
 			if (!user) return;
 
@@ -66,6 +77,11 @@ const Budget: React.FC = () => {
 				const budgetGoalsData = (await FirestoreService.getBudgetGoals(
 					user.uid
 				)) as BudgetGoalData[];
+
+				const savingsGoalsData =
+					(await FirestoreService.getSavingsGoals(
+						user.uid
+					)) as SavingsGoalData[];
 
 				// Process each budget goal
 				const processedGoals = budgetGoalsData.map(
@@ -86,11 +102,11 @@ const Budget: React.FC = () => {
 
 						// Group amounts by tag with assigned colors
 						const colors = [
-							"#3498db",
-							"#2ecc71",
-							"#e74c3c",
-							"#f1c40f",
-							"#9b59b6",
+							"#5dade2",
+							"#58d68d",
+							"#ec7063",
+							"#f7dc6f",
+							"#af7ac5",
 						];
 						const tagAmounts = goal.tags.map((tag, index) => ({
 							name: tag,
@@ -109,7 +125,7 @@ const Budget: React.FC = () => {
 						};
 					}
 				);
-
+				setSavingsGoals(savingsGoalsData);
 				setBudgetGoals(processedGoals);
 				setLoading(false);
 			} catch (error) {
@@ -118,12 +134,17 @@ const Budget: React.FC = () => {
 			}
 		};
 
-		loadBudgetData();
+		loadAllData();
 	}, []);
 
 	const handleEdit = (goal: BudgetGoal) => {
 		setEditingGoal(goal);
 		setShowNewBudgetForm(true);
+	};
+
+	const handleEditSavings = (goal: SavingsGoalData) => {
+		setEditingSavingsGoal(goal);
+		setShowNewSavingsForm(true);
 	};
 
 	const handleDelete = async (goalId: string) => {
@@ -141,8 +162,23 @@ const Budget: React.FC = () => {
 			console.error("Error deleting budget goal:", error);
 		}
 	};
+	const handleDeleteSavings = async (goalId: string) => {
+		if (!auth.currentUser) {
+			alert("Please log in to delete goals");
+			return;
+		}
+		try {
+			await FirestoreService.deleteSavingsGoal(
+				auth.currentUser.uid,
+				goalId
+			);
+			await refreshSavingsData();
+		} catch (error) {
+			console.error("Error deleting savings goal:", error);
+		}
+	};
 
-	const GoalItem: React.FC<{ goal: BudgetGoal }> = ({ goal }) => {
+	const BudgetGoalItem: React.FC<{ goal: BudgetGoal }> = ({ goal }) => {
 		const percentageUsed = Math.round(
 			(goal.currentAmount / goal.targetAmount) * 100
 		);
@@ -193,7 +229,10 @@ const Budget: React.FC = () => {
 				</div>
 
 				<div className={styles.progressSection}>
-					<ProgressBar tags={goal.tags} total={goal.targetAmount} />
+					<BudgetProgressBar.BudgetProgressBar
+						tags={goal.tags}
+						total={goal.targetAmount}
+					/>
 				</div>
 
 				<div className={styles.tagBreakdown}>
@@ -222,6 +261,146 @@ const Budget: React.FC = () => {
 							</span>
 						</div>
 					))}
+				</div>
+			</div>
+		);
+	};
+
+	const SavingsGoalItem: React.FC<{ goal: SavingsGoalData }> = ({ goal }) => {
+		const [isSuccess, setIsSuccess] = useState(false);
+		const [isAdding, setIsAdding] = useState(false);
+		const [amount, setAmount] = useState("");
+
+		const handleAddSavings = async (e: React.FormEvent) => {
+			e.preventDefault();
+			if (!amount || !auth.currentUser) return;
+
+			try {
+				await FirestoreService.updateSavingsGoal(
+					auth.currentUser.uid,
+					goal.id,
+					{
+						...goal,
+						amountSaved: goal.amountSaved + Number(amount),
+					}
+				);
+
+				setIsSuccess(true);
+				setIsAdding(false);
+				setAmount("");
+
+				await refreshSavingsData();
+
+				setTimeout(() => {
+					setIsSuccess(false);
+				}, 1500);
+			} catch (error) {
+				console.error("Error updating savings:", error);
+			}
+		};
+
+		const percentageSaved = Math.round(
+			(goal.amountSaved / goal.targetAmount) * 100
+		);
+		const remainingAmount = goal.targetAmount - goal.amountSaved;
+
+		return (
+			<div className={styles.goalItem}>
+				<div className={styles.goalHeader}>
+					<div className={styles.goalTitleSection}>
+						<h4 className={styles.goalTitle}>{goal.title}</h4>
+						<span className={styles.percentageBadge}>
+							{percentageSaved}% Saved
+						</span>
+					</div>
+					<MeatballMenu
+						options={[
+							{
+								label: "Edit",
+								onClick: () => handleEditSavings(goal),
+								icon: <Pencil size={16} />,
+								variant: "edit",
+							},
+							{
+								label:
+									pendingDeleteId === goal.id
+										? "Confirm Delete"
+										: "Delete",
+								onClick: () => handleDeleteSavings(goal.id),
+								icon: <Trash2 size={16} />,
+								variant: "danger",
+							},
+						]}
+					/>
+				</div>
+
+				<div className={styles.goalAmount}>
+					<span className={styles.currentAmount}>
+						${(goal.amountSaved || 0).toLocaleString()}
+					</span>
+					<span className={styles.separator}>/</span>
+					<span className={styles.targetAmount}>
+						${(goal.targetAmount || 0).toLocaleString()}
+					</span>
+				</div>
+
+				<div className={styles.progressSection}>
+					<SavingsProgressBar.SavingsProgressBar
+						savedAmount={goal.amountSaved}
+						total={goal.targetAmount}
+					/>
+				</div>
+
+				<div className={styles.savingsInfo}>
+					<div className={styles.savingsInfoItem}>
+						<span>Remaining to save</span>
+						<span className={styles.savingsInfoValue}>
+							${remainingAmount.toLocaleString()}
+						</span>
+					</div>
+					<div className={styles.savingsInfoItem}>
+						<span>Monthly target</span>
+						<span className={styles.savingsInfoValue}>
+							${Math.ceil(remainingAmount / 12).toLocaleString()}
+							/month
+						</span>
+					</div>
+				</div>
+
+				<div className={styles.savingsActions}>
+					<div
+						className={`${styles.savingsInputContainer} ${
+							isAdding ? styles.expanded : ""
+						}`}
+					>
+						<form
+							onSubmit={handleAddSavings}
+							className={styles.savingsForm}
+						>
+							<input
+								type='number'
+								value={amount}
+								onChange={(e) => setAmount(e.target.value)}
+								placeholder='Enter amount'
+								className={styles.savingsInput}
+							/>
+							<button
+								type='submit'
+								className={styles.confirmButton}
+							>
+								Confirm
+							</button>
+						</form>
+					</div>
+					<button
+						className={`${styles.addSavingsBtn} ${
+							isSuccess ? styles.success : ""
+						} ${isAdding ? styles.shifted : ""}`}
+						onClick={() => setIsAdding(!isAdding)}
+					>
+						<Plus className={styles.addSavingsIcon} size={20} />
+						{isAdding ? "Cancel" : "Add to Savings"}
+					</button>
 				</div>
 			</div>
 		);
@@ -267,11 +446,11 @@ const Budget: React.FC = () => {
 					);
 
 					const colors = [
-						"#3498db",
-						"#2ecc71",
-						"#e74c3c",
-						"#f1c40f",
-						"#9b59b6",
+						"#5dade2",
+						"#58d68d",
+						"#ec7063",
+						"#f7dc6f",
+						"#af7ac5",
 					];
 					const tagAmounts = goal.tags.map((tag, index) => ({
 						name: tag,
@@ -299,6 +478,17 @@ const Budget: React.FC = () => {
 		}
 	};
 
+	const refreshSavingsData = async () => {
+		setLoading(true);
+		const user = auth.currentUser;
+		if (!user) return;
+		const savingsGoals = (await FirestoreService.getSavingsGoals(
+			user.uid
+		)) as SavingsGoalData[];
+		setSavingsGoals(savingsGoals);
+		setLoading(false);
+	};
+
 	const handleSubmitBudgetGoal = async (goalData: NewGoalData) => {
 		const user = auth.currentUser;
 		if (!user) return;
@@ -321,24 +511,66 @@ const Budget: React.FC = () => {
 				await FirestoreService.addBudgetGoal(user.uid, {
 					title: goalData.title,
 					targetAmount: goalData.targetAmount,
-					tags: goalData.tags,
+					tags: goalData.tags || [],
 					createdAt: new Date(),
 					type: "budget",
 				});
 			}
 
-			await refreshBudgetData();
 			setShowNewBudgetForm(false);
 			setEditingGoal(null);
+			await refreshBudgetData();
 		} catch (error) {
 			console.error("Error saving budget goal:", error);
 		}
 	};
 
-	const handleSubmitSavingsGoal = (goalData: any) => {
-		// Handle savings goal submission
-		console.log("New savings goal:", goalData);
-		// Add your logic here to save to database
+	const handleSubmitSavingsGoal = async (goalData: any) => {
+		const user = auth.currentUser;
+		if (!user) return;
+		try {
+			if (editingSavingsGoal) {
+				await FirestoreService.updateSavingsGoal(
+					user.uid,
+					editingSavingsGoal.id,
+					goalData
+				);
+			} else {
+				await FirestoreService.addSavingsGoal(user.uid, {
+					title: goalData.title,
+					targetAmount: goalData.targetAmount,
+					amountSaved: goalData.amountSaved || 0,
+					createdAt: new Date(),
+					type: "savings",
+				});
+			}
+
+			await refreshSavingsData();
+			setShowNewSavingsForm(false);
+			setEditingSavingsGoal(null);
+
+			return (
+				<NewGoalForm
+					key={Date.now()}
+					isVisible={showNewSavingsForm}
+					onClose={() => setShowNewSavingsForm(false)}
+					onSubmit={handleSubmitSavingsGoal}
+					type='savings'
+					initialData={
+						editingSavingsGoal
+							? {
+									title: editingSavingsGoal.title,
+									targetAmount:
+										editingSavingsGoal.targetAmount,
+									amountSaved: editingSavingsGoal.amountSaved,
+							  }
+							: undefined
+					}
+				/>
+			);
+		} catch (error) {
+			console.error("Error saving user data:", error);
+		}
 	};
 
 	return (
@@ -357,7 +589,7 @@ const Budget: React.FC = () => {
 						<div>Loading...</div>
 					) : (
 						budgetGoals.map((goal, index) => (
-							<GoalItem key={index} goal={goal} />
+							<BudgetGoalItem key={index} goal={goal} />
 						))
 					)}
 				</div>
@@ -370,6 +602,13 @@ const Budget: React.FC = () => {
 							label='New Savings Goal'
 						/>
 					</div>
+					{loading ? (
+						<div>Loading...</div>
+					) : (
+						savingsGoals.map((goal, index) => (
+							<SavingsGoalItem key={index} goal={goal} />
+						))
+					)}
 				</div>
 
 				<NewGoalForm
@@ -388,6 +627,16 @@ const Budget: React.FC = () => {
 					onClose={() => setShowNewSavingsForm(false)}
 					onSubmit={handleSubmitSavingsGoal}
 					type='savings'
+					initialData={
+						editingSavingsGoal
+							? {
+									title: editingSavingsGoal.title,
+									targetAmount:
+										editingSavingsGoal.targetAmount,
+									amountSaved: editingSavingsGoal.amountSaved,
+							  }
+							: undefined
+					}
 				/>
 			</div>
 		</div>

@@ -7,13 +7,15 @@ interface NewGoalFormProps {
 	onSubmit: (goalData: {
 		title: string;
 		targetAmount: number;
-		tags: string[];
+		tags?: string[];
+		amountSaved?: number;
 	}) => void;
 	type: "budget" | "savings";
 	initialData?: {
 		title: string;
 		targetAmount: number;
-		tags: { name: string }[];
+		tags?: { name: string }[];
+		amountSaved?: number;
 	};
 }
 
@@ -27,13 +29,16 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 	const [formData, setFormData] = useState<{
 		title: string;
 		targetAmount: string;
-		tags: string | undefined;
+		amountSaved?: string;
+		tags?: string;
 	}>({
 		title: initialData?.title || "",
 		targetAmount: initialData?.targetAmount.toString() || "",
-		tags: initialData?.tags
-			? initialData.tags.map((tag) => tag.name).join(", ")
-			: "",
+		amountSaved: initialData?.amountSaved?.toString() || "",
+		tags:
+			type === "budget"
+				? initialData?.tags?.map((tag) => tag.name).join(", ") || ""
+				: undefined,
 	});
 
 	// Reset form when initialData changes
@@ -42,12 +47,18 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 			setFormData({
 				title: initialData.title,
 				targetAmount: initialData.targetAmount.toString(),
-				tags: initialData.tags.map((tag) => tag.name).join(", "),
+				amountSaved: initialData.amountSaved?.toString() || "",
+				tags:
+					type === "budget"
+						? initialData.tags?.map((tag) => tag.name).join(", ") ||
+						  ""
+						: undefined,
 			});
 		} else {
 			setFormData({
 				title: "",
 				targetAmount: "",
+				amountSaved: type === "savings" ? "" : undefined,
 				tags: type === "budget" ? "" : undefined,
 			});
 		}
@@ -60,6 +71,9 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 		onSubmit({
 			...formData,
 			targetAmount: parseFloat(formData.targetAmount),
+			amountSaved: formData.amountSaved
+				? parseFloat(formData.amountSaved)
+				: undefined,
 			tags: formData.tags?.split(",").map((tag) => tag.trim()) || [],
 		});
 		onClose();
@@ -101,6 +115,24 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 							required
 						/>
 					</div>
+
+					{type === "savings" && (
+						<div className={styles.formGroup}>
+							<label htmlFor='amountSaved'>Amount Saved</label>
+							<input
+								type='number'
+								id='amountSaved'
+								value={formData.amountSaved}
+								defaultValue={0}
+								onChange={(e) =>
+									setFormData({
+										...formData,
+										amountSaved: e.target.value,
+									})
+								}
+							/>
+						</div>
+					)}
 
 					{type === "budget" && (
 						<div className={styles.formGroup}>

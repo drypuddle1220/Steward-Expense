@@ -55,23 +55,11 @@ const Transaction: React.FC = () => {
 		}[]
 	>([
 		{
-			startDate: new Date(
-				new Date().toLocaleString("en-US", {
-					timeZone: "America/New_York",
-				})
-			),
-			endDate: new Date(
-				new Date().toLocaleString("en-US", {
-					timeZone: "America/New_York",
-				})
-			),
+			startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)), // 1 months ago
+			endDate: new Date(), // Today
 			key: "selection",
 		},
 	]);
-
-	// Then set the hours separately
-	dateRange[0].startDate.setHours(0, 0, 0, 0);
-	dateRange[0].endDate.setHours(23, 59, 59, 999);
 
 	// Toggle visibility of date picker
 	const [showDatePicker, setShowDatePicker] = useState(false);

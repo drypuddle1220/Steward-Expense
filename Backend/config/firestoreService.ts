@@ -280,4 +280,81 @@ export class FirestoreService {
 			throw error;
 		}
 	}
+
+	//savings goals functions for add, update, delete, and get
+	static async addSavingsGoal(
+		userId: string,
+		goalData: {
+			title: string;
+			targetAmount: number;
+			amountSaved: number;
+			createdAt: Date;
+			type: "savings";
+		}
+	) {
+		try {
+			const savingGoalsRef = collection(
+				db,
+				"users",
+				userId,
+				"savingGoals"
+			);
+			const docRef = await addDoc(savingGoalsRef, {
+				...goalData,
+				createdAt: Timestamp.fromDate(goalData.createdAt),
+			});
+			return docRef.id;
+		} catch (error) {
+			console.error("Error adding saving goal:", error);
+			throw error;
+		}
+	}
+	static async updateSavingsGoal(
+		userId: string,
+		goalId: string,
+		updatedData: any
+	) {
+		try {
+			const goalRef = await doc(
+				db,
+				"users",
+				userId,
+				"savingGoals",
+				goalId
+			);
+			await updateDoc(goalRef, updatedData);
+		} catch (error) {
+			console.error("Error updating saving goal:", error);
+			throw error;
+		}
+	}
+
+	static async deleteSavingsGoal(userId: string, goalId: string) {
+		try {
+			const goalRef = doc(db, "users", userId, "savingGoals", goalId);
+			await deleteDoc(goalRef);
+		} catch (error) {
+			console.error("Error deleting saving goal:", error);
+			throw error;
+		}
+	}
+
+	static async getSavingsGoals(userId: string) {
+		try {
+			const savingGoalsRef = collection(
+				db,
+				"users",
+				userId,
+				"savingGoals"
+			);
+			const querySnapshot = await getDocs(savingGoalsRef);
+			return querySnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+		} catch (error) {
+			console.error("Error getting saving goals:", error);
+			throw error;
+		}
+	}
 }
