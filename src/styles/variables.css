@@ -1,71 +1,79 @@
 :root {
-    height: 100vh; /* Ensure the root container takes full height */
-    /* Background Colors */
-    --bg-primary: #121212;        /* Login page, Modal background */
-    --bg-secondary: #F8F9FA;      /* Dashboard, Transaction list background */
-    --bg-white: #ffffff;          /* Cards, Buttons background */
-    --bg-input: #222;             /* Input fields background */
-    --bg-footer: #999898;          /* Footer background */
-    
-    /* Text Colors */
-    --text-primary: #17191a;      /* Headers, Main text */
-    --text-secondary: #636e72;    /* Secondary text, Filter buttons */
-    --text-light: #b2bec3;        /* Payment method, Dates */
-    --text-white: #ffffff;        /* Button text, Modal text */
-    
-    /* Border & Input Colors */
-    --border-light: #e0e0e0;      /* Input borders, Card borders */
-    --border-focus: #74b9ff;      /* Input focus, Button hover */
-    --border-dark: #444;          /* Dark input borders */
-    
-    /* Status Colors */
-    --income: #00b894;            /* Income amounts */
-    --expense: #ff7675;           /* Expense amounts, Delete button */
-    
-    /* Button & Interactive Colors */
-    --btn-primary: #74B9FF;       /* Primary buttons, Edit button */
-    --btn-primary-hover: #4d94ff; /* Button hover states */
-    --btn-danger: #ff7675;        /* Delete button */
-    --btn-danger-hover: #ff4d4d;  /* Delete button hover */
-    
-    /* Chart & UI Colors */
-    --chart-blue: #3498db;        /* Progress bars, Charts */
-    --skeleton-start: #ececec;     /* Skeleton loader start color */
-    --skeleton-middle: #f5f5f5;    /* Skeleton loader middle color */
-    --skeleton-end: #ececec;       /* Skeleton loader end color */
-    
-    /* Chart & Visualization Colors */
-    --chart-gradient-1: #61DAFB;
-    --chart-gradient-2: #764ABC;
-    --chart-gradient-3: #2ECC71;
-    --chart-gradient-4: #E74C3C;
-    
-    /* Card & Container Styles */
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --card-border: rgba(255, 255, 255, 0.2);
-    --card-border-hover: rgba(97, 218, 251, 0.5);
-    --card-shadow: rgba(0, 0, 0, 0.1);
-    --card-radius: 16px;
-    
-    /* Chart Grid & Axis */
-    --chart-grid: #eee;
-    --chart-text: #666;
-    --chart-tooltip-bg: rgba(255, 255, 255, 0.8);
-    --chart-tooltip-shadow: rgba(0, 0, 0, 0.1);
-    
-    /* Spacing & Layout */
-    --grid-gap: 10px;
-    --card-padding: 24px;
-    --chart-padding: 10px;
+	height: 100vh; /* Ensure the root container takes full height */
+	/* Background Colors */
+	--bg-primary: #121212; /* Login page, Modal background */
+	--bg-secondary: #f8f9fa; /* Dashboard, Transaction list background */
+	--bg-white: #ffffff; /* Cards, Buttons background */
+	--bg-input: #222; /* Input fields background */
+	--bg-footer: #999898; /* Footer background */
+
+	/* Text Colors */
+	--text-primary: #17191a; /* Headers, Main text */
+	--text-secondary: #636e72; /* Secondary text, Filter buttons */
+	--text-light: #b2bec3; /* Payment method, Dates */
+	--text-white: #ffffff; /* Button text, Modal text */
+
+	/* Border & Input Colors */
+	--border-light: #e0e0e0; /* Input borders, Card borders */
+	--border-focus: #74b9ff; /* Input focus, Button hover */
+	--border-dark: #444; /* Dark input borders */
+
+	/* Status Colors */
+	--income: #00b894; /* Income amounts */
+	--expense: #ff7675; /* Expense amounts, Delete button */
+
+	/* Button & Interactive Colors */
+	--btn-primary: #74b9ff; /* Primary buttons, Edit button */
+	--btn-primary-hover: #4d94ff; /* Button hover states */
+	--btn-danger: #ff7675; /* Delete button */
+	--btn-danger-hover: #ff4d4d; /* Delete button hover */
+
+	/* Chart & UI Colors */
+	--chart-blue: #3498db; /* Progress bars, Charts */
+	--skeleton-start: #ececec; /* Skeleton loader start color */
+	--skeleton-middle: #f5f5f5; /* Skeleton loader middle color */
+	--skeleton-end: #ececec; /* Skeleton loader end color */
+
+	/* Chart & Visualization Colors */
+	--chart-gradient-1: #61dafb;
+	--chart-gradient-2: #764abc;
+	--chart-gradient-3: #2ecc71;
+	--chart-gradient-4: #e74c3c;
+
+	/* Card & Container Styles */
+	--card-bg: rgba(255, 255, 255, 0.9);
+	--card-border: rgba(255, 255, 255, 0.2);
+	--card-border-hover: rgba(97, 218, 251, 0.5);
+	--card-shadow: rgba(0, 0, 0, 0.1);
+	--card-radius: 16px;
+
+	/* Chart Grid & Axis */
+	--chart-grid: #eee;
+	--chart-text: #666;
+	--chart-tooltip-bg: rgba(255, 255, 255, 0.8);
+	--chart-tooltip-shadow: rgba(0, 0, 0, 0.1);
+
+	/* Spacing & Layout */
+	--grid-gap: 10px;
+	--card-padding: 24px;
+	--chart-padding: 10px;
+
+	/* Gradients */
+	--gradient-blue: linear-gradient(90deg, #3b82f6, #2563eb);
+	--gradient-green: linear-gradient(90deg, #10b981, #059669);
+	--gradient-orange: linear-gradient(90deg, #f59e0b, #d97706);
+	--gradient-bg: linear-gradient(145deg, #ffffff, #f8fafc);
+	--border-light: rgba(226, 232, 240, 0.8);
+	--shadow-sm: 0 2px 4px rgba(148, 163, 184, 0.05);
+	--shadow-md: 0 4px 6px rgba(148, 163, 184, 0.1);
 }
 
 /* Dark theme example (you can add this later) */
-[data-theme='dark'] {
-    --card-bg: rgba(30, 30, 30, 0.9);
-    --card-border: rgba(0, 0, 0, 0.2);
-    --card-border-hover: rgba(97, 218, 251, 0.492);
-    --chart-grid: #333;
-    --chart-text: #999;
-    --chart-tooltip-bg: rgba(30, 30, 30, 0.8);
+[data-theme="dark"] {
+	--card-bg: rgba(30, 30, 30, 0.9);
+	--card-border: rgba(0, 0, 0, 0.2);
+	--card-border-hover: rgba(97, 218, 251, 0.492);
+	--chart-grid: #333;
+	--chart-text: #999;
+	--chart-tooltip-bg: rgba(30, 30, 30, 0.8);
 }
-

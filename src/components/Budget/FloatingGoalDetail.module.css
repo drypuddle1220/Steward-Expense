@@ -1,0 +1,462 @@
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	backdrop-filter: blur(0px);
+	animation: fadeInBackdrop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.container {
+	background: var(--gradient-bg);
+	border: 1px solid var(--border-light);
+	padding: 2rem;
+	border-radius: 1.5rem;
+	width: 90%;
+	max-width: 800px;
+	height: 80vh;
+	position: relative;
+	z-index: 1001;
+	box-shadow: var(--shadow-md);
+	transform: scale(0.95) translateY(20px);
+	opacity: 0;
+	animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	animation-delay: 0.1s;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+	opacity: 0;
+	transform: translateY(10px);
+	animation: fadeInContent 0.4s ease forwards;
+	animation-delay: 0.3s;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 2rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--border-light);
+}
+
+.header h2 {
+	font-size: 1.75rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0;
+}
+
+.closeButton {
+	background: transparent;
+	border: none;
+	padding: 0.5rem;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0.7;
+}
+
+.closeButton:hover {
+	background: var(--gradient-bg);
+	box-shadow: var(--shadow-sm);
+	transform: rotate(90deg) scale(1.1);
+	opacity: 1;
+}
+
+.summary {
+	background: var(--gradient-bg);
+	border: 1px solid var(--border-light);
+	padding: 1.5rem;
+	border-radius: 1rem;
+	margin-bottom: 2rem;
+	box-shadow: var(--shadow-sm);
+	flex-shrink: 0;
+}
+
+.summaryStats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.statItem {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1rem;
+	background: rgba(255, 255, 255, 0.7);
+	border-radius: 0.75rem;
+	border: 1px solid var(--border-light);
+	box-shadow: var(--shadow-sm);
+}
+
+.statLabel {
+	color: var(--text-secondary);
+	font-size: 0.875rem;
+}
+
+.statValue {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	background: linear-gradient(90deg, #3b82f6, #2563eb);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.amounts {
+	display: flex;
+	align-items: baseline;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.current {
+	font-size: 2rem;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.separator {
+	color: var(--text-secondary);
+	font-size: 1.5rem;
+}
+
+.target {
+	color: var(--text-secondary);
+	font-size: 1.5rem;
+}
+
+.progress {
+	margin-top: 1rem;
+}
+
+.transactionsList {
+	flex: 1;
+	overflow-y: auto;
+	padding: 1rem;
+	background: var(--gradient-bg);
+	border: 1px solid var(--border-light);
+	border-radius: 1rem;
+	margin-top: 1rem;
+	box-shadow: var(--shadow-sm);
+}
+
+.transactionsList h3 {
+	margin: 0 0 1rem 0;
+	color: var(--text-primary);
+	font-size: 1.25rem;
+}
+
+.transactionItem {
+	padding: 1.25rem;
+	border-bottom: 1px solid var(--border-light);
+	transition: background-color 0.2s ease;
+}
+
+.transactionItem:hover {
+	background-color: var(--bg-secondary);
+}
+
+.transactionMain {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.transactionInfo {
+	flex: 1;
+}
+
+.description {
+	font-weight: 500;
+	color: var(--text-primary);
+	margin-bottom: 0.25rem;
+	display: block;
+}
+
+.amount {
+	color: var(--danger-dark);
+	font-weight: 600;
+	font-size: 1.125rem;
+}
+
+.date {
+	color: var(--text-secondary);
+	font-size: 0.875rem;
+}
+
+.tags {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.tag {
+	background-color: var(--bg-secondary);
+	padding: 0.25rem 0.75rem;
+	border-radius: 1rem;
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+
+.noTransactions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 300px;
+	color: var(--text-secondary);
+	text-align: center;
+	padding: 2rem;
+}
+
+.noTransactions p {
+	margin: 0;
+	font-size: 1rem;
+}
+
+@keyframes fadeInBackdrop {
+	0% {
+		background-color: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
+	}
+	100% {
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+}
+
+@keyframes popIn {
+	0% {
+		transform: scale(0.95) translateY(20px);
+		opacity: 0;
+		box-shadow: var(--shadow-sm);
+	}
+	100% {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+		box-shadow: var(--shadow-md);
+	}
+}
+
+@keyframes fadeInContent {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeOutBackdrop {
+	from {
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+	to {
+		background-color: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
+	}
+}
+
+@keyframes popOut {
+	from {
+		transform: scale(1);
+		opacity: 1;
+	}
+	to {
+		transform: scale(0.95) translateY(20px);
+		opacity: 0;
+	}
+}
+
+/* Custom scrollbar for the container */
+.container::-webkit-scrollbar {
+	width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+	background: var(--gradient-bg);
+	border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb {
+	background: var(--gradient-blue);
+	border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+	background: var(--gradient-green);
+	background: var(--text-secondary);
+}
+
+.contributionsList {
+	background: var(--gradient-bg);
+	border: 1px solid var(--border-light);
+	border-radius: 1rem;
+	padding: 1.5rem;
+	box-shadow: var(--shadow-sm);
+}
+
+.contributionsHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+}
+
+.contributionsHeader h3 {
+	font-size: 1.25rem;
+	color: var(--text-primary);
+	margin: 0;
+}
+
+.totalContributions {
+	color: var(--text-secondary);
+	font-size: 0.875rem;
+}
+
+.contributionsTableHeader {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	padding: 0.75rem 1rem;
+	background: var(--gradient-bg);
+	border-radius: 0.5rem;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+}
+
+.contributionItem {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	padding: 1rem;
+	border-bottom: 1px solid var(--border-light);
+	transition: background-color 0.2s ease;
+}
+
+.contributionItem:hover {
+	background: var(--gradient-bg);
+	border-radius: 0.5rem;
+}
+
+.contributionAmount {
+	background: var(--gradient-green);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: 600;
+}
+
+.contributionDate {
+	color: var(--text-secondary);
+}
+
+.contributionProgress {
+	color: var(--text-primary);
+	font-weight: 500;
+}
+
+.noContributions {
+	text-align: center;
+	padding: 3rem 1rem;
+	color: var(--text-secondary);
+}
+
+.noContributionsSubtext {
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
+	color: var(--text-tertiary);
+}
+
+.overlay.closing {
+	animation: fadeOutBackdrop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.container.closing {
+	animation: popOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Different gradients for different stats */
+.statItem:nth-child(1) .statValue {
+	background: var(--gradient-blue);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.statItem:nth-child(2) .statValue {
+	background: var(--gradient-orange);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.statItem:nth-child(3) .statValue {
+	background: var(--gradient-green);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/* Custom scrollbar for transactions list */
+.transactionsList::-webkit-scrollbar {
+	width: 8px;
+}
+
+.transactionsList::-webkit-scrollbar-track {
+	background: var(--gradient-bg);
+	border-radius: 4px;
+}
+
+.transactionsList::-webkit-scrollbar-thumb {
+	background: var(--gradient-blue);
+	border-radius: 4px;
+}
+
+.transactionsList::-webkit-scrollbar-thumb:hover {
+	background: var(--gradient-green);
+}
+
+/* Same for contributions list */
+.contributionsList {
+	flex: 1;
+	overflow-y: auto;
+}
+
+.contributionsList::-webkit-scrollbar {
+	width: 8px;
+}
+
+.contributionsList::-webkit-scrollbar-track {
+	background: var(--gradient-bg);
+	border-radius: 4px;
+}
+
+.contributionsList::-webkit-scrollbar-thumb {
+	background: var(--gradient-blue);
+	border-radius: 4px;
+}
+
+.contributionsList::-webkit-scrollbar-thumb:hover {
+	background: var(--gradient-green);
+}

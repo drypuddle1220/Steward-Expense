@@ -8,6 +8,8 @@ import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import MeatballMenu from "../Transactions/MeatballMenu";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import FloatingGoalDetail from "./FloatingGoalDetail";
+import { Timestamp } from "firebase/firestore";
 
 interface BudgetGoal {
 	id: string;
@@ -41,16 +43,21 @@ interface SavingsGoalData {
 	title: string;
 	targetAmount: number;
 	amountSaved: number;
+	contributions?: Array<{
+		amount: number;
+		date: Date;
+	}>;
 	createdAt: Date;
 }
 
-// interface NewGoalFormProps {
-// 	isVisible: boolean;
-// 	onClose: () => void;
-// 	onSubmit: (goalData: NewGoalData) => Promise<void>;
-// 	type: "budget" | "savings";
-// 	initialData?: BudgetGoal | null;
-// }
+interface Transaction {
+	id: string;
+	amount: number;
+	type: string;
+	tags?: string[];
+	description: string;
+	date: any;
+}
 
 const Budget: React.FC = () => {
 	const [budgetGoals, setBudgetGoals] = useState<BudgetGoal[]>([]);
@@ -62,6 +69,14 @@ const Budget: React.FC = () => {
 	const [editingGoal, setEditingGoal] = useState<BudgetGoal | null>(null);
 	const [editingSavingsGoal, setEditingSavingsGoal] =
 		useState<SavingsGoalData | null>(null);
+	const [selectedGoal, setSelectedGoal] = useState<
+		BudgetGoal | SavingsGoalData | null
+	>(null);
+	const [selectedGoalType, setSelectedGoalType] = useState<
+		"budget" | "savings" | null
+	>(null);
+	const [transactions, setTransactions] = useState<Transaction[]>([]);
+
 	useEffect(() => {
 		const loadAllData = async () => {
 			const user = auth.currentUser;
@@ -71,6 +86,12 @@ const Budget: React.FC = () => {
 				// Get all transactions
 				const transactions = await FirestoreService.getTransactions(
 					user.uid
+				);
+				setTransactions(
+					transactions.map((t) => ({
+						...t,
+						date: t.date.toDate(),
+					}))
 				);
 
 				// Get budget goals
@@ -185,7 +206,11 @@ const Budget: React.FC = () => {
 		const isOverBudget = percentageUsed > 100;
 
 		return (
-			<div className={styles.goalItem}>
+			<div
+				className={styles.goalItem}
+				onClick={() => handleGoalClick(goal, "budget")}
+				style={{ cursor: "pointer" }}
+			>
 				<div className={styles.goalHeader}>
 					<div className={styles.goalTitleSection}>
 						<h4 className={styles.goalTitle}>{goal.title}</h4>
@@ -276,12 +301,21 @@ const Budget: React.FC = () => {
 			if (!amount || !auth.currentUser) return;
 
 			try {
+				const newContribution = {
+					amount: Number(amount),
+					date: Timestamp.fromDate(new Date()),
+				};
+
 				await FirestoreService.updateSavingsGoal(
 					auth.currentUser.uid,
 					goal.id,
 					{
 						...goal,
 						amountSaved: goal.amountSaved + Number(amount),
+						contributions: [
+							...(goal.contributions || []),
+							newContribution,
+						],
 					}
 				);
 
@@ -305,7 +339,11 @@ const Budget: React.FC = () => {
 		const remainingAmount = goal.targetAmount - goal.amountSaved;
 
 		return (
-			<div className={styles.goalItem}>
+			<div
+				className={styles.goalItem}
+				onClick={() => handleGoalClick(goal, "savings")}
+				style={{ cursor: "pointer" }}
+			>
 				<div className={styles.goalHeader}>
 					<div className={styles.goalTitleSection}>
 						<h4 className={styles.goalTitle}>{goal.title}</h4>
@@ -573,6 +611,19 @@ const Budget: React.FC = () => {
 		}
 	};
 
+	const handleGoalClick = (
+		goal: BudgetGoal | SavingsGoalData,
+		type: "budget" | "savings"
+	) => {
+		setSelectedGoal(goal);
+		setSelectedGoalType(type);
+	};
+
+	const handleCloseFloatingGoal = () => {
+		setSelectedGoal(null);
+		setSelectedGoalType(null);
+	};
+
 	return (
 		<div className={styles.budget}>
 			<Sidebar />
@@ -638,6 +689,27 @@ const Budget: React.FC = () => {
 							: undefined
 					}
 				/>
+
+				{selectedGoal && selectedGoalType && (
+					<FloatingGoalDetail
+						isVisible={!!selectedGoal}
+						onClose={handleCloseFloatingGoal}
+						goal={
+							selectedGoal as unknown as
+								| BudgetGoal
+								| SavingsGoalData
+						}
+						type={selectedGoalType}
+						transactions={transactions.map((t) => ({
+							id: t.id,
+							amount: t.amount,
+							description: t.description,
+							date: t.date,
+							tags: t.tags || [],
+							type: t.type,
+						}))}
+					/>
+				)}
 			</div>
 		</div>
 	);
