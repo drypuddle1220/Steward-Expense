@@ -1,6 +1,7 @@
 // Dashboard.tsx
 import React, { useEffect, useState } from "react"; //Reach hooks (UseState, useEffect)
 import { useNavigate } from "react-router-dom";
+import { Transaction as TransactionType } from '../../types';
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
 import styles from "./Dashboard.module.css";
 import Visualizer from "../Visualizer/visualizer";
@@ -8,9 +9,12 @@ import InputButton from "../InputExpense/InputButton";
 import Navbar from "./Navbar";
 import nav from "./Navbar.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
-import { ArrowUpCircle, ArrowDownCircle, PiggyBank } from 'lucide-react'; // Add this import
+import { ArrowUpCircle, ArrowDownCircle, PiggyBank,} from 'lucide-react'; // Add this import
 import PieChart from "../Visualizer/PieChart"; 
 import Sidebar from "../Sidebar/sidebar";
+import LineChart from "../Visualizer/LineChart";
+import BarChart from "../Visualizer/BarChart";
+
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -40,35 +44,70 @@ const Dashboard: React.FC = () => {
     }
 }
 	 */
-	useEffect(() => {
-		const user = auth.currentUser;
-		if (user) {
-			if (!user.emailVerified) {
-				auth.signOut();
-				alert("Please verify your email address before logging in.");
-				navigate("/dashboard");
-			} else {
-				const loadUserData = async () => {
-					try {
-						setLoading(true); // Set loading state
-						const userData = await FirestoreService.getUserData(
-							user.uid
-						);
-						if (userData) {
-							setUserData(userData);
-						}
-					} catch (error) {
-						console.error("Error loading user data:", error);
-					} finally {
-						setLoading(false); // Clear loading state
-					}
-				};
-				loadUserData();
-			}
-		} else {
-			navigate("/login");
-		}
-	}, [navigate]);
+useEffect(() => {
+    const loadData = async () => {
+        if (auth.currentUser) {
+            try {
+                // Load user data from Firestore
+                const userDataResult = await FirestoreService.getUserData(auth.currentUser.uid);
+                if (userDataResult) {
+                    setUserData(userDataResult);
+                }
+
+                // Load transactions
+                const transactions = await FirestoreService.getTransactions(auth.currentUser.uid);
+                setTransactions(transactions.map(t => ({
+                    ...t,
+                    userId: auth.currentUser!.uid,
+                    currency: t.currency || 'USD',
+                    status: t.status || 'completed',
+                    date: t.date.toDate() // Convert Firestore Timestamp to Date
+                })) as TransactionType[]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setLoading(false);
+        }
+    };
+
+    loadData();
+}, []);
+    //This is the function that filters the transactions based on the filter and search term
+
+
+const TotalIncome = () => {
+	const incometrans = transactions.filter(t => t.type === 'income'); 
+
+	let res = 0
+	
+    incometrans.forEach(transaction => {
+        res += transaction.amount;
+    });
+
+	return res
+}
+
+
+const TotalExpense = () => {
+	const expensetrans = transactions.filter(t => t.type === 'expense')
+	let res = 0
+	
+    expensetrans.forEach(transaction => {
+        res += transaction.amount;
+    });
+
+	return res
+}
+
+
+
+
+const tot_i = TotalIncome()
+const tot_e = TotalExpense()
+
 
 	// Skeleton components
 	const CardSkeleton = () => (
@@ -82,6 +121,8 @@ const Dashboard: React.FC = () => {
 			<div className={styles.skeletonChart}></div>
 		</div>
 	);
+
+
 
 	//This is the component for the dashboard.
 	//It displays the user's data, and the dashboard visuals.
@@ -109,7 +150,9 @@ const Dashboard: React.FC = () => {
 									</div>
 									<div className={styles.cardInfo}>
 										<h3>Total Income</h3>
-										<p className={styles.amount}>$4,300</p>
+										<p className={styles.amount}>
+											${tot_i}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -123,7 +166,9 @@ const Dashboard: React.FC = () => {
 									</div>
 									<div className={styles.cardInfo}>
 										<h3>Total Expense</h3>
-										<p className={styles.amount}>$3,000</p>
+										<p className={styles.amount}>
+											${tot_e}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -157,7 +202,7 @@ const Dashboard: React.FC = () => {
 							<div
 								className={`${styles.chart} ${styles.fullWidthChart}`}
 							>
-								<Visualizer.BarChartComponent />
+								<BarChart />
 							</div>
 							<div className={styles.goals}>
 								<section className={styles.goalSection}>
@@ -308,7 +353,7 @@ const Dashboard: React.FC = () => {
 							<div
 								className={`${styles.chart}${styles.lineChart}`}
 							>
-								<Visualizer.LineChartComponent />
+								<LineChart />
 							</div>
 						</>
 					)}
