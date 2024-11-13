@@ -10,6 +10,7 @@ import Navbar from "./Navbar";
 import nav from "./Navbar.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { ArrowUpCircle, ArrowDownCircle, PiggyBank } from 'lucide-react'; // Add this import
+import PieChart from "../Visualizer/PieChart"; 
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -276,8 +277,8 @@ const Dashboard: React.FC = () => {
 									</div>
 								</section>
 							</div>
-							<div className={`${styles.chart}${styles.pieChart}`}>
-								<Visualizer.PieChartComponent />
+							<div className={`${styles.chart} ${styles.pieChart}`}>
+								<PieChart />
 							</div>
 							<div className={`${styles.chart}${styles.lineChart}`}>
 								<Visualizer.LineChartComponent />

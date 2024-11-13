@@ -35,10 +35,10 @@
     --skeleton-end: #ececec;       /* Skeleton loader end color */
     
     /* Chart & Visualization Colors */
-    --chart-gradient-1: #61DAFB;
-    --chart-gradient-2: #764ABC;
-    --chart-gradient-3: #2ECC71;
-    --chart-gradient-4: #E74C3C;
+    --chart-gradient-1: #4158D0;  /* Gradient 1 for pie chart */
+    --chart-gradient-2: #C850C0;
+    --chart-gradient-3: #3B2667;
+    --chart-gradient-4: #6B48FF;
     
     /* Card & Container Styles */
     --card-bg: rgba(255, 255, 255, 0.9);
