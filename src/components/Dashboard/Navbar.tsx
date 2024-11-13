@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import InputButton from "../InputExpense/InputButton";
 import styles from "./Navbar.module.css";
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Navbar: React.FC = () => {
 	const location = useLocation();
@@ -18,13 +17,17 @@ const Navbar: React.FC = () => {
 			<button className={styles.menuButton} onClick={toggleMenu}>
 				{isOpen ? <CloseIcon /> : <MenuIcon />}
 			</button>
-			
-			<nav className={`${styles.nav} ${isOpen ? styles.open : ''}`}>
+
+			<nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
 				<ul>
 					<li>
 						<Link
 							to='/dashboard'
-							className={location.pathname === "/dashboard" ? styles.active : ""}
+							className={
+								location.pathname === "/dashboard"
+									? styles.active
+									: ""
+							}
 							onClick={() => setIsOpen(false)}
 						>
 							Dashboard
@@ -33,17 +36,28 @@ const Navbar: React.FC = () => {
 					<li>
 						<Link
 							to='/transaction'
-							className={location.pathname === "/transaction" ? styles.active : ""}
+							className={
+								location.pathname === "/transaction"
+									? styles.active
+									: ""
+							}
 							onClick={() => setIsOpen(false)}
 						>
 							Transactions
 						</Link>
 					</li>
 					<li>
-						<Link to='/budgets' onClick={() => setIsOpen(false)}>Budgets</Link>
-					</li>
-					<li>
-						<Link to='/savings-goals' onClick={() => setIsOpen(false)}>Savings Goals</Link>
+						<Link
+							to='/GoalsTracker'
+							className={
+								location.pathname === "/GoalsTracker"
+									? styles.active
+									: ""
+							}
+							onClick={() => setIsOpen(false)}
+						>
+							Goals Tracker
+						</Link>
 					</li>
 				</ul>
 			</nav>

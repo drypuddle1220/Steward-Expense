@@ -1,6 +1,5 @@
 // Dashboard.tsx
 import React, { useEffect, useState } from "react"; //Reach hooks (UseState, useEffect)
-import { getDatabase, ref, onValue, set } from "firebase/database"; //Firebase database functions.
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
 import styles from "./Dashboard.module.css";
@@ -11,6 +10,7 @@ import nav from "./Navbar.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { ArrowUpCircle, ArrowDownCircle, PiggyBank } from 'lucide-react'; // Add this import
 import PieChart from "../Visualizer/PieChart"; 
+import Sidebar from "../Sidebar/sidebar";
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -51,12 +51,14 @@ const Dashboard: React.FC = () => {
 				const loadUserData = async () => {
 					try {
 						setLoading(true); // Set loading state
-						const userData = await FirestoreService.getUserData(user.uid);
+						const userData = await FirestoreService.getUserData(
+							user.uid
+						);
 						if (userData) {
 							setUserData(userData);
 						}
 					} catch (error) {
-						console.error('Error loading user data:', error);
+						console.error("Error loading user data:", error);
 					} finally {
 						setLoading(false); // Clear loading state
 					}
@@ -86,38 +88,7 @@ const Dashboard: React.FC = () => {
 	//The left side is the navigation sidebar, and the right side is the main container that contains the dashboard visuals.
 	return (
 		<div className={styles.dashboard}>
-			<aside className={nav.sidebar}>
-				<div className={nav.logo}>
-					<img
-						src='src/assets/steward_logo.png'
-						alt='Steward Logo'
-						className={nav.stewardlogo}
-					/>
-				</div>
-
-				<nav className={nav.navigation}>
-					<Navbar />
-					<InputButton setTransactions={setTransactions} />
-				</nav>
-				<div className={nav.userInfo}>
-					<img
-						src='src/components/Dashboard/Avatars/Avatar1.png'
-						alt='User Avatar'
-						className={nav.stewardlogo}
-					/>
-					{loading ? (
-						<>
-							<div className={styles.skeletonText}></div>
-							<div className={styles.skeletonText}></div>
-						</>
-					) : (
-						<>
-							<h5>Welcome, {userData?.firstName}!</h5>
-							<p>{userData?.email}</p>
-						</>
-					)}
-				</div>
-			</aside>
+			<Sidebar />
 
 			<main className={styles.dashboardContent}>
 				<section className={styles.topCards}>
@@ -129,7 +100,9 @@ const Dashboard: React.FC = () => {
 						</>
 					) : (
 						<>
-							<div className={`${styles.card} ${styles.incomeCard}`}>
+							<div
+								className={`${styles.card} ${styles.incomeCard}`}
+							>
 								<div className={styles.cardContent}>
 									<div className={styles.cardIcon}>
 										<ArrowUpCircle size={20} />
@@ -141,7 +114,9 @@ const Dashboard: React.FC = () => {
 								</div>
 							</div>
 
-							<div className={`${styles.card} ${styles.expenseCard}`}>
+							<div
+								className={`${styles.card} ${styles.expenseCard}`}
+							>
 								<div className={styles.cardContent}>
 									<div className={styles.cardIcon}>
 										<ArrowDownCircle size={20} />
@@ -153,7 +128,9 @@ const Dashboard: React.FC = () => {
 								</div>
 							</div>
 
-							<div className={`${styles.card} ${styles.savingsCard}`}>
+							<div
+								className={`${styles.card} ${styles.savingsCard}`}
+							>
 								<div className={styles.cardContent}>
 									<div className={styles.cardIcon}>
 										<PiggyBank size={20} />
@@ -188,42 +165,66 @@ const Dashboard: React.FC = () => {
 									<div className={styles.goalsList}>
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Dining out expenses</span>
-												<span className={styles.goalValue}>$160/$200</span>
+												<span
+													className={styles.goalText}
+												>
+													Dining out expenses
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$160/$200
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.warning}`} 
-													style={{ width: '80%' }}
-													title="80% of budget used"
+												<div
+													className={`${styles.progressFill} ${styles.warning}`}
+													style={{ width: "80%" }}
+													title='80% of budget used'
 												/>
 											</div>
 										</div>
 
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Entertainment budget</span>
-												<span className={styles.goalValue}>$150/$200</span>
+												<span
+													className={styles.goalText}
+												>
+													Entertainment budget
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$150/$200
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.success}`} 
-													style={{ width: '75%' }}
-													title="75% of budget used"
+												<div
+													className={`${styles.progressFill} ${styles.success}`}
+													style={{ width: "75%" }}
+													title='75% of budget used'
 												/>
 											</div>
 										</div>
 
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Grocery expenses</span>
-												<span className={styles.goalValue}>$450/$500</span>
+												<span
+													className={styles.goalText}
+												>
+													Grocery expenses
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$450/$500
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.info}`} 
-													style={{ width: '90%' }}
-													title="90% of budget used"
+												<div
+													className={`${styles.progressFill} ${styles.info}`}
+													style={{ width: "90%" }}
+													title='90% of budget used'
 												/>
 											</div>
 										</div>
@@ -235,42 +236,66 @@ const Dashboard: React.FC = () => {
 									<div className={styles.goalsList}>
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Emergency fund</span>
-												<span className={styles.goalValue}>$3,000/$5,000</span>
+												<span
+													className={styles.goalText}
+												>
+													Emergency fund
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$3,000/$5,000
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.primary}`} 
-													style={{ width: '60%' }}
-													title="60% of goal reached"
+												<div
+													className={`${styles.progressFill} ${styles.primary}`}
+													style={{ width: "60%" }}
+													title='60% of goal reached'
 												/>
 											</div>
 										</div>
 
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Retirement savings</span>
-												<span className={styles.goalValue}>$15,000/$20,000</span>
+												<span
+													className={styles.goalText}
+												>
+													Retirement savings
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$15,000/$20,000
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.success}`} 
-													style={{ width: '75%' }}
-													title="75% of goal reached"
+												<div
+													className={`${styles.progressFill} ${styles.success}`}
+													style={{ width: "75%" }}
+													title='75% of goal reached'
 												/>
 											</div>
 										</div>
 
 										<div className={styles.goalItem}>
 											<div className={styles.goalInfo}>
-												<span className={styles.goalText}>Vacation fund</span>
-												<span className={styles.goalValue}>$800/$2,000</span>
+												<span
+													className={styles.goalText}
+												>
+													Vacation fund
+												</span>
+												<span
+													className={styles.goalValue}
+												>
+													$800/$2,000
+												</span>
 											</div>
 											<div className={styles.progressBar}>
-												<div 
-													className={`${styles.progressFill} ${styles.warning}`} 
-													style={{ width: '40%' }}
-													title="40% of goal reached"
+												<div
+													className={`${styles.progressFill} ${styles.warning}`}
+													style={{ width: "40%" }}
+													title='40% of goal reached'
 												/>
 											</div>
 										</div>
@@ -280,10 +305,11 @@ const Dashboard: React.FC = () => {
 							<div className={`${styles.chart} ${styles.pieChart}`}>
 								<PieChart />
 							</div>
-							<div className={`${styles.chart}${styles.lineChart}`}>
+							<div
+								className={`${styles.chart}${styles.lineChart}`}
+							>
 								<Visualizer.LineChartComponent />
 							</div>
-							
 						</>
 					)}
 				</section>

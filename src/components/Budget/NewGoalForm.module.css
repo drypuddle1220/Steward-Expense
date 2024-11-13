@@ -1,0 +1,174 @@
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	backdrop-filter: blur(0px);
+	animation: fadeInBackdrop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.container {
+	background-color: var(--bg-white);
+	padding: 2rem;
+	border-radius: 1.5rem;
+	width: 90%;
+	max-width: 600px;
+	position: relative;
+	z-index: 1001;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	transform: scale(0.95) translateY(20px);
+	opacity: 0;
+	animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	animation-delay: 0.1s;
+}
+
+.formContent {
+	opacity: 0;
+	transform: translateY(10px);
+	animation: fadeInContent 0.4s ease forwards;
+	animation-delay: 0.3s;
+}
+
+.modalContent h2 {
+	margin-bottom: 1.5rem;
+	color: var(--text-primary);
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+
+.formGroup {
+	margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+	display: block;
+	margin-bottom: 0.5rem;
+	color: var(--text-primary);
+	font-weight: 500;
+}
+
+.formGroup input {
+	width: 100%;
+	padding: 0.75rem;
+	border: 1px solid var(--border-light);
+	border-radius: 0.5rem;
+	background-color: rgba(255, 255, 255, 0.997);
+	font-size: 1rem;
+}
+
+.formGroup input:hover {
+	border-color: var(--border-focus);
+}
+
+.formGroup input:focus {
+	outline: none;
+	border-color: var(--btn-primary);
+	box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.1);
+}
+
+.formActions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	margin-top: 2rem;
+}
+
+.cancelBtn {
+	padding: 0.5rem 1rem;
+	border: 1px solid var(--border-light);
+	border-radius: 0.5rem;
+	background-color: var(--bg-white);
+	color: var(--text-primary);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+	background-color: var(--btn-danger-hover);
+}
+
+.submitBtn {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 0.5rem;
+	background-color: var(--btn-primary);
+	color: var(--text-white);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.submitBtn:hover {
+	background-color: var(--btn-primary-hover);
+}
+
+/* Exit animations */
+.overlay.closing {
+	animation: fadeOutBackdrop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.container.closing {
+	animation: popOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInBackdrop {
+	0% {
+		background-color: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
+	}
+	100% {
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+}
+
+@keyframes popIn {
+	0% {
+		transform: scale(0.95) translateY(20px);
+		opacity: 0;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	}
+	100% {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+	}
+}
+
+@keyframes fadeInContent {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeOutBackdrop {
+	from {
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+	to {
+		background-color: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
+	}
+}
+
+@keyframes popOut {
+	from {
+		transform: scale(1);
+		opacity: 1;
+	}
+	to {
+		transform: scale(0.95) translateY(20px);
+		opacity: 0;
+	}
+}
