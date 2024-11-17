@@ -8,7 +8,7 @@ body {
 	overflow: hidden;
 }
 #root {
-	height: 100vh; /* Ensure the root container takes full height */
+	height: 100%; /* Ensure the root container takes full height */
 	width: 100%;
 }
 .dashboard {
@@ -17,7 +17,7 @@ body {
 	height: 100%;
 	width: 100%;
 	position: relative;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 /* Main content area */
@@ -27,8 +27,8 @@ body {
 	display: grid;
 	grid-template-rows: auto 1fr; /* Make rows adjust to content */
 	gap: 20px;
-	height: 100%;
-	overflow: hidden;
+	height: 100vh;
+	/* overflow: hidden; */
 	width: 100%; /* Ensure full width */
 }
 
@@ -53,7 +53,7 @@ body {
 }
 
 .card::after {
-	content: '';
+	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: 12px;
@@ -78,6 +78,7 @@ body {
 	grid-row: span 1;
 	grid-column: span 2;
 	width: 100%; /* Ensure it takes full width of the grid */
+	height: 100%;
 }
 
 /* Charts section */
@@ -87,13 +88,14 @@ body {
 	grid-template-rows: 1fr 1fr;
 	gap: 15px;
 	width: 100%;
-	height: 100%;
+
 	min-height: 0; /* Allow charts to shrink if needed */
 }
 
 .chart {
 	background-color: var(--bg-white);
-	padding: 8px;
+	height: 100%;
+	padding: 0.5rem;
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	min-height: 0;
@@ -104,13 +106,15 @@ body {
 	grid-column-start: 1;
 	grid-row: span 1;
 	grid-column: span 1;
-}	
+	height: 100%;
+}
 
 .lineChart {
 	grid-row-start: 2;
 	grid-column-start: 2;
 	grid-row: span 1;
 	grid-column: span 1;
+	height: 100%;
 }
 
 .goals {
@@ -253,67 +257,67 @@ body {
 	}
 }
 
-.inputbutton{
+.inputbutton {
 	position: absolute;
 }
 
 .skeleton {
-    background: var(--skeleton-start);
-    background: linear-gradient(
-        110deg,
-        var(--skeleton-start) 8%,
-        var(--skeleton-middle) 18%,
-        var(--skeleton-end) 33%
-    );
-    background-size: 200% 100%;
-    animation: 1.5s shine linear infinite;
+	background: var(--skeleton-start);
+	background: linear-gradient(
+		110deg,
+		var(--skeleton-start) 8%,
+		var(--skeleton-middle) 18%,
+		var(--skeleton-end) 33%
+	);
+	background-size: 200% 100%;
+	animation: 1.5s shine linear infinite;
 }
 
 .skeletonText {
-    height: 1rem;
-    border-radius: 4px;
-    margin: 0.5rem 0;
-    width: 80%;
+	height: 1rem;
+	border-radius: 4px;
+	margin: 0.5rem 0;
+	width: 80%;
 }
 
 .skeletonChart {
-    height: 200px;
-    border-radius: 4px;
+	height: 200px;
+	border-radius: 4px;
 }
 
 @keyframes shine {
-    to {
-        background-position-x: -200%;
-    }
+	to {
+		background-position-x: -200%;
+	}
 }
 
 /* Add these media queries at the end of the file */
 @media screen and (max-width: 768px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    height: 100vh; /* Ensure full height on mobile */
-	overflow: scroll;
-  }
+	.dashboard {
+		grid-template-columns: 1fr;
+		height: 100vh; /* Ensure full height on mobile */
+		overflow: scroll;
+	}
 
-  .dashboardContent {
-    width: 100%;
-    padding: 60px 15px 15px 15px;
-    overflow-y: auto;
-    max-height: 100vh; /* Limit height to viewport */
-	overflow: scroll;
-  }
+	.dashboardContent {
+		width: 100%;
+		padding: 60px 15px 15px 15px;
+		overflow-y: auto;
+		max-height: 100vh; /* Limit height to viewport */
+		overflow: scroll;
+	}
 
-  .topCards {
-    grid-template-columns: 1fr;
-  }
+	.topCards {
+		grid-template-columns: 1fr;
+	}
 
-  .charts {
-    grid-template-columns: 1fr;
-  }
+	.charts {
+		grid-template-columns: 1fr;
+	}
 
-  .fullWidthChart {
-    grid-column: auto;
-  }
+	.fullWidthChart {
+		grid-column: auto;
+	}
 }
 
 .cardContent {
@@ -363,4 +367,17 @@ body {
 
 .savingsCard .cardIcon {
 	background: linear-gradient(135deg, var(--btn-primary) 0%, #3498db 100%);
+}
+
+/* Keep hover animation only for pie chart */
+.pieChartCard:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove hover animation for bar and line charts */
+.barChartCard:hover,
+.lineChartCard:hover {
+	transform: none;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }

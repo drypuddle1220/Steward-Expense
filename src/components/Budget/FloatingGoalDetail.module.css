@@ -116,7 +116,6 @@
 	font-weight: 600;
 	color: var(--text-primary);
 	background: linear-gradient(90deg, #3b82f6, #2563eb);
-	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
@@ -365,6 +364,7 @@
 
 .contributionAmount {
 	background: var(--gradient-green);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	font-weight: 600;
@@ -401,19 +401,22 @@
 
 /* Different gradients for different stats */
 .statItem:nth-child(1) .statValue {
-	background: var(--gradient-blue);
+	background-color: var(--gradient-blue);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
 .statItem:nth-child(2) .statValue {
 	background: var(--gradient-orange);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
 .statItem:nth-child(3) .statValue {
 	background: var(--gradient-green);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }

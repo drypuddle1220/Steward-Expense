@@ -10,7 +10,9 @@ import MeatballMenu from "../Transactions/MeatballMenu";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import FloatingGoalDetail from "./FloatingGoalDetail";
 import { Timestamp } from "firebase/firestore";
+import ReactConfetti from "react-confetti";
 
+// Interfaces
 interface BudgetGoal {
 	id: string;
 	title: string;
@@ -59,7 +61,9 @@ interface Transaction {
 	date: any;
 }
 
+// Main Component
 const Budget: React.FC = () => {
+	// State Variables
 	const [budgetGoals, setBudgetGoals] = useState<BudgetGoal[]>([]);
 	const [savingsGoals, setSavingsGoals] = useState<SavingsGoalData[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -77,6 +81,7 @@ const Budget: React.FC = () => {
 	>(null);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 
+	// Effect to Load Data
 	useEffect(() => {
 		const loadAllData = async () => {
 			const user = auth.currentUser;
@@ -102,7 +107,7 @@ const Budget: React.FC = () => {
 				const savingsGoalsData =
 					(await FirestoreService.getSavingsGoals(
 						user.uid
-					)) as SavingsGoalData[];
+					)) as unknown as SavingsGoalData[];
 
 				// Process each budget goal
 				const processedGoals = budgetGoalsData.map(
@@ -123,11 +128,11 @@ const Budget: React.FC = () => {
 
 						// Group amounts by tag with assigned colors
 						const colors = [
-							"#5dade2",
-							"#58d68d",
-							"#ec7063",
-							"#f7dc6f",
-							"#af7ac5",
+							"var(--chart-gradient-1)",
+							"var(--chart-gradient-2)",
+							"var(--chart-gradient-3)",
+							"var(--chart-gradient-4)",
+							"var(--chart-gradient-5)",
 						];
 						const tagAmounts = goal.tags.map((tag, index) => ({
 							name: tag,
@@ -158,6 +163,7 @@ const Budget: React.FC = () => {
 		loadAllData();
 	}, []);
 
+	// Handlers for Editing and Deleting Goals
 	const handleEdit = (goal: BudgetGoal) => {
 		setEditingGoal(goal);
 		setShowNewBudgetForm(true);
@@ -183,6 +189,7 @@ const Budget: React.FC = () => {
 			console.error("Error deleting budget goal:", error);
 		}
 	};
+
 	const handleDeleteSavings = async (goalId: string) => {
 		if (!auth.currentUser) {
 			alert("Please log in to delete goals");
@@ -199,6 +206,7 @@ const Budget: React.FC = () => {
 		}
 	};
 
+	// Budget Goal Item Component
 	const BudgetGoalItem: React.FC<{ goal: BudgetGoal }> = ({ goal }) => {
 		const percentageUsed = Math.round(
 			(goal.currentAmount / goal.targetAmount) * 100
@@ -291,27 +299,54 @@ const Budget: React.FC = () => {
 		);
 	};
 
+	// Savings Goal Item Component
 	const SavingsGoalItem: React.FC<{ goal: SavingsGoalData }> = ({ goal }) => {
 		const [isSuccess, setIsSuccess] = useState(false);
-		const [isAdding, setIsAdding] = useState(false);
+		const [showConfetti, setShowConfetti] = useState(false);
+		const [motivationalMessage, setMotivationalMessage] = useState("");
 		const [amount, setAmount] = useState("");
+		const [isAdding, setIsAdding] = useState(false);
 
 		const handleAddSavings = async (e: React.FormEvent) => {
 			e.preventDefault();
 			if (!amount || !auth.currentUser) return;
 
 			try {
+				const newAmount = goal.amountSaved + Number(amount);
+				const previousProgress = Math.floor(
+					(goal.amountSaved / goal.targetAmount) * 100
+				);
+				const newProgress = Math.floor(
+					(newAmount / goal.targetAmount) * 100
+				);
+
 				const newContribution = {
 					amount: Number(amount),
-					date: Timestamp.fromDate(new Date()),
+					date: new Date(),
 				};
+
+				setIsSuccess(true);
+				setIsAdding(false);
+				setAmount("");
+
+				if (
+					(newProgress >= 25 && previousProgress < 25) ||
+					(newProgress >= 50 && previousProgress < 50) ||
+					(newProgress >= 75 && previousProgress < 75) ||
+					(newProgress >= 100 && previousProgress < 100)
+				) {
+					setShowConfetti(true);
+					setMotivationalMessage(
+						getMotivationalMessage(newAmount, goal.targetAmount)
+					);
+				}
 
 				await FirestoreService.updateSavingsGoal(
 					auth.currentUser.uid,
 					goal.id,
 					{
 						...goal,
-						amountSaved: goal.amountSaved + Number(amount),
+						amountSaved: newAmount,
 						contributions: [
 							...(goal.contributions || []),
 							newContribution,
@@ -319,31 +354,67 @@ const Budget: React.FC = () => {
 					}
 				);
 
-				setIsSuccess(true);
-				setIsAdding(false);
-				setAmount("");
-
-				await refreshSavingsData();
+				setTimeout(async () => {
+					await refreshSavingsData();
+				}, 3000);
 
 				setTimeout(() => {
+					setShowConfetti(false);
 					setIsSuccess(false);
-				}, 1500);
+					setMotivationalMessage("");
+				}, 5000);
 			} catch (error) {
 				console.error("Error updating savings:", error);
+				setIsSuccess(false);
+				setShowConfetti(false);
+				setMotivationalMessage("");
 			}
+		};
+
+		const handleButtonClick = (e: React.MouseEvent) => {
+			e.stopPropagation();
+			setIsAdding(!isAdding);
 		};
 
 		const percentageSaved = Math.round(
 			(goal.amountSaved / goal.targetAmount) * 100
 		);
 		const remainingAmount = goal.targetAmount - goal.amountSaved;
-
 		return (
 			<div
 				className={styles.goalItem}
 				onClick={() => handleGoalClick(goal, "savings")}
 				style={{ cursor: "pointer" }}
 			>
+				{showConfetti && (
+					<ReactConfetti
+						width={window.innerWidth}
+						height={window.innerHeight}
+						recycle={false}
+						numberOfPieces={200}
+						gravity={0.3}
+						colors={[
+							"#2ecc71",
+							"#3498db",
+							"#f1c40f",
+							"#e74c3c",
+							"#9b59b6",
+						]}
+						style={{
+							position: "fixed",
+							top: 0,
+							left: 0,
+							zIndex: 1000,
+						}}
+					/>
+				)}
+
+				{motivationalMessage && (
+					<div className={styles.motivationalMessage}>
+						{motivationalMessage}
+					</div>
+				)}
+
 				<div className={styles.goalHeader}>
 					<div className={styles.goalTitleSection}>
 						<h4 className={styles.goalTitle}>{goal.title}</h4>
@@ -355,7 +426,9 @@ const Budget: React.FC = () => {
 						options={[
 							{
 								label: "Edit",
-								onClick: () => handleEditSavings(goal),
+								onClick: () => {
+									handleEditSavings(goal);
+								},
 								icon: <Pencil size={16} />,
 								variant: "edit",
 							},
@@ -364,7 +437,9 @@ const Budget: React.FC = () => {
 									pendingDeleteId === goal.id
 										? "Confirm Delete"
 										: "Delete",
-								onClick: () => handleDeleteSavings(goal.id),
+								onClick: () => {
+									handleDeleteSavings(goal.id);
+								},
 								icon: <Trash2 size={16} />,
 								variant: "danger",
 							},
@@ -418,11 +493,16 @@ const Budget: React.FC = () => {
 							<input
 								type='number'
 								value={amount}
+								onClick={(e) => e.stopPropagation()}
 								onChange={(e) => setAmount(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === "-") e.preventDefault();
+								}}
 								placeholder='Enter amount'
 								className={styles.savingsInput}
 							/>
 							<button
+								onClick={(e) => e.stopPropagation()}
 								type='submit'
 								className={styles.confirmButton}
 							>
@@ -434,7 +514,7 @@ const Budget: React.FC = () => {
 						className={`${styles.addSavingsBtn} ${
 							isSuccess ? styles.success : ""
 						} ${isAdding ? styles.shifted : ""}`}
-						onClick={() => setIsAdding(!isAdding)}
+						onClick={handleButtonClick}
 					>
 						<Plus className={styles.addSavingsIcon} size={20} />
 						{isAdding ? "Cancel" : "Add to Savings"}
@@ -444,6 +524,7 @@ const Budget: React.FC = () => {
 		);
 	};
 
+	// Add Button Component
 	const AddButton: React.FC<{ onClick: () => void; label: string }> = ({
 		onClick,
 		label,
@@ -454,6 +535,7 @@ const Budget: React.FC = () => {
 		</button>
 	);
 
+	// Refresh Data Functions
 	const refreshBudgetData = async () => {
 		setLoading(true);
 		const user = auth.currentUser;
@@ -522,11 +604,12 @@ const Budget: React.FC = () => {
 		if (!user) return;
 		const savingsGoals = (await FirestoreService.getSavingsGoals(
 			user.uid
-		)) as SavingsGoalData[];
+		)) as unknown as SavingsGoalData[];
 		setSavingsGoals(savingsGoals);
 		setLoading(false);
 	};
 
+	// Submit Handlers
 	const handleSubmitBudgetGoal = async (goalData: NewGoalData) => {
 		const user = auth.currentUser;
 		if (!user) return;
@@ -574,43 +657,45 @@ const Budget: React.FC = () => {
 					goalData
 				);
 			} else {
-				await FirestoreService.addSavingsGoal(user.uid, {
-					title: goalData.title,
-					targetAmount: goalData.targetAmount,
-					amountSaved: goalData.amountSaved || 0,
-					createdAt: new Date(),
-					type: "savings",
-				});
+				if (goalData.amountSaved > 0) {
+					const initialContribution = {
+						amount: Number(goalData.amountSaved),
+						date: Timestamp.fromDate(new Date()),
+					};
+
+					await FirestoreService.addSavingsGoal(user.uid, {
+						title: goalData.title,
+						targetAmount: goalData.targetAmount,
+						amountSaved: goalData.amountSaved || 0,
+						createdAt: new Date(),
+						contributions: [
+							{
+								...initialContribution,
+								date: initialContribution.date.toDate(),
+							},
+						],
+						type: "savings",
+					});
+				} else {
+					await FirestoreService.addSavingsGoal(user.uid, {
+						title: goalData.title,
+						targetAmount: goalData.targetAmount,
+						amountSaved: goalData.amountSaved || 0,
+						createdAt: new Date(),
+						type: "savings",
+					});
+				}
 			}
 
 			await refreshSavingsData();
 			setShowNewSavingsForm(false);
 			setEditingSavingsGoal(null);
-
-			return (
-				<NewGoalForm
-					key={Date.now()}
-					isVisible={showNewSavingsForm}
-					onClose={() => setShowNewSavingsForm(false)}
-					onSubmit={handleSubmitSavingsGoal}
-					type='savings'
-					initialData={
-						editingSavingsGoal
-							? {
-									title: editingSavingsGoal.title,
-									targetAmount:
-										editingSavingsGoal.targetAmount,
-									amountSaved: editingSavingsGoal.amountSaved,
-							  }
-							: undefined
-					}
-				/>
-			);
 		} catch (error) {
 			console.error("Error saving user data:", error);
 		}
 	};
 
+	// Goal Click Handlers
 	const handleGoalClick = (
 		goal: BudgetGoal | SavingsGoalData,
 		type: "budget" | "savings"
@@ -624,9 +709,142 @@ const Budget: React.FC = () => {
 		setSelectedGoalType(null);
 	};
 
+	// Render Skeleton loading placeholder for goal items.
+	const renderBudgetGoalsSkeleton = () => (
+		<div className={styles.goalItem}>
+			<div className={styles.goalHeader}>
+				<div className={styles.goalTitleSection}>
+					<h4 className={styles.skeleton}></h4>{" "}
+					{/* Placeholder for goal title */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for percentage badge */}
+				</div>
+			</div>
+
+			<div className={styles.goalAmount}>
+				<span className={styles.skeleton}></span>{" "}
+				{/* Placeholder for current amount */}
+				<span className={styles.separator}></span>{" "}
+				{/* Placeholder for separator */}
+				<span className={styles.skeleton}></span>{" "}
+				{/* Placeholder for target amount */}
+			</div>
+
+			<div className={styles.progressSection}>
+				<div className={styles.skeleton}></div>{" "}
+				{/* Placeholder for progress bar */}
+			</div>
+
+			<div className={styles.tagBreakdown}>
+				<div className={styles.tagBreakdownHeader}>
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for category header */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for amount header */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for percentage header */}
+				</div>
+				{Array(1)
+					.fill(null)
+					.map(
+						(
+							_,
+							index // Placeholder for tag items
+						) => (
+							<div key={index} className={styles.tagItem}>
+								<div className={styles.tagLabel}>
+									<div
+										className={`${styles.tagColor} ${styles.skeleton}`}
+									></div>{" "}
+									{/* Placeholder for tag color */}
+									<span
+										className={styles.skeleton}
+									></span>{" "}
+									{/* Placeholder for tag name */}
+								</div>
+								<span className={styles.skeleton}></span>{" "}
+								{/* Placeholder for tag amount */}
+								<span className={styles.skeleton}></span>{" "}
+								{/* Placeholder for tag percentage */}
+							</div>
+						)
+					)}
+			</div>
+		</div>
+	);
+
+	const renderSavingsGoalSkeleton = () => (
+		<div className={styles.goalItem}>
+			<div className={styles.goalHeader}>
+				<div className={styles.goalTitleSection}>
+					<h4 className={styles.skeleton}></h4>{" "}
+					{/* Placeholder for goal title */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for percentage badge */}
+				</div>
+			</div>
+
+			<div className={styles.goalAmount}>
+				<span className={styles.skeleton}></span>{" "}
+				{/* Placeholder for current amount */}
+				<span className={styles.separator}></span>{" "}
+				{/* Placeholder for separator */}
+				<span className={styles.skeleton}></span>{" "}
+				{/* Placeholder for target amount */}
+			</div>
+
+			<div className={styles.progressSection}>
+				<div className={styles.skeleton}></div>{" "}
+				{/* Placeholder for progress bar */}
+			</div>
+
+			<div className={styles.savingsInfo}>
+				<div className={styles.savingsInfoItem}>
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for "Remaining to save" label */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for remaining amount */}
+				</div>
+				<div className={styles.savingsInfoItem}>
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for "Monthly target" label */}
+					<span className={styles.skeleton}></span>{" "}
+					{/* Placeholder for monthly target value */}
+				</div>
+			</div>
+
+			<div className={styles.savingsActions}>
+				<div
+					className={`${styles.savingsInputContainer} ${styles.expanded}`}
+				>
+					<form className={styles.savingsForm}>
+						<input
+							className={`${styles.savingsInput} ${styles.skeleton}`} // Placeholder for input
+						/>
+						{/* No buttons rendered in the skeleton */}
+					</form>
+				</div>
+			</div>
+		</div>
+	);
+
+	const getMotivationalMessage = (
+		savedAmount: number,
+		targetAmount: number
+	) => {
+		const progress = (savedAmount / targetAmount) * 100;
+		if (progress >= 100) return "🎉 Amazing! You've reached your goal!";
+		if (progress >= 75) return "💪 Almost there! You're crushing it!";
+		if (progress >= 50) return "🌟 Halfway there! Keep going strong!";
+		if (progress >= 25) return "🚀 Great progress! You're on your way!";
+		return "✨ Every penny counts! Keep it up!";
+	};
+
+	// Render
 	return (
 		<div className={styles.budget}>
 			<Sidebar />
+
 			<div className={styles.mainContent}>
 				<div className={styles.container}>
 					<div className={styles.sectionHeader}>
@@ -636,13 +854,19 @@ const Budget: React.FC = () => {
 							label='New Budget Goal'
 						/>
 					</div>
-					{loading ? (
-						<div>Loading...</div>
-					) : (
-						budgetGoals.map((goal, index) => (
-							<BudgetGoalItem key={index} goal={goal} />
-						))
-					)}
+					<div className={styles.goalItemContainer}>
+						{loading
+							? Array(3)
+									.fill(null)
+									.map((_, index) => (
+										<div key={index}>
+											{renderBudgetGoalsSkeleton()}
+										</div>
+									))
+							: budgetGoals.map((goal, index) => (
+									<BudgetGoalItem key={index} goal={goal} />
+							  ))}
+					</div>
 				</div>
 
 				<div className={styles.container}>
@@ -653,13 +877,19 @@ const Budget: React.FC = () => {
 							label='New Savings Goal'
 						/>
 					</div>
-					{loading ? (
-						<div>Loading...</div>
-					) : (
-						savingsGoals.map((goal, index) => (
-							<SavingsGoalItem key={index} goal={goal} />
-						))
-					)}
+					<div className={styles.goalItemContainer}>
+						{loading
+							? Array(3)
+									.fill(null)
+									.map((_, index) => (
+										<div key={index}>
+											{renderSavingsGoalSkeleton()}
+										</div>
+									))
+							: savingsGoals.map((goal, index) => (
+									<SavingsGoalItem key={index} goal={goal} />
+							  ))}
+					</div>
 				</div>
 
 				<NewGoalForm

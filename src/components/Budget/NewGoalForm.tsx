@@ -97,18 +97,15 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 					isClosing ? styles.closing : ""
 				}`}
 			>
+				<button onClick={handleClose} className={styles.closeButton}>
+					<X size={24} />
+				</button>
 				<div className={styles.header}>
 					<h2>
 						{type === "budget"
 							? "New Budget Goal"
 							: "New Savings Goal"}
 					</h2>
-					<button
-						onClick={handleClose}
-						className={styles.closeButton}
-					>
-						<X size={24} />
-					</button>
 				</div>
 
 				<div className={styles.formContent}>
@@ -135,6 +132,9 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 								type='number'
 								id='targetAmount'
 								value={formData.targetAmount}
+								onKeyDown={(e) => {
+									if (e.key === "-") e.preventDefault();
+								}}
 								onChange={(e) =>
 									setFormData({
 										...formData,
@@ -154,13 +154,15 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 									type='number'
 									id='amountSaved'
 									value={formData.amountSaved}
-									defaultValue={0}
 									onChange={(e) =>
 										setFormData({
 											...formData,
 											amountSaved: e.target.value,
 										})
 									}
+									onKeyDown={(e) => {
+										if (e.key === "-") e.preventDefault();
+									}}
 								/>
 							</div>
 						)}
@@ -168,7 +170,7 @@ const NewGoalForm: React.FC<NewGoalFormProps> = ({
 						{type === "budget" && (
 							<div className={styles.formGroup}>
 								<label htmlFor='tags'>
-									Tags you want to Track(comma-separated)
+									Tags you want to Track (comma-separated)
 								</label>
 								<input
 									type='text'

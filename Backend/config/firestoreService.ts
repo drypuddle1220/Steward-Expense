@@ -32,6 +32,15 @@ interface FirestoreBudgetGoal {
 	type: string;
 }
 
+interface SavingsGoal {
+	id: string;
+	title: string;
+	targetAmount: number;
+	amountSaved: number;
+	createdAt: Timestamp;
+	type: "savings";
+}
+
 // Service class for handling all Firestore database operations
 // This class provides methods for creating, retrieving, updating, and deleting user data and transactions.
 // Static methods are used to ensure that each method is callable without instantiating the class.
@@ -289,6 +298,7 @@ export class FirestoreService {
 			targetAmount: number;
 			amountSaved: number;
 			createdAt: Date;
+			contributions?: Array<{ amount: number; date: Date }>;
 			type: "savings";
 		}
 	) {
@@ -339,7 +349,7 @@ export class FirestoreService {
 		}
 	}
 
-	static async getSavingsGoals(userId: string) {
+	static async getSavingsGoals(userId: string): Promise<SavingsGoal[]> {
 		try {
 			const savingGoalsRef = collection(
 				db,
@@ -348,10 +358,23 @@ export class FirestoreService {
 				"savingGoals"
 			);
 			const querySnapshot = await getDocs(savingGoalsRef);
-			return querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+
+			// Debug the data structure
+			console.log(
+				"Savings Goals Data:",
+				querySnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}))
+			);
+
+			return querySnapshot.docs.map((doc) => {
+				const data = doc.data();
+				return {
+					id: doc.id,
+					...data,
+				} as SavingsGoal;
+			});
 		} catch (error) {
 			console.error("Error getting saving goals:", error);
 			throw error;

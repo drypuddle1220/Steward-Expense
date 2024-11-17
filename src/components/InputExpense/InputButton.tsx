@@ -6,20 +6,23 @@ import TransactionCard from "./TransactionCard";
 interface InputButtonProps {
 	setTransactions: React.Dispatch<React.SetStateAction<any[]>>;
 	onTransactionAdded: () => Promise<void>;
+	showDropdown: boolean;
+	setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InputButton({
 	setTransactions,
 	onTransactionAdded,
+	showDropdown,
+	setShowDropdown,
 }: InputButtonProps) {
-	const [showOptions, setShowOptions] = useState(false);
 	const [showTransactionForm, setShowTransactionForm] = useState(false);
 	const [transactionType, setTransactionType] = useState<
 		"income" | "expense"
 	>("income");
 
 	const handleAddTransaction = (type: "income" | "expense") => {
-		setShowOptions(false);
+		setShowDropdown(false);
 		setTransactionType(type);
 		setShowTransactionForm(true);
 	};
@@ -28,12 +31,12 @@ export default function InputButton({
 		<div className={styles.container}>
 			<button
 				className={styles.addButton}
-				onClick={() => setShowOptions(!showOptions)}
+				onClick={() => setShowDropdown(!showDropdown)}
 			>
 				<span>+</span>Add Transaction
 			</button>
 
-			{showOptions && (
+			{showDropdown && (
 				<div className={styles.optionsMenu}>
 					<button onClick={() => handleAddTransaction("income")}>
 						Add Income

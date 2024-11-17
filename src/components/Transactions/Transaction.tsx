@@ -67,6 +67,9 @@ const Transaction: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const datePickerRef = useRef<HTMLDivElement>(null);
 
+	// Add this ref at the top of your component with other state declarations
+	const inputButtonRef = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -76,6 +79,25 @@ const Transaction: React.FC = () => {
 				setShowDatePicker(false);
 			}
 		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () =>
+			document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
+
+	const [showDropdown, setShowDropdown] = useState(false);
+	// Add this useEffect to handle clicks outside
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				inputButtonRef.current &&
+				!inputButtonRef.current.contains(event.target as Node)
+			) {
+				// Call the close dropdown function from InputButton
+				// You'll need to pass this as a prop to InputButton
+				setShowDropdown(false);
+			}
+		};
+
 		document.addEventListener("mousedown", handleClickOutside);
 		return () =>
 			document.removeEventListener("mousedown", handleClickOutside);
@@ -387,10 +409,14 @@ const Transaction: React.FC = () => {
 							>
 								Expenses
 							</button>
-							<InputButton
-								setTransactions={setTransactions}
-								onTransactionAdded={refreshTransactions}
-							/>
+							<div ref={inputButtonRef}>
+								<InputButton
+									setTransactions={setTransactions}
+									onTransactionAdded={refreshTransactions}
+									showDropdown={showDropdown}
+									setShowDropdown={setShowDropdown}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

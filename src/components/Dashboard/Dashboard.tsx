@@ -1,20 +1,26 @@
 // Dashboard.tsx
 import React, { useEffect, useState } from "react"; //Reach hooks (UseState, useEffect)
 import { useNavigate } from "react-router-dom";
-import { Transaction as TransactionType } from '../../types';
+import { Transaction as TransactionType } from "../../types";
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
 import styles from "./Dashboard.module.css";
-import Visualizer from "../Visualizer/visualizer";
-import InputButton from "../InputExpense/InputButton";
-import Navbar from "./Navbar";
-import nav from "./Navbar.module.css";
+
 import { FirestoreService } from "../../../Backend/config/firestoreService";
-import { ArrowUpCircle, ArrowDownCircle, PiggyBank,} from 'lucide-react'; // Add this import
-import PieChart from "../Visualizer/PieChart"; 
+import { ArrowUpCircle, ArrowDownCircle, PiggyBank } from "lucide-react"; // Add this import
+import PieChart from "../Visualizer/PieChart";
 import Sidebar from "../Sidebar/sidebar";
 import LineChart from "../Visualizer/LineChart";
 import BarChart from "../Visualizer/BarChart";
 
+// Add this interface at the top of your file
+interface SavingsGoal {
+	id: string;
+	title: string;
+	targetAmount: number;
+	amountSaved: number;
+	createdAt: Date;
+	type: "savings";
+}
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
@@ -22,6 +28,7 @@ const Dashboard: React.FC = () => {
 	const [transactions, setTransactions] = useState<any[]>([]);
 	const [userData, setUserData] = useState<any>(null); //Here we create a state variable for user data. initialized to null to begin with
 	const [loading, setLoading] = useState(true); // Add loading state
+	const [totalSavingsAmount, setTotalSavingsAmount] = useState<number>(0);
 	const navigate = useNavigate(); //Used this to redirect user if not signed in.
 
 	/**
@@ -42,72 +49,98 @@ const Dashboard: React.FC = () => {
         creationTime: "...",    // When the account was created
         lastSignInTime: "..."   // When the user last signed in
     }
-}
+}		
 	 */
-useEffect(() => {
-    const loadData = async () => {
-        if (auth.currentUser) {
-            try {
-                // Load user data from Firestore
-                const userDataResult = await FirestoreService.getUserData(auth.currentUser.uid);
-                if (userDataResult) {
-                    setUserData(userDataResult);
-                }
 
-                // Load transactions
-                const transactions = await FirestoreService.getTransactions(auth.currentUser.uid);
-                setTransactions(transactions.map(t => ({
-                    ...t,
-                    userId: auth.currentUser!.uid,
-                    currency: t.currency || 'USD',
-                    status: t.status || 'completed',
-                    date: t.date.toDate() // Convert Firestore Timestamp to Date
-                })) as TransactionType[]);
-            } catch (error) {
-                console.error('Error loading data:', error);
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setLoading(false);
-        }
-    };
+	const totalSaved = async () => {
+		if (!userData?.uid) return 0;
+		try {
+			const savings = await FirestoreService.getSavingsGoals(
+				userData.uid
+			);
+			return savings.reduce(
+				(sum, saving) => sum + (saving.amountSaved || 0),
+				0
+			);
+		} catch (error) {
+			console.error("Error fetching savings:", error);
+			return 0;
+		}
+	};
+	useEffect(() => {
+		const loadData = async () => {
+			if (auth.currentUser) {
+				try {
+					// Load user data from Firestore
+					const userDataResult = await FirestoreService.getUserData(
+						auth.currentUser.uid
+					);
+					if (userDataResult) {
+						setUserData(userDataResult);
+					}
 
-    loadData();
-}, []);
-    //This is the function that filters the transactions based on the filter and search term
+					// Load transactions and savings simultaneously
+					const [transactions, savings] = await Promise.all([
+						FirestoreService.getTransactions(auth.currentUser.uid),
+						FirestoreService.getSavingsGoals(auth.currentUser.uid),
+					]);
 
+					// Set transactions
+					setTransactions(
+						transactions.map((t) => ({
+							...t,
+							userId: auth.currentUser!.uid,
+							currency: t.currency || "USD",
+							status: t.status || "completed",
+							date: t.date.toDate(),
+						})) as TransactionType[]
+					);
 
-const TotalIncome = () => {
-	const incometrans = transactions.filter(t => t.type === 'income'); 
+					// Calculate and set total savings
+					const totalSavingsAmount = savings.reduce(
+						(sum, saving) => sum + (saving.amountSaved || 0),
+						0
+					);
+					setTotalSavingsAmount(totalSavingsAmount);
+				} catch (error) {
+					console.error("Error loading data:", error);
+				} finally {
+					setLoading(false);
+				}
+			} else {
+				setLoading(false);
+			}
+		};
 
-	let res = 0
-	
-    incometrans.forEach(transaction => {
-        res += transaction.amount;
-    });
+		loadData();
+	}, []);
+	//This is the function that filters the transactions based on the filter and search term
 
-	return res
-}
+	const TotalIncome = () => {
+		const incometrans = transactions.filter((t) => t.type === "income");
 
+		let res = 0;
 
-const TotalExpense = () => {
-	const expensetrans = transactions.filter(t => t.type === 'expense')
-	let res = 0
-	
-    expensetrans.forEach(transaction => {
-        res += transaction.amount;
-    });
+		incometrans.forEach((transaction) => {
+			res += transaction.amount;
+		});
 
-	return res
-}
+		return parseFloat(res.toFixed(2));
+	};
 
+	const TotalExpense = () => {
+		const expensetrans = transactions.filter((t) => t.type === "expense");
+		let res = 0;
 
+		expensetrans.forEach((transaction) => {
+			res += transaction.amount;
+		});
 
+		return parseFloat(res.toFixed(2));
+	};
 
-const tot_i = TotalIncome()
-const tot_e = TotalExpense()
-
+	const tot_i = TotalIncome();
+	const tot_e = TotalExpense();
 
 	// Skeleton components
 	const CardSkeleton = () => (
@@ -121,8 +154,6 @@ const tot_e = TotalExpense()
 			<div className={styles.skeletonChart}></div>
 		</div>
 	);
-
-
 
 	//This is the component for the dashboard.
 	//It displays the user's data, and the dashboard visuals.
@@ -182,7 +213,9 @@ const tot_e = TotalExpense()
 									</div>
 									<div className={styles.cardInfo}>
 										<h3>Total Savings</h3>
-										<p className={styles.amount}>$1,300</p>
+										<p className={styles.amount}>
+											${totalSavingsAmount}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -193,9 +226,29 @@ const tot_e = TotalExpense()
 				<section className={styles.charts}>
 					{loading ? (
 						<>
-							<ChartSkeleton />
-							<ChartSkeleton />
-							<ChartSkeleton />
+							<div
+								className={`${styles.chart} ${styles.fullWidthChart}`}
+							>
+								<ChartSkeleton />
+							</div>
+							<div className={styles.goals}>
+								<div className={styles.goalSection}>
+									<ChartSkeleton />
+								</div>
+								<div className={styles.goalSection}>
+									<ChartSkeleton />
+								</div>
+							</div>
+							<div
+								className={`${styles.chart} ${styles.pieChart}`}
+							>
+								<ChartSkeleton />
+							</div>
+							<div
+								className={`${styles.chart} ${styles.lineChart}`}
+							>
+								<ChartSkeleton />
+							</div>
 						</>
 					) : (
 						<>
@@ -347,11 +400,13 @@ const tot_e = TotalExpense()
 									</div>
 								</section>
 							</div>
-							<div className={`${styles.chart} ${styles.pieChart}`}>
+							<div
+								className={`${styles.chart} ${styles.pieChart}`}
+							>
 								<PieChart />
 							</div>
 							<div
-								className={`${styles.chart}${styles.lineChart}`}
+								className={`${styles.chart} ${styles.lineChart}`}
 							>
 								<LineChart />
 							</div>

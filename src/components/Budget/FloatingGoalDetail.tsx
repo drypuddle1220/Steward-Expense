@@ -58,11 +58,17 @@ const FloatingGoalDetail: React.FC<FloatingGoalDetailProps> = ({
 			setIsClosing(false);
 		}, 300); // Match animation duration
 	};
-
+	//Create a handler to handle click event on overlay outside of floating window.
+	const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+		if (e.currentTarget === e.target) handleClose();
+	};
 	if (!isVisible) return null;
 
 	return (
-		<div className={`${styles.overlay} ${isClosing ? styles.closing : ""}`}>
+		<div
+			className={`${styles.overlay} ${isClosing ? styles.closing : ""}`}
+			onClick={handleOverlayClick}
+		>
 			<div
 				className={`${styles.container} ${
 					isClosing ? styles.closing : ""

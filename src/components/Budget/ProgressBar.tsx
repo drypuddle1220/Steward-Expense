@@ -28,7 +28,7 @@ const SavingsProgressBar: React.FC<SavingsProgressBarProps> = ({
 						className={styles.progressSegment}
 						style={{
 							width: `${percentageSaved}%`,
-							backgroundColor: "#81C784",
+							backgroundColor: "var(--chart-gradient-3)",
 						}}
 					/>
 				</div>
