@@ -169,6 +169,24 @@ nav a:hover {
 }
 
 /*Styling for elements in sidebar ^^^ */
+.themeToggle {
+	background: none;
+	border: none;
+	color: var(--text-primary);
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+	margin-bottom: 20px;
+  }
+  
+  .themeToggle:hover {
+	background-color: var(--bg-secondary);
+	transform: scale(1.1);
+  }
 
 .menuButton {
 	display: none;
