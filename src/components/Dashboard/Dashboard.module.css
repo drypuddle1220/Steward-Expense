@@ -117,68 +117,92 @@ body {
 	height: 100%;
 }
 
-.goals {
-	display: grid;
-	grid-row: span 2;
-	grid-column: span 1;
-	gap: 15px;
-	background: var(--card-bg);
-	border-radius: var(--card-radius);
-	padding: 20px;
-	display: grid;
-	gap: 24px;
-	border: 1px solid var(--border-light);
-}
-
-.goalSection {
+.sectionHeader {
 	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.goalSection h3 {
-	font-size: 1rem;
-	font-weight: 600;
-	color: var(--text-primary);
-	margin: 0;
-}
-
-.goalsList {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
+	justify-content: space-between;
+	align-items: center;
+	height: auto;
+	width: 100%;
+	height: fit-content;
 }
 
 .goalItem {
+	background: var(--bg-secondary);
+	padding: 10px;
+	border-radius: var(--card-radius);
+	border: 1px solid var(--border-light);
+}
+
+.goalHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.goalTitle {
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.progressContainer {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 }
 
-.goalInfo {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 0.875rem;
-}
-
-.goalText {
-	color: var(--text-primary);
-	font-size: 0.875rem;
-	font-weight: 500;
-}
-
-.goalValue {
-	color: var(--text-secondary);
-	font-size: 0.75rem;
+.progressBars {
+	position: relative;
+	height: 8px;
+	background-color: var(--bg-secondary);
+	border-radius: 4px;
+	overflow: hidden;
+	margin: 8px 0;
 }
 
 .progressBar {
-	height: 6px;
-	background: var(--bg-secondary);
-	border-radius: 3px;
-	overflow: hidden;
-	position: relative;
+	height: 100%;
+	border-radius: 4px;
+	transition: width 0.3s ease;
+}
+
+.progressBar.excellent {
+	background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.progressBar.good {
+	background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+}
+
+.progressBar.warning {
+	background: linear-gradient(90deg, #f1c40f 0%, #f39c12 100%);
+}
+
+.progressBar.danger {
+	background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.amounts {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+}
+
+.targetAmount {
+	opacity: 0.7;
+}
+
+.sectionHeader .monthProgress {
+	background-color: var(--bg-primary);
+	color: var(--text-white);
+	border-radius: var(--card-radius);
+}
+
+.monthlyTarget {
+	margin-top: 8px;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
 }
 
 .progressFill {
@@ -380,4 +404,136 @@ body {
 .lineChartCard:hover {
 	transform: none;
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.goals {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr 1fr;
+	grid-row-start: 1;
+	grid-column-start: 3;
+	grid-row: span 2;
+	grid-column: span 1;
+	background: var(--card-bg);
+	border-radius: var(--card-radius);
+	padding: 15px;
+	grid-gap: 1.5rem;
+}
+
+.goalsList {
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	gap: 15px;
+}
+.goals .budgetSection {
+	grid-row-start: 1;
+	grid-column-start: 1;
+	grid-row: span 1;
+	grid-column: span 1;
+	overflow-y: auto;
+	scrollbar-gutter: stable; /* Prevents layout shift when scrollbar appears */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.goals .budgetSection::-webkit-scrollbar {
+	display: none;
+}
+
+.goals .savingsSection {
+	grid-row-start: 2;
+	grid-column-start: 1;
+	grid-row: span 1;
+	grid-column: span 1;
+}
+
+.budgetItem,
+.savingsItem {
+	margin-bottom: 1.25rem;
+}
+
+.budgetHeader,
+.savingsHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.status {
+	padding: 0.25rem 0.75rem;
+	border-radius: 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.status.excellent {
+	background: var(--gradient-green);
+	color: white;
+}
+.status.good {
+	background: var(--gradient-blue);
+	color: white;
+}
+.status.warning {
+	background: var(--gradient-orange);
+	color: white;
+}
+.status.danger {
+	background: var(--btn-danger);
+	color: white;
+}
+
+.progressBars {
+	position: relative;
+	height: 8px;
+	background: var(--bg-input);
+	border-radius: 4px;
+	margin-bottom: 0.5rem;
+}
+
+.progressBar {
+	height: 100%;
+	border-radius: 4px;
+	transition: width 0.3s ease;
+}
+
+.usage {
+	background: var(--gradient-blue);
+}
+
+.monthIndicator {
+	position: absolute;
+	top: -4px;
+	width: 2px;
+	height: 16px;
+	background: var(--text-secondary);
+	transform: translateX(-50%);
+}
+
+.amounts {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+}
+
+.monthProgress {
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	background: var(--bg-input);
+	padding: 0.25rem 0.75rem;
+	border-radius: 1rem;
+}
+
+.savings {
+	background: var(--gradient-green);
+	padding: 0.25rem 0.75rem;
+	border-radius: 1rem;
+	color: var(--text-white);
+}
+
+.savingsProgress {
+	padding: 0.25rem 0.75rem;
+	background: var(--gradient-green);
 }

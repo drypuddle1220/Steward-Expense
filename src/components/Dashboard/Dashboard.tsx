@@ -22,6 +22,15 @@ interface SavingsGoal {
 	type: "savings";
 }
 
+// Add these interfaces if you don't have them
+interface BudgetGoalData {
+	id: string;
+	title: string;
+	targetAmount: number;
+	tags: string[];
+	type: string;
+}
+
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
 const Dashboard: React.FC = () => {
 	//State and navigation setup:
@@ -29,7 +38,9 @@ const Dashboard: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null); //Here we create a state variable for user data. initialized to null to begin with
 	const [loading, setLoading] = useState(true); // Add loading state
 	const [totalSavingsAmount, setTotalSavingsAmount] = useState<number>(0);
+	const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
 	const navigate = useNavigate(); //Used this to redirect user if not signed in.
+	const [budgetGoals, setBudgetGoals] = useState<BudgetGoalData[]>([]);
 
 	/**
 	 * Checks if user is logged in
@@ -52,38 +63,38 @@ const Dashboard: React.FC = () => {
 }		
 	 */
 
-	const totalSaved = async () => {
-		if (!userData?.uid) return 0;
-		try {
-			const savings = await FirestoreService.getSavingsGoals(
-				userData.uid
-			);
-			return savings.reduce(
-				(sum, saving) => sum + (saving.amountSaved || 0),
-				0
-			);
-		} catch (error) {
-			console.error("Error fetching savings:", error);
-			return 0;
-		}
-	};
 	useEffect(() => {
 		const loadData = async () => {
 			if (auth.currentUser) {
 				try {
-					// Load user data from Firestore
-					const userDataResult = await FirestoreService.getUserData(
-						auth.currentUser.uid
-					);
+					// Load user data, transactions, and budget goals simultaneously
+					const [
+						userDataResult,
+						transactions,
+						budgetGoals,
+						savingsGoals,
+					] = await Promise.all([
+						FirestoreService.getUserData(auth.currentUser.uid),
+						FirestoreService.getTransactions(auth.currentUser.uid),
+						FirestoreService.getBudgetGoals(auth.currentUser.uid),
+						FirestoreService.getSavingsGoals(auth.currentUser.uid),
+					]);
+
+					// Set user data
 					if (userDataResult) {
 						setUserData(userDataResult);
 					}
 
-					// Load transactions and savings simultaneously
-					const [transactions, savings] = await Promise.all([
-						FirestoreService.getTransactions(auth.currentUser.uid),
-						FirestoreService.getSavingsGoals(auth.currentUser.uid),
-					]);
+					// Set budget goals
+					setBudgetGoals(budgetGoals as BudgetGoalData[]);
+
+					// Set savings goals
+					setSavingsGoals(
+						savingsGoals.map((sg) => ({
+							...sg,
+							createdAt: sg.createdAt.toDate(),
+						})) as SavingsGoal[]
+					);
 
 					// Set transactions
 					setTransactions(
@@ -97,7 +108,7 @@ const Dashboard: React.FC = () => {
 					);
 
 					// Calculate and set total savings
-					const totalSavingsAmount = savings.reduce(
+					const totalSavingsAmount = savingsGoals.reduce(
 						(sum, saving) => sum + (saving.amountSaved || 0),
 						0
 					);
@@ -154,6 +165,31 @@ const Dashboard: React.FC = () => {
 			<div className={styles.skeletonChart}></div>
 		</div>
 	);
+
+	// Add these helper functions
+	const calculateBudgetHealth = (
+		currentAmount: number,
+		targetAmount: number
+	) => {
+		const usagePercentage = (currentAmount / targetAmount) * 100;
+		if (usagePercentage <= 35) return "excellent";
+		else if (usagePercentage <= 60) return "good";
+		else if (usagePercentage <= 70) return "warning";
+		return "danger";
+	};
+
+	const getTimeProgress = () => {
+		const today = new Date();
+		const monthProgress =
+			(today.getDate() /
+				new Date(
+					today.getFullYear(),
+					today.getMonth() + 1,
+					0
+				).getDate()) *
+			100;
+		return monthProgress;
+	};
 
 	//This is the component for the dashboard.
 	//It displays the user's data, and the dashboard visuals.
@@ -258,145 +294,217 @@ const Dashboard: React.FC = () => {
 								<BarChart />
 							</div>
 							<div className={styles.goals}>
-								<section className={styles.goalSection}>
-									<h3>Budget Goals</h3>
+								<section className={styles.budgetSection}>
+									<div className={styles.sectionHeader}>
+										<h3>Budget Goals</h3>
+										<span className={styles.monthProgress}>
+											Month Progress:{" "}
+											{getTimeProgress().toFixed(0)}%
+										</span>
+									</div>
 									<div className={styles.goalsList}>
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
-												>
-													Dining out expenses
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$160/$200
-												</span>
-											</div>
-											<div className={styles.progressBar}>
+										{budgetGoals.map((goal) => {
+											const currentAmount = transactions
+												.filter(
+													(transaction) =>
+														transaction.type ===
+															"expense" &&
+														transaction.tags?.some(
+															(tag: string) =>
+																goal.tags.includes(
+																	tag
+																)
+														)
+												)
+												.reduce(
+													(sum, t) => sum + t.amount,
+													0
+												);
+											const healthStatus =
+												calculateBudgetHealth(
+													currentAmount,
+													goal.targetAmount
+												);
+											return (
 												<div
-													className={`${styles.progressFill} ${styles.warning}`}
-													style={{ width: "80%" }}
-													title='80% of budget used'
-												/>
-											</div>
-										</div>
-
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
+													key={goal.id}
+													className={styles.goalItem}
 												>
-													Entertainment budget
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$150/$200
-												</span>
-											</div>
-											<div className={styles.progressBar}>
-												<div
-													className={`${styles.progressFill} ${styles.success}`}
-													style={{ width: "75%" }}
-													title='75% of budget used'
-												/>
-											</div>
-										</div>
-
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
-												>
-													Grocery expenses
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$450/$500
-												</span>
-											</div>
-											<div className={styles.progressBar}>
-												<div
-													className={`${styles.progressFill} ${styles.info}`}
-													style={{ width: "90%" }}
-													title='90% of budget used'
-												/>
-											</div>
-										</div>
+													<div
+														className={
+															styles.goalHeader
+														}
+													>
+														<span
+															className={
+																styles.goalTitle
+															}
+														>
+															{goal.title}
+														</span>
+														<span
+															className={`${styles.status} ${styles[healthStatus]}`}
+														>
+															{(
+																(currentAmount /
+																	goal.targetAmount) *
+																100
+															).toFixed(0)}
+															%
+														</span>
+													</div>
+													<div
+														className={
+															styles.progressContainer
+														}
+													>
+														<div
+															className={
+																styles.progressBars
+															}
+														>
+															<div
+																className={`${styles.progressBar} ${styles[healthStatus]}`}
+																style={{
+																	width: `${
+																		(currentAmount /
+																			goal.targetAmount) *
+																		100
+																	}%`,
+																}}
+															/>
+															<div
+																className={
+																	styles.monthIndicator
+																}
+																style={{
+																	left: `${getTimeProgress()}%`,
+																}}
+																title='Month Progress'
+															/>
+														</div>
+														<div
+															className={
+																styles.amounts
+															}
+														>
+															<span>
+																$
+																{currentAmount.toLocaleString()}
+															</span>
+															<span
+																className={
+																	styles.targetAmount
+																}
+															>
+																of $
+																{goal.targetAmount.toLocaleString()}
+															</span>
+														</div>
+													</div>
+												</div>
+											);
+										})}
 									</div>
 								</section>
 
-								<section className={styles.goalSection}>
-									<h3>Savings Goals</h3>
+								<section className={styles.savingsSection}>
+									<div className={styles.sectionHeader}>
+										<h3>Savings Goals</h3>
+										<span className={styles.monthProgress}>
+											Month Progress:{" "}
+											{getTimeProgress().toFixed(0)}%
+										</span>
+									</div>
 									<div className={styles.goalsList}>
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
-												>
-													Emergency fund
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$3,000/$5,000
-												</span>
-											</div>
-											<div className={styles.progressBar}>
-												<div
-													className={`${styles.progressFill} ${styles.primary}`}
-													style={{ width: "60%" }}
-													title='60% of goal reached'
-												/>
-											</div>
-										</div>
+										{savingsGoals.map((goal) => {
+											const progressPercentage =
+												(goal.amountSaved /
+													goal.targetAmount) *
+												100;
+											const remaining =
+												goal.targetAmount -
+												goal.amountSaved;
 
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
-												>
-													Retirement savings
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$15,000/$20,000
-												</span>
-											</div>
-											<div className={styles.progressBar}>
+											return (
 												<div
-													className={`${styles.progressFill} ${styles.success}`}
-													style={{ width: "75%" }}
-													title='75% of goal reached'
-												/>
-											</div>
-										</div>
-
-										<div className={styles.goalItem}>
-											<div className={styles.goalInfo}>
-												<span
-													className={styles.goalText}
+													key={goal.id}
+													className={styles.goalItem}
 												>
-													Vacation fund
-												</span>
-												<span
-													className={styles.goalValue}
-												>
-													$800/$2,000
-												</span>
-											</div>
-											<div className={styles.progressBar}>
-												<div
-													className={`${styles.progressFill} ${styles.warning}`}
-													style={{ width: "40%" }}
-													title='40% of goal reached'
-												/>
-											</div>
-										</div>
+													<div
+														className={
+															styles.goalHeader
+														}
+													>
+														<span
+															className={
+																styles.goalTitle
+															}
+														>
+															{goal.title}
+														</span>
+														<span
+															className={`${styles.status} ${styles.savings}`}
+														>
+															{progressPercentage.toFixed(
+																0
+															)}
+															%
+														</span>
+													</div>
+													<div
+														className={
+															styles.progressContainer
+														}
+													>
+														<div
+															className={
+																styles.progressBar
+															}
+														>
+															<div
+																className={
+																	styles.savingsProgress
+																}
+																style={{
+																	width: `${progressPercentage}%`,
+																}}
+															/>
+														</div>
+														<div
+															className={
+																styles.amounts
+															}
+														>
+															<span>
+																$
+																{goal.amountSaved.toLocaleString()}{" "}
+																saved
+															</span>
+															<span
+																className={
+																	styles.remaining
+																}
+															>
+																$
+																{remaining.toLocaleString()}{" "}
+																to go
+															</span>
+														</div>
+													</div>
+													<div
+														className={
+															styles.monthlyTarget
+														}
+													>
+														Monthly target: $
+														{Math.ceil(
+															remaining / 12
+														).toLocaleString()}
+													</div>
+												</div>
+											);
+										})}
 									</div>
 								</section>
 							</div>

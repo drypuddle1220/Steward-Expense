@@ -33,7 +33,7 @@ export default function InputButton({
 				className={styles.addButton}
 				onClick={() => setShowDropdown(!showDropdown)}
 			>
-				<span>+</span>Add Transaction
+				Add Transaction
 			</button>
 
 			{showDropdown && (

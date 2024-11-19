@@ -23,7 +23,7 @@ interface Transaction {
 	paymentMethod: string;
 }
 
-interface FirestoreBudgetGoal {
+interface BudgetGoalData {
 	id: string;
 	title: string;
 	targetAmount: number;
@@ -247,7 +247,7 @@ export class FirestoreService {
 		}
 	}
 
-	static async getBudgetGoals(userId: string) {
+	static async getBudgetGoals(userId: string): Promise<BudgetGoalData[]> {
 		try {
 			const budgetGoalsRef = collection(
 				db,
@@ -256,10 +256,13 @@ export class FirestoreService {
 				"budgetGoals"
 			);
 			const querySnapshot = await getDocs(budgetGoalsRef);
-			return querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+			return querySnapshot.docs.map((doc) => {
+				const data = doc.data();
+				return {
+					id: doc.id,
+					...data,
+				} as BudgetGoalData;
+			});
 		} catch (error) {
 			console.error("Error getting budget goals:", error);
 			throw error;
@@ -358,15 +361,6 @@ export class FirestoreService {
 				"savingGoals"
 			);
 			const querySnapshot = await getDocs(savingGoalsRef);
-
-			// Debug the data structure
-			console.log(
-				"Savings Goals Data:",
-				querySnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				}))
-			);
 
 			return querySnapshot.docs.map((doc) => {
 				const data = doc.data();
