@@ -28,6 +28,10 @@ interface BudgetGoal {
 	currentAmount: number;
 	targetAmount: number;
 	tags: string[] | { name: string; amount: number; color: string }[];
+	interval: {
+		type: string;
+		startDate: Date;
+	};
 }
 
 interface SavingsGoalData {
@@ -107,9 +111,85 @@ const BudgetGoalDetail: React.FC<{
 		(goal.currentAmount / goal.targetAmount) * 100
 	);
 
-	// Filter transactions to only show those matching the goal's tags
-	const relevantTransactions = transactions?.filter(
-		(transaction) =>
+	const isTransactionInCurrentPeriod = (
+		transactionDate: Date,
+		intervalType: string,
+		startDate: Date
+	): boolean => {
+		const normalizeDate = (date: Date) => {
+			const d = new Date(date);
+			d.setHours(0, 0, 0, 0);
+			return d;
+		};
+
+		const txDate = normalizeDate(transactionDate);
+		const start = normalizeDate(startDate);
+		const now = normalizeDate(new Date());
+
+		// Find the current period's start date based on today
+		const getCurrentPeriodStart = () => {
+			const currentDate = new Date(now);
+			switch (intervalType) {
+				case "daily":
+					return currentDate;
+				case "weekly":
+					currentDate.setDate(
+						currentDate.getDate() - currentDate.getDay()
+					);
+					return currentDate;
+				case "monthly":
+					currentDate.setDate(start.getDate());
+					if (currentDate > now) {
+						currentDate.setMonth(currentDate.getMonth() - 1);
+					}
+					return currentDate;
+				case "yearly":
+					currentDate.setMonth(start.getMonth());
+					currentDate.setDate(start.getDate());
+					if (currentDate > now) {
+						currentDate.setFullYear(currentDate.getFullYear() - 1);
+					}
+					return currentDate;
+				default:
+					return start;
+			}
+		};
+
+		const currentPeriodStart = getCurrentPeriodStart();
+		const currentPeriodEnd = new Date(currentPeriodStart);
+
+		switch (intervalType) {
+			case "daily":
+				currentPeriodEnd.setDate(currentPeriodEnd.getDate() + 1);
+				break;
+			case "weekly":
+				currentPeriodEnd.setDate(currentPeriodEnd.getDate() + 7);
+				break;
+			case "monthly":
+				currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
+				break;
+			case "yearly":
+				currentPeriodEnd.setFullYear(
+					currentPeriodEnd.getFullYear() + 1
+				);
+				break;
+			case "once":
+				return txDate >= start;
+		}
+
+		return txDate >= currentPeriodStart && txDate < currentPeriodEnd;
+	};
+
+	const relevantTransactions = transactions?.filter((transaction) => {
+		const isInPeriod = isTransactionInCurrentPeriod(
+			transaction.date,
+			goal.interval.type,
+			goal.interval.startDate
+		);
+
+		if (!isInPeriod) return false;
+
+		return (
 			transaction.type === "expense" &&
 			transaction.tags?.some((tag) =>
 				goal.tags.some((goalTag) =>
@@ -118,7 +198,8 @@ const BudgetGoalDetail: React.FC<{
 						: goalTag.name === tag
 				)
 			)
-	);
+		);
+	});
 
 	return (
 		<>
@@ -131,7 +212,12 @@ const BudgetGoalDetail: React.FC<{
 					<span className={styles.target}>
 						${goal.targetAmount.toLocaleString()}
 					</span>
+					<span className={styles.recurring}>
+						{goal.interval.type.charAt(0).toUpperCase() +
+							goal.interval.type.slice(1)}
+					</span>
 				</div>
+
 				<div className={styles.progress}>
 					<BudgetProgressBar.BudgetProgressBar
 						tags={
@@ -255,10 +341,15 @@ const SavingsGoalDetail: React.FC<{ goal: SavingsGoalData }> = ({ goal }) => {
 								const runningTotal =
 									goal.contributions
 										?.slice(0, index + 1)
-										.reduce(
-											(sum, c) => sum + c.amount,
-											0
-										) || 0;
+										.reduce((sum, c) => {
+											console.log(
+												"Current contribution:",
+												c.amount
+											);
+											console.log("Current sum:", sum);
+											return sum + c.amount;
+										}, 0) || 0;
+
 								const progressAtTime = Math.round(
 									(runningTotal / goal.targetAmount) * 100
 								);
@@ -269,12 +360,21 @@ const SavingsGoalDetail: React.FC<{ goal: SavingsGoalData }> = ({ goal }) => {
 										className={styles.contributionItem}
 									>
 										<span
-											className={
+											className={`${
 												styles.contributionAmount
-											}
+											} ${
+												contribution.amount > 0
+													? styles.positive
+													: styles.negative
+											}`}
 										>
-											+$
-											{contribution.amount.toLocaleString()}
+											{contribution.amount > 0
+												? "+"
+												: "-"}
+											$
+											{Math.abs(
+												contribution.amount
+											).toLocaleString()}
 										</span>
 										<span
 											className={styles.contributionDate}

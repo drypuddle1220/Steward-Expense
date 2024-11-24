@@ -1,12 +1,11 @@
 /* General page layout */
 
-
 .landingPage {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	min-height: 100vh;
-	background-color: var(--btn-primary);
+	background-color: var(--bg-primary);
 	text-align: center;
 	color: var(--text-white);
 }
@@ -52,7 +51,9 @@
 
 .logInBtn:hover,
 .signInBtn:hover {
-	border-color: var(--text-white); /* Highlight the border in white on hover */
+	border-color: var(
+		--text-white
+	); /* Highlight the border in white on hover */
 	transform: scale(1.05); /* Slightly enlarge the button */
 }
 
@@ -156,8 +157,6 @@
 		transform: translateY(0); /* Move to original position */
 	}
 }
-
-
 
 .feature h3 {
 	font-size: 1.5rem;

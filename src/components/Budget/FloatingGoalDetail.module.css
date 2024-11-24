@@ -100,7 +100,7 @@
 	flex-direction: column;
 	gap: 0.5rem;
 	padding: 1rem;
-	background: rgba(255, 255, 255, 0.7);
+	background: var(--card-bg);
 	border-radius: 0.75rem;
 	border: 1px solid var(--border-light);
 	box-shadow: var(--shadow-sm);
@@ -138,6 +138,11 @@
 }
 
 .target {
+	color: var(--text-secondary);
+	font-size: 1.5rem;
+}
+
+.recurring {
 	color: var(--text-secondary);
 	font-size: 1.5rem;
 }
@@ -186,13 +191,13 @@
 
 .description {
 	font-weight: 500;
-	color: var(--text-primary);
+	color: var(--text-secondary);
 	margin-bottom: 0.25rem;
 	display: block;
 }
 
 .amount {
-	color: var(--danger-dark);
+	color: var(--text-primary);
 	font-weight: 600;
 	font-size: 1.125rem;
 }
@@ -337,6 +342,20 @@
 	font-size: 0.875rem;
 }
 
+.positive {
+	background-color: var(--gradient-green);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.negative {
+	background-color: var(--gradient-orange);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
 .contributionsTableHeader {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -363,11 +382,23 @@
 }
 
 .contributionAmount {
-	background: var(--gradient-green);
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	font-weight: 600;
+}
+.contributionAmount.positive {
+	background: var(--income);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.contributionAmount.negative {
+	background: var(--expense);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .contributionDate {

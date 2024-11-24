@@ -20,7 +20,7 @@
 }
 
 .addButton:hover {
-	background-color: #0984e3;
+	background-color: var(--btn-primary-hover);
 }
 
 .optionsMenu {
@@ -28,7 +28,7 @@
 	top: 100%;
 	right: 0;
 	margin-top: 8px;
-	background: white;
+	background: var(--bg-secondary);
 	border-radius: 8px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	padding: 8px;
@@ -48,7 +48,7 @@
 }
 
 .optionsMenu button:hover {
-	background-color: var(--bg-secondary);
+	background-color: var(--bg-white);
 }
 
 @media screen and (max-width: 768px) {

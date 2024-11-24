@@ -488,6 +488,7 @@ body {
 	position: relative;
 	height: 8px;
 	background: var(--bg-input);
+	max-width: 100%;
 	border-radius: 4px;
 	margin-bottom: 0.5rem;
 }
@@ -535,5 +536,7 @@ body {
 
 .savingsProgress {
 	padding: 0.25rem 0.75rem;
+	max-width: 100%;
 	background: var(--gradient-green);
+	border-radius: 1rem;
 }

@@ -5,6 +5,7 @@ import {
 	Cell,
 	Tooltip,
 	Legend,
+	Sector,
 } from "recharts";
 import { Transaction as TransactionType } from "../../types";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
@@ -15,19 +16,60 @@ import { ResponsiveContainer } from "recharts";
 import { Category } from "@mui/icons-material";
 
 const COLORS = [
-	"#4158D0", // Deep Blue
-	"#C850C0", // Purple
-	"#3B2667", // Dark Purple
-	"#6B48FF", // Violet
-	"#4B6EFF", // Royal Blue
-	"#61DAFB", // Light Blue
-	"#764ABC", // Medium Purple
-	"#9B6BFF", // Lavender
+	"var(--chart-gradient-5)",
+	"var(--chart-gradient-6)",
+	"var(--chart-gradient-2)",
+	"var(--chart-gradient-9)",
 ];
 const firestoreService = new FirestoreService();
 
 //This is the component for the transactions page.
 //It displays all the transactions of the user, and allows the user to filter and search through the transactions.
+
+// Add this function for the active shape rendering
+const renderActiveShape = (props: any) => {
+	const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
+		props;
+
+	return (
+		<g>
+			{/* Subtle outer glow */}
+			<Sector
+				cx={cx}
+				cy={cy}
+				innerRadius={innerRadius - 1}
+				outerRadius={outerRadius + 5}
+				startAngle={startAngle}
+				endAngle={endAngle}
+				fill={fill}
+				opacity={0.1}
+			/>
+
+			{/* Main sector with slight expansion */}
+			<Sector
+				cx={cx}
+				cy={cy}
+				innerRadius={innerRadius}
+				outerRadius={outerRadius + 3}
+				startAngle={startAngle}
+				endAngle={endAngle}
+				fill={fill}
+			/>
+
+			{/* Inner highlight for depth */}
+			<Sector
+				cx={cx}
+				cy={cy}
+				startAngle={startAngle}
+				endAngle={endAngle}
+				innerRadius={innerRadius - 2}
+				outerRadius={innerRadius}
+				fill={fill}
+				opacity={0.3}
+			/>
+		</g>
+	);
+};
 
 const PieChart: React.FC = () => {
 	//The following useState hooks manage the state of the transactions, user data, and loading.
@@ -37,6 +79,9 @@ const PieChart: React.FC = () => {
 	const [filter, setFilter] = useState("all"); //This is the default filter, which is all transactions.
 	const [searchTerm, setSearchTerm] = useState(""); //This is the search term, which is the search input in the search bar.
 	const navigate = useNavigate();
+
+	// Add state for active index
+	const [activeIndex, setActiveIndex] = useState<number>(-1);
 
 	useEffect(() => {
 		const loadData = async () => {
@@ -126,6 +171,15 @@ const PieChart: React.FC = () => {
 
 	const pieData = preparePieChartData();
 
+	// Add hover handlers
+	const onPieEnter = (_: any, index: number) => {
+		setActiveIndex(index);
+	};
+
+	const onPieLeave = () => {
+		setActiveIndex(-1);
+	};
+
 	return (
 		<div className={`${styles.card}`}>
 			<h3>Expense Breakdown</h3>
@@ -134,6 +188,36 @@ const PieChart: React.FC = () => {
 					<RechartsPieChart
 						margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
 					>
+						<defs>
+							<filter
+								id='glow'
+								height='200%'
+								width='200%'
+								x='-50%'
+								y='-50%'
+							>
+								<feGaussianBlur
+									stdDeviation='2'
+									result='coloredBlur'
+								/>
+								<feOffset dx='0' dy='0' result='offsetBlur' />
+								<feFlood
+									floodColor='rgba(255,255,255,0.2)'
+									result='glowColor'
+								/>
+								<feComposite
+									in='glowColor'
+									in2='coloredBlur'
+									operator='in'
+									result='softGlow'
+								/>
+								<feMerge>
+									<feMergeNode in='softGlow' />
+									<feMergeNode in='SourceGraphic' />
+								</feMerge>
+							</filter>
+						</defs>
+
 						<Pie
 							data={pieData}
 							labelLine={{
@@ -150,9 +234,13 @@ const PieChart: React.FC = () => {
 							label={({ percent }) =>
 								`${(percent * 100).toFixed(0)}%`
 							}
+							activeIndex={activeIndex}
+							activeShape={renderActiveShape}
+							onMouseEnter={onPieEnter}
+							onMouseLeave={onPieLeave}
 							isAnimationActive={true}
 							animationBegin={0}
-							animationDuration={2000}
+							animationDuration={600}
 							animationEasing='ease-out'
 						>
 							{pieData.map((entry, index) => (
@@ -172,6 +260,9 @@ const PieChart: React.FC = () => {
 								borderRadius: "var(--card-radius)",
 								border: "none",
 								boxShadow: `0 4px 12px var(--chart-tooltip-shadow)`,
+							}}
+							itemStyle={{
+								color: "var(--text-primary)",
 							}}
 						/>
 						<Legend

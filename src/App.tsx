@@ -7,7 +7,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "../Backend/Routes/ProtectedRoute";
 import Transaction from "./components/Transactions/Transaction";
 import Budget from "./components/Budget/Budget";
-import { ThemeProvider } from './contexts/ThemeContext';
+import Settings from "./components/Setting/Settings";
+import { ThemeProvider } from "./contexts/ThemeContext";
 const App: React.FC = () => {
 	return (
 		<ThemeProvider>
@@ -27,6 +28,7 @@ const App: React.FC = () => {
 						<Route path='/dashboard' element={<Dashboard />} />
 						<Route path='/transaction' element={<Transaction />} />
 						<Route path='/GoalsTracker' element={<Budget />} />
+						<Route path='/settings' element={<Settings />} />
 						{/* Add more protected routes here */}
 					</Route>
 				</Routes>

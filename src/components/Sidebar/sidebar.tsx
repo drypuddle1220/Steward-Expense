@@ -4,14 +4,12 @@ import Navbar from "../Dashboard/Navbar";
 import styles from "../Transactions/Transaction.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
-import { useTheme } from '../../contexts/ThemeContext';
-import { Moon, Sun } from 'lucide-react'; // Import icons
-
+import { useTheme } from "../../contexts/ThemeContext";
+import { Moon, Sun } from "lucide-react"; // Import icons
 
 const Sidebar: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const { theme, toggleTheme } = useTheme();
-	
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -44,20 +42,27 @@ const Sidebar: React.FC = () => {
 			</div>
 			<nav className={nav.navigation}>
 				<Navbar />
+				<button onClick={toggleTheme} className={nav.themeToggle}>
+					{theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+				</button>
 			</nav>
-			<button onClick={toggleTheme} className={nav.themeToggle}>
-        	{theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-      		</button>
+
 			<div className={nav.userInfo}>
 				{userData ? (
 					<>
-						<img
-							src='src/components/Dashboard/Avatars/Avatar1.png'
-							alt='User Avatar'
-							className={nav.stewardlogo}
-						/>
-						<h5>Welcome, {userData.firstName}!</h5>
-						<p>{userData.email}</p>
+						<div className={nav.avatar}>
+							<img
+								src='src/components/Dashboard/Avatars/Avatar1.png'
+								alt='User Avatar'
+								className={nav.stewardlogo}
+							/>
+						</div>
+						<div className={nav.userInfoText}>
+							<h5>
+								{userData.firstName} {userData.lastName}
+							</h5>
+							<p>{userData.email}</p>
+						</div>
 					</>
 				) : (
 					<>

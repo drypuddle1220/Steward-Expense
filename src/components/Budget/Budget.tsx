@@ -7,9 +7,8 @@ import NewGoalForm from "./NewGoalForm";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import MeatballMenu from "../Transactions/MeatballMenu";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Minus } from "lucide-react";
 import FloatingGoalDetail from "./FloatingGoalDetail";
-import { Timestamp } from "firebase/firestore";
 import ReactConfetti from "react-confetti";
 
 // Interfaces
@@ -23,12 +22,21 @@ interface BudgetGoal {
 		amount: number;
 		color: string;
 	}[];
+	interval: {
+		type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+		startDate: Date;
+	};
+	createdAt: Date;
 }
 
 interface NewGoalData {
 	title: string;
 	targetAmount: number;
 	tags?: string[];
+	interval?: {
+		type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+		startDate: Date;
+	};
 }
 
 interface BudgetGoalData {
@@ -37,6 +45,10 @@ interface BudgetGoalData {
 	targetAmount: number;
 	tags: string[];
 	type: string;
+	interval: {
+		type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+		startDate: Date;
+	};
 	createdAt: Date;
 }
 
@@ -81,6 +93,87 @@ const Budget: React.FC = () => {
 	>(null);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 
+	// Add this helper function at the top of your component
+	const isTransactionInCurrentPeriod = (
+		transactionDate: Date,
+		intervalType: string,
+		startDate: Date
+	): boolean => {
+		const now = new Date();
+		const start = new Date(startDate);
+
+		switch (intervalType) {
+			case "daily":
+				// Reset every 24 hours from start date
+				const daysSinceStart = Math.floor(
+					(now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+				);
+				const currentPeriodStart = new Date(start);
+				currentPeriodStart.setDate(start.getDate() + daysSinceStart);
+				const currentPeriodEnd = new Date(currentPeriodStart);
+				currentPeriodEnd.setDate(currentPeriodStart.getDate() + 1);
+				return (
+					transactionDate >= currentPeriodStart &&
+					transactionDate < currentPeriodEnd
+				);
+
+			case "weekly":
+				// Reset every 7 days from start date
+				const weeksSinceStart = Math.floor(
+					(now.getTime() - start.getTime()) /
+						(1000 * 60 * 60 * 24 * 7)
+				);
+				const currentWeekStart = new Date(start);
+				currentWeekStart.setDate(start.getDate() + weeksSinceStart * 7);
+				const currentWeekEnd = new Date(currentWeekStart);
+				currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+				return (
+					transactionDate >= currentWeekStart &&
+					transactionDate < currentWeekEnd
+				);
+
+			case "monthly":
+				// Reset on same day each month
+				const currentMonthStart = new Date(
+					now.getFullYear(),
+					now.getMonth(),
+					start.getDate()
+				);
+				const currentMonthEnd = new Date(
+					now.getFullYear(),
+					now.getMonth() + 1,
+					start.getDate()
+				);
+				return (
+					transactionDate >= currentMonthStart &&
+					transactionDate < currentMonthEnd
+				);
+
+			case "yearly":
+				// Reset on same date each year
+				const currentYearStart = new Date(
+					now.getFullYear(),
+					start.getMonth(),
+					start.getDate()
+				);
+				const currentYearEnd = new Date(
+					now.getFullYear() + 1,
+					start.getMonth(),
+					start.getDate()
+				);
+				return (
+					transactionDate >= currentYearStart &&
+					transactionDate < currentYearEnd
+				);
+
+			case "once":
+				return transactionDate >= start;
+
+			default:
+				return false;
+		}
+	};
+
 	// Effect to Load Data
 	useEffect(() => {
 		const loadAllData = async () => {
@@ -118,6 +211,11 @@ const Budget: React.FC = () => {
 								transaction.type === "expense" &&
 								transaction.tags?.some((tag) =>
 									goal.tags.includes(tag)
+								) &&
+								isTransactionInCurrentPeriod(
+									transaction.date.toDate(),
+									goal.interval.type,
+									goal.interval.startDate
 								)
 						);
 
@@ -148,11 +246,16 @@ const Budget: React.FC = () => {
 							currentAmount,
 							targetAmount: goal.targetAmount,
 							tags: tagAmounts,
+							interval: {
+								type: goal.interval.type,
+								startDate: goal.interval.startDate,
+							},
+							createdAt: goal.createdAt,
 						};
 					}
 				);
 				setSavingsGoals(savingsGoalsData);
-				setBudgetGoals(processedGoals);
+				setBudgetGoals(processedGoals as BudgetGoal[]);
 				setLoading(false);
 			} catch (error) {
 				console.error("Error loading budget data:", error);
@@ -163,6 +266,8 @@ const Budget: React.FC = () => {
 		loadAllData();
 	}, []);
 
+	const [formLabel, setFormLabel] = useState<string>("");
+
 	// Handlers for Editing and Deleting Goals
 	const handleEdit = (goal: BudgetGoal) => {
 		setEditingGoal(goal);
@@ -172,6 +277,7 @@ const Budget: React.FC = () => {
 	const handleEditSavings = (goal: SavingsGoalData) => {
 		setEditingSavingsGoal(goal);
 		setShowNewSavingsForm(true);
+		setFormLabel("Edit Savings Goal");
 	};
 
 	const handleDelete = async (goalId: string) => {
@@ -259,6 +365,10 @@ const Budget: React.FC = () => {
 					<span className={styles.targetAmount}>
 						${goal.targetAmount.toLocaleString()}
 					</span>
+					<div className={styles.budgetRecurring}>
+						{goal.interval.type.charAt(0).toUpperCase() +
+							goal.interval.type.slice(1)}
+					</div>
 				</div>
 
 				<div className={styles.progressSection}>
@@ -281,7 +391,9 @@ const Budget: React.FC = () => {
 									className={styles.tagColor}
 									style={{ backgroundColor: tag.color }}
 								/>
-								<span>{tag.name}</span>
+								<span className={styles.tagLabelText}>
+									{tag.name}
+								</span>
 							</div>
 							<span className={styles.tagAmount}>
 								${tag.amount.toLocaleString()}
@@ -306,13 +418,16 @@ const Budget: React.FC = () => {
 		const [motivationalMessage, setMotivationalMessage] = useState("");
 		const [amount, setAmount] = useState("");
 		const [isAdding, setIsAdding] = useState(false);
+		const [actionType, setActionType] = useState<"add" | "withdraw">("add");
 
 		const handleAddSavings = async (e: React.FormEvent) => {
 			e.preventDefault();
 			if (!amount || !auth.currentUser) return;
 
 			try {
-				const newAmount = goal.amountSaved + Number(amount);
+				const newContributionAmount =
+					Number(amount) * (actionType === "add" ? 1 : -1);
+				const newAmount = goal.amountSaved + newContributionAmount;
 				const previousProgress = Math.floor(
 					(goal.amountSaved / goal.targetAmount) * 100
 				);
@@ -321,7 +436,7 @@ const Budget: React.FC = () => {
 				);
 
 				const newContribution = {
-					amount: Number(amount),
+					amount: newContributionAmount,
 					date: new Date(),
 				};
 
@@ -333,7 +448,9 @@ const Budget: React.FC = () => {
 					(newProgress >= 25 && previousProgress < 25) ||
 					(newProgress >= 50 && previousProgress < 50) ||
 					(newProgress >= 75 && previousProgress < 75) ||
-					(newProgress >= 100 && previousProgress < 100)
+					(newProgress >= 100 &&
+						previousProgress < 100 &&
+						actionType == "add")
 				) {
 					setShowConfetti(true);
 					setMotivationalMessage(
@@ -493,20 +610,61 @@ const Budget: React.FC = () => {
 							<input
 								type='number'
 								value={amount}
+								min={0}
 								onClick={(e) => e.stopPropagation()}
-								onChange={(e) => setAmount(e.target.value)}
+								onChange={(e) => {
+									// Only allow numbers and valid decimals
+									const value = e.target.value;
+									const regex = /^\d*\.?\d{0,2}$/;
+									if (regex.test(value) || value === "") {
+										setAmount(value);
+									}
+								}}
 								onKeyDown={(e) => {
-									if (e.key === "-") e.preventDefault();
+									// Prevent specific keys
+									const invalidChars = ["-", "+", "e", "E"];
+									if (invalidChars.includes(e.key)) {
+										e.preventDefault();
+									}
+								}}
+								onPaste={(e) => {
+									// Prevent pasting invalid content
+									e.preventDefault();
+									const pastedText =
+										e.clipboardData.getData("text");
+									const regex = /^\d*\.?\d{0,2}$/;
+									if (regex.test(pastedText)) {
+										setAmount(pastedText);
+									}
 								}}
 								placeholder='Enter amount'
 								className={styles.savingsInput}
 							/>
 							<button
-								onClick={(e) => e.stopPropagation()}
+								onClick={(e) => {
+									e.stopPropagation();
+									setActionType("add");
+								}}
 								type='submit'
-								className={styles.confirmButton}
+								className={`${styles.confirmButton} ${
+									actionType === "add" ? styles.active : ""
+								}`}
 							>
-								Confirm
+								Deposit
+							</button>
+							<button
+								onClick={(e) => {
+									e.stopPropagation();
+									setActionType("withdraw");
+								}}
+								type='submit'
+								className={`${styles.withdrawButton} ${
+									actionType === "withdraw"
+										? styles.active
+										: ""
+								}`}
+							>
+								Withdraw
 							</button>
 						</form>
 					</div>
@@ -557,6 +715,11 @@ const Budget: React.FC = () => {
 							transaction.type === "expense" &&
 							transaction.tags?.some((tag) =>
 								goal.tags.includes(tag)
+							) &&
+							isTransactionInCurrentPeriod(
+								transaction.date.toDate(),
+								goal.interval.type,
+								goal.interval.startDate
 							)
 					);
 
@@ -586,11 +749,16 @@ const Budget: React.FC = () => {
 						currentAmount,
 						targetAmount: goal.targetAmount,
 						tags: tagAmounts,
+						interval: {
+							type: goal.interval.type,
+							startDate: goal.interval.startDate,
+						},
+						createdAt: goal.createdAt,
 					};
 				}
 			);
 
-			setBudgetGoals(processedGoals);
+			setBudgetGoals(processedGoals as BudgetGoal[]);
 		} catch (error) {
 			console.error("Error refreshing budget data:", error);
 		} finally {
@@ -616,23 +784,29 @@ const Budget: React.FC = () => {
 
 		try {
 			if (editingGoal) {
-				// Update existing goal
 				await FirestoreService.updateBudgetGoal(
 					user.uid,
 					editingGoal.id,
 					{
 						title: goalData.title,
 						targetAmount: goalData.targetAmount,
-						tags: goalData.tags,
-						type: "budget",
+						tags: goalData.tags || [],
+						interval: {
+							type: goalData.interval?.type || "monthly",
+							startDate:
+								goalData.interval?.startDate || new Date(),
+						},
 					}
 				);
 			} else {
-				// Create new goal
 				await FirestoreService.addBudgetGoal(user.uid, {
 					title: goalData.title,
 					targetAmount: goalData.targetAmount,
 					tags: goalData.tags || [],
+					interval: {
+						type: goalData.interval?.type || "monthly",
+						startDate: goalData.interval?.startDate || new Date(),
+					},
 					createdAt: new Date(),
 					type: "budget",
 				});
@@ -660,7 +834,7 @@ const Budget: React.FC = () => {
 				if (goalData.amountSaved > 0) {
 					const initialContribution = {
 						amount: Number(goalData.amountSaved),
-						date: Timestamp.fromDate(new Date()),
+						date: new Date(),
 					};
 
 					await FirestoreService.addSavingsGoal(user.uid, {
@@ -671,7 +845,7 @@ const Budget: React.FC = () => {
 						contributions: [
 							{
 								...initialContribution,
-								date: initialContribution.date.toDate(),
+								date: initialContribution.date,
 							},
 						],
 						type: "savings",
@@ -900,21 +1074,25 @@ const Budget: React.FC = () => {
 					}}
 					onSubmit={handleSubmitBudgetGoal}
 					type='budget'
+					label={""}
 					initialData={editingGoal || undefined}
 				/>
 
 				<NewGoalForm
 					isVisible={showNewSavingsForm}
-					onClose={() => setShowNewSavingsForm(false)}
+					onClose={() => {
+						setShowNewSavingsForm(false);
+						setFormLabel("");
+					}}
 					onSubmit={handleSubmitSavingsGoal}
 					type='savings'
+					label={formLabel}
 					initialData={
 						editingSavingsGoal
 							? {
 									title: editingSavingsGoal.title,
 									targetAmount:
 										editingSavingsGoal.targetAmount,
-									amountSaved: editingSavingsGoal.amountSaved,
 							  }
 							: undefined
 					}
@@ -924,11 +1102,7 @@ const Budget: React.FC = () => {
 					<FloatingGoalDetail
 						isVisible={!!selectedGoal}
 						onClose={handleCloseFloatingGoal}
-						goal={
-							selectedGoal as unknown as
-								| BudgetGoal
-								| SavingsGoalData
-						}
+						goal={selectedGoal as BudgetGoal | SavingsGoalData}
 						type={selectedGoalType}
 						transactions={transactions.map((t) => ({
 							id: t.id,

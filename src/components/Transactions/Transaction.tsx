@@ -137,7 +137,10 @@ const Transaction: React.FC = () => {
 							userId: user.uid,
 							currency: t.currency || "USD",
 							status: t.status || "completed",
-							date: t.date.toDate(),
+							date: new Date(
+								t.date.toDate().getTime() +
+									new Date().getTimezoneOffset() * 60000
+							),
 							tags: t.tags || [],
 						})) as TransactionType[]
 					);
@@ -161,7 +164,10 @@ const Transaction: React.FC = () => {
 				userId: userId,
 				currency: t.currency || "USD",
 				status: t.status || "completed",
-				date: t.date.toDate(),
+				date: new Date(
+					t.date.toDate().getTime() +
+						new Date().getTimezoneOffset() * 60000
+				),
 			})) as TransactionType[];
 		} catch (error) {
 			console.error("Error fetching transactions:", error);
@@ -306,7 +312,11 @@ const Transaction: React.FC = () => {
 	};
 
 	const formatLocalDate = (date: Date) => {
-		return new Date(date).toLocaleDateString();
+		// Create a new date object and adjust for timezone
+		const localDate = new Date(
+			date.getTime() - date.getTimezoneOffset() * 60000
+		);
+		return localDate.toLocaleDateString();
 	};
 
 	// Component Render

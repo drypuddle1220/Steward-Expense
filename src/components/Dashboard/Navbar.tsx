@@ -6,62 +6,60 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const Navbar: React.FC = () => {
 	const location = useLocation();
-	const [isOpen, setIsOpen] = useState(false);
-
-	const toggleMenu = () => {
-		setIsOpen(!isOpen);
-	};
 
 	return (
-		<>
-			<button className={styles.menuButton} onClick={toggleMenu}>
-				{isOpen ? <CloseIcon /> : <MenuIcon />}
-			</button>
-
-			<nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
-				<ul>
-					<li>
-						<Link
-							to='/dashboard'
-							className={
-								location.pathname === "/dashboard"
-									? styles.active
-									: ""
-							}
-							onClick={() => setIsOpen(false)}
-						>
-							Dashboard
-						</Link>
-					</li>
-					<li>
-						<Link
-							to='/transaction'
-							className={
-								location.pathname === "/transaction"
-									? styles.active
-									: ""
-							}
-							onClick={() => setIsOpen(false)}
-						>
-							Transactions
-						</Link>
-					</li>
-					<li>
-						<Link
-							to='/GoalsTracker'
-							className={
-								location.pathname === "/GoalsTracker"
-									? styles.active
-									: ""
-							}
-							onClick={() => setIsOpen(false)}
-						>
-							Goals Tracker
-						</Link>
-					</li>
-				</ul>
-			</nav>
-		</>
+		<nav className={styles.nav}>
+			<ul>
+				<li>
+					<Link
+						to='/dashboard'
+						className={
+							location.pathname === "/dashboard"
+								? styles.active
+								: ""
+						}
+					>
+						Dashboard
+					</Link>
+				</li>
+				<li>
+					<Link
+						to='/transaction'
+						className={
+							location.pathname === "/transaction"
+								? styles.active
+								: ""
+						}
+					>
+						Transactions
+					</Link>
+				</li>
+				<li>
+					<Link
+						to='/GoalsTracker'
+						className={
+							location.pathname === "/GoalsTracker"
+								? styles.active
+								: ""
+						}
+					>
+						Goals Tracker
+					</Link>
+				</li>
+				<li>
+					<Link
+						to='/settings'
+						className={
+							location.pathname === "/settings"
+								? styles.active
+								: ""
+						}
+					>
+						Settings
+					</Link>
+				</li>
+			</ul>
+		</nav>
 	);
 };
 

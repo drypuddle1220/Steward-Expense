@@ -1,5 +1,5 @@
 // Dashboard.tsx
-import React, { useEffect, useState } from "react"; //Reach hooks (UseState, useEffect)
+import React, { useEffect, useState, useRef } from "react"; //Reach hooks (UseState, useEffect)
 import { useNavigate } from "react-router-dom";
 import { Transaction as TransactionType } from "../../types";
 import { auth } from "../../../Backend/config/firebaseConfig"; // Adjust import path
@@ -29,6 +29,10 @@ interface BudgetGoalData {
 	targetAmount: number;
 	tags: string[];
 	type: string;
+	interval: {
+		type: string;
+		startDate?: Date;
+	};
 }
 
 //React,FC = React.FunctionComponent which is a typescript type used to define function components.
@@ -191,6 +195,129 @@ const Dashboard: React.FC = () => {
 		return monthProgress;
 	};
 
+	const BudgetSection = () => {
+		const [isScrollable, setIsScrollable] = useState(false);
+		const sectionRef = useRef<HTMLDivElement>(null);
+
+		useEffect(() => {
+			const section = sectionRef.current;
+			if (!section) return;
+
+			const checkScroll = () => {
+				// Check if content is scrollable and not at bottom
+				const hasMoreContent =
+					section.scrollHeight > section.clientHeight &&
+					section.scrollTop + section.clientHeight <
+						section.scrollHeight;
+				setIsScrollable(hasMoreContent);
+			};
+
+			// Initial check
+			checkScroll();
+			// Check on scroll
+			section.addEventListener("scroll", checkScroll);
+			// Check on resize
+			window.addEventListener("resize", checkScroll);
+
+			return () => {
+				section.removeEventListener("scroll", checkScroll);
+				window.removeEventListener("resize", checkScroll);
+			};
+		}, []);
+
+		return (
+			<div
+				className={`${styles.budgetSection} ${
+					isScrollable ? styles.showGradient : ""
+				}`}
+				ref={sectionRef}
+			>
+				{/* Your budget goals content */}
+			</div>
+		);
+	};
+
+	// Add this helper function
+	const isTransactionInCurrentPeriod = (
+		transactionDate: Date,
+		intervalType: string,
+		startDate: Date
+	): boolean => {
+		const now = new Date();
+		const start = new Date(startDate);
+
+		switch (intervalType) {
+			case "daily":
+				// Reset every 24 hours from start date
+				const daysSinceStart = Math.floor(
+					(now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+				);
+				const currentPeriodStart = new Date(start);
+				currentPeriodStart.setDate(start.getDate() + daysSinceStart);
+				const currentPeriodEnd = new Date(currentPeriodStart);
+				currentPeriodEnd.setDate(currentPeriodStart.getDate() + 1);
+				return (
+					transactionDate >= currentPeriodStart &&
+					transactionDate < currentPeriodEnd
+				);
+
+			case "weekly":
+				// Reset every 7 days from start date
+				const weeksSinceStart = Math.floor(
+					(now.getTime() - start.getTime()) /
+						(1000 * 60 * 60 * 24 * 7)
+				);
+				const currentWeekStart = new Date(start);
+				currentWeekStart.setDate(start.getDate() + weeksSinceStart * 7);
+				const currentWeekEnd = new Date(currentWeekStart);
+				currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+				return (
+					transactionDate >= currentWeekStart &&
+					transactionDate < currentWeekEnd
+				);
+
+			case "monthly":
+				// Reset on same day each month
+				const currentMonthStart = new Date(
+					now.getFullYear(),
+					now.getMonth(),
+					start.getDate()
+				);
+				const currentMonthEnd = new Date(
+					now.getFullYear(),
+					now.getMonth() + 1,
+					start.getDate()
+				);
+				return (
+					transactionDate >= currentMonthStart &&
+					transactionDate < currentMonthEnd
+				);
+
+			case "yearly":
+				// Reset on same date each year
+				const currentYearStart = new Date(
+					now.getFullYear(),
+					start.getMonth(),
+					start.getDate()
+				);
+				const currentYearEnd = new Date(
+					now.getFullYear() + 1,
+					start.getMonth(),
+					start.getDate()
+				);
+				return (
+					transactionDate >= currentYearStart &&
+					transactionDate < currentYearEnd
+				);
+
+			case "once":
+				return transactionDate >= start;
+
+			default:
+				return false;
+		}
+	};
+
 	//This is the component for the dashboard.
 	//It displays the user's data, and the dashboard visuals.
 	//The left side is the navigation sidebar, and the right side is the main container that contains the dashboard visuals.
@@ -314,6 +441,14 @@ const Dashboard: React.FC = () => {
 																goal.tags.includes(
 																	tag
 																)
+														) &&
+														isTransactionInCurrentPeriod(
+															transaction.date ||
+																new Date(),
+															goal.interval.type,
+															goal.interval
+																.startDate ||
+																new Date()
 														)
 												)
 												.reduce(

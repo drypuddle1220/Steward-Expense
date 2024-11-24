@@ -28,6 +28,10 @@ interface BudgetGoalData {
 	title: string;
 	targetAmount: number;
 	tags: string[];
+	interval: {
+		type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+		startDate: Date;
+	};
 	createdAt: Date;
 	type: string;
 }
@@ -39,6 +43,17 @@ interface SavingsGoal {
 	amountSaved: number;
 	createdAt: Timestamp;
 	type: "savings";
+}
+
+import { ThemeType } from "../../src/contexts/ThemeContext";
+
+interface UserSettings {
+	firstName?: string;
+	lastName?: string;
+	avatar?: string;
+	theme?: ThemeType;
+	email?: string;
+	updatedAt?: Timestamp;
 }
 
 // Service class for handling all Firestore database operations
@@ -69,6 +84,41 @@ export class FirestoreService {
 			);
 		} catch (error) {
 			console.error("Error saving user data:", error);
+			throw error;
+		}
+	}
+
+	static async saveUserSetting(userId: string, settings: UserSettings) {
+		try {
+			await setDoc(
+				doc(db, "users", userId),
+				{
+					...settings,
+					updatedAt: Timestamp.now(),
+				},
+				{ merge: true } // Add merge option to preserve existing data
+			);
+		} catch (error) {
+			console.error("Error saving user settings:", error);
+			throw error;
+		}
+	}
+
+	static async getUserSetting(userId: string) {
+		try {
+			const userSetting = await getDoc(doc(db, "users", userId));
+			return userSetting.data();
+		} catch (error) {
+			console.error("Error getting user settings:", error);
+			throw error;
+		}
+	}
+
+	static async updateUserSetting(userId: string, settings: UserSettings) {
+		try {
+			await updateDoc(doc(db, "users", userId), settings as {});
+		} catch (error) {
+			console.error("Error updating user settings:", error);
 			throw error;
 		}
 	}
@@ -225,6 +275,10 @@ export class FirestoreService {
 			title: string;
 			targetAmount: number;
 			tags: string[];
+			interval: {
+				type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+				startDate: Date;
+			};
 			createdAt: Date;
 			type: "budget" | "savings";
 		}
@@ -238,7 +292,11 @@ export class FirestoreService {
 			);
 			const docRef = await addDoc(budgetGoalsRef, {
 				...goalData,
-				createdAt: Timestamp.fromDate(goalData.createdAt),
+				createdAt: new Date(),
+				interval: {
+					type: goalData.interval.type,
+					startDate: goalData.interval.startDate,
+				},
 			});
 			return docRef.id;
 		} catch (error) {
@@ -261,6 +319,11 @@ export class FirestoreService {
 				return {
 					id: doc.id,
 					...data,
+					interval: {
+						type: data.interval.type,
+						startDate: data.interval.startDate.toDate(),
+					},
+					createdAt: data.createdAt.toDate(),
 				} as BudgetGoalData;
 			});
 		} catch (error) {
@@ -272,11 +335,29 @@ export class FirestoreService {
 	static async updateBudgetGoal(
 		userId: string,
 		goalId: string,
-		updatedData: any
+		updatedData: {
+			title: string;
+			targetAmount: number;
+			tags?: string[];
+			interval?: {
+				type: "monthly" | "yearly" | "weekly" | "daily" | "once";
+				startDate: Date;
+			};
+		}
 	) {
 		try {
 			const goalRef = doc(db, "users", userId, "budgetGoals", goalId);
-			await updateDoc(goalRef, updatedData);
+			const updateFields: any = {
+				title: updatedData.title,
+				targetAmount: updatedData.targetAmount,
+				interval: updatedData.interval
+					? {
+							type: updatedData.interval.type,
+							startDate: updatedData.interval.startDate,
+					  }
+					: undefined,
+			};
+			await updateDoc(goalRef, updateFields);
 		} catch (error) {
 			console.error("Error updating budget goal:", error);
 			throw error;

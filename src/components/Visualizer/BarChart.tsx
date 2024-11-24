@@ -168,17 +168,10 @@ const BarChart: React.FC = () => {
 							</linearGradient>
 						</defs>
 
-						<rect
-							width='100%'
-							height='100%'
-							fill='url(#bgGradient)'
-						/>
-
 						<CartesianGrid
 							strokeDasharray='3 3'
 							vertical={false}
 							stroke='var(--chart-grid)'
-							opacity={0.2}
 						/>
 
 						<XAxis

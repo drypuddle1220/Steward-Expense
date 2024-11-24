@@ -177,7 +177,7 @@ body {
 }
 
 .progress_bar::after {
-	content: '';
+	content: "";
 	display: block;
 	width: 40%;
 	height: 100%;
@@ -186,16 +186,22 @@ body {
 }
 
 @keyframes loading {
-	0% { transform: translateX(-100%); }
-	100% { transform: translateX(250%); }
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(250%);
+	}
 }
 
 .skeleton {
 	background: var(--skeleton-start);
-	background: linear-gradient(110deg, 
-		var(--skeleton-start) 8%, 
-		var(--skeleton-middle) 18%, 
-		var(--skeleton-end) 33%);
+	background: linear-gradient(
+		110deg,
+		var(--skeleton-start) 8%,
+		var(--skeleton-middle) 18%,
+		var(--skeleton-end) 33%
+	);
 	border-radius: 5px;
 	background-size: 200% 100%;
 	animation: 1.5s shine linear infinite;
@@ -209,27 +215,26 @@ body {
 	}
 }
 
-
 /* Add a subtle scrollbar style */
 .transactionList::-webkit-scrollbar {
-    width: 8px;
+	width: 8px;
 }
 
 .transactionList::-webkit-scrollbar-track {
-    background: var(--border-light);
-    border-radius: 4px;
+	background: var(--border-light);
+	border-radius: 4px;
 }
 
 .transactionList::-webkit-scrollbar-thumb {
-    background: var(--text-light);
-    border-radius: 4px;
+	background: var(--text-light);
+	border-radius: 4px;
 }
 
 .transactionList::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
+	background: var(--text-secondary);
 }
 
-.datePickerContainer{
+.datePickerContainer {
 	position: absolute;
 	top: calc(100% + 10px);
 	right: 0;
@@ -267,7 +272,7 @@ body {
 	border-color: #0052cc;
 }
 
-.filterButtons{
+.filterButtons {
 	position: relative;
 }
 
@@ -286,7 +291,6 @@ body {
 	font-weight: 500;
 }
 
-
 .transactionCard.expense .tag {
 	background-color: var(--btn-primary);
 	color: var(--text-white);
@@ -294,83 +298,83 @@ body {
 
 /* Add these media queries at the end of the file */
 @media screen and (max-width: 768px) {
-  .transaction {
-    grid-template-columns: 1fr;
-  }
+	.transaction {
+		grid-template-columns: 1fr;
+	}
 
-  .mainContent {
-    padding: 60px 15px 15px 15px;
-  }
+	.mainContent {
+		padding: 60px 15px 15px 15px;
+	}
 
-  .controls {
-    flex-direction: column;
-  }
+	.controls {
+		flex-direction: column;
+	}
 
-  .searchBar input {
-    width: 100%;
-  }
+	.searchBar input {
+		width: 100%;
+	}
 
-  .filterButtons {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
+	.filterButtons {
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.5rem;
+	}
 
-  .filterBtn {
-    flex: 1;
-    min-width: 100px;
-  }
+	.filterBtn {
+		flex: 1;
+		min-width: 100px;
+	}
 }
 
 @media screen and (max-width: 480px) {
-  .filterBtn {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
+	.filterBtn {
+		padding: 0.5rem 1rem;
+		font-size: 0.9rem;
+	}
 
-  .header h1 {
-    font-size: 1.5rem;
-  }
+	.header h1 {
+		font-size: 1.5rem;
+	}
 }
 
 .actions {
-  display: flex;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+	display: flex;
+	align-items: center;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
 .transaction:hover .actions {
-  opacity: 1;
+	opacity: 1;
 }
 
 /* If you want the menu to always be visible on mobile */
 @media screen and (max-width: 768px) {
-  .actions {
-    opacity: 1;
-  }
+	.actions {
+		opacity: 1;
+	}
 }
 
 .datePickerContainer :global(.rdrStaticRange) {
-    border-radius: 6px;
-    background: transparent;
-    padding: 5px 8px;
-    margin: 4px 8px;
-    transition: all 0.2s ease;
+	border-radius: 6px;
+	background: transparent;
+	padding: 5px 8px;
+	margin: 4px 8px;
+	transition: all 0.2s ease;
 }
 
 .datePickerContainer :global(.rdrStaticRange:hover) {
-    background: #f0f5ff;
-    color: #0052cc;
+	background: #f0f5ff;
+	color: #0052cc;
 }
 
 .datePickerContainer :global(.rdrStaticRangeLabel) {
-    font-weight: 500;
-    font-size: 14px;
+	font-weight: 500;
+	font-size: 14px;
 }
 
 .datePickerContainer :global(.rdrStaticRangeSelected) {
-    background: #e6effd;
-    color: #0052cc;
-    border-left: 3px solid #0052cc;
+	background: #e6effd;
+	color: #0052cc;
+	border-left: 3px solid #0052cc;
 }
