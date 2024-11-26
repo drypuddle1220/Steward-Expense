@@ -4,12 +4,21 @@ import Navbar from "../Dashboard/Navbar";
 import styles from "../Transactions/Transaction.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
-import { useTheme } from "../../contexts/ThemeContext";
+import { ThemeType, useTheme } from "../../contexts/ThemeContext";
 import { Moon, Sun } from "lucide-react"; // Import icons
 
 const Sidebar: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
-	const { theme, toggleTheme } = useTheme();
+	const [avatar, setAvatar] = useState<string>("");
+
+	const fetchAvatarData = async () => {
+		const userSettings = await FirestoreService.getUserSetting(
+			auth.currentUser?.uid || ""
+		);
+		setAvatar(userSettings?.avatar || "");
+	};
+
+	fetchAvatarData();
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -42,9 +51,6 @@ const Sidebar: React.FC = () => {
 			</div>
 			<nav className={nav.navigation}>
 				<Navbar />
-				<button onClick={toggleTheme} className={nav.themeToggle}>
-					{theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-				</button>
 			</nav>
 
 			<div className={nav.userInfo}>
@@ -52,8 +58,8 @@ const Sidebar: React.FC = () => {
 					<>
 						<div className={nav.avatar}>
 							<img
-								src='src/components/Dashboard/Avatars/Avatar1.png'
-								alt='User Avatar'
+								src={avatar}
+								alt='profile picture'
 								className={nav.stewardlogo}
 							/>
 						</div>

@@ -10,6 +10,17 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { auth } from "./firebaseConfig";
+import {
+	updateEmail,
+	updatePassword,
+	EmailAuthProvider,
+	reauthenticateWithCredential,
+	sendEmailVerification,
+	ActionCodeSettings,
+	verifyBeforeUpdateEmail,
+} from "firebase/auth";
+
 interface Transaction {
 	status: string;
 	currency: string;
@@ -452,6 +463,164 @@ export class FirestoreService {
 			});
 		} catch (error) {
 			console.error("Error getting saving goals:", error);
+			throw error;
+		}
+	}
+
+	static async handleUserLogin(user: any) {
+		if (!user || !user.email) return;
+
+		try {
+			// Get current user data from Firestore
+			const userDoc = await getDoc(doc(db, "users", user.uid));
+			const userData = userDoc.data();
+
+			// Check if email needs to be synced
+			if (userData && userData.email !== user.email) {
+				await updateDoc(doc(db, "users", user.uid), {
+					email: user.email,
+					updatedAt: Timestamp.now(),
+				});
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	// Update the existing updateUserEmail method
+	static async updateUserEmail(newEmail: string, currentPassword: string) {
+		const user = auth.currentUser;
+		if (!user || !user.email) {
+			throw new Error("No authenticated user found");
+		}
+
+		try {
+			// First, reauthenticate the user
+			const credential = EmailAuthProvider.credential(
+				user.email,
+				currentPassword
+			);
+			await reauthenticateWithCredential(user, credential);
+
+			const actionCodeSettings: ActionCodeSettings = {
+				url: `${window.location.origin}/settings?mode=verifyEmail&operation=updateEmail`,
+				handleCodeInApp: true,
+			};
+
+			// Send verification email
+			await verifyBeforeUpdateEmail(user, newEmail, actionCodeSettings);
+
+			// Set up an auth state listener to handle the email update
+			const unsubscribe = auth.onAuthStateChanged(async (updatedUser) => {
+				if (updatedUser && updatedUser.email === newEmail) {
+					try {
+						await this.handleUserLogin(updatedUser);
+					} finally {
+						unsubscribe(); // Clean up the listener
+					}
+				}
+			});
+
+			return {
+				success: true,
+				message:
+					"Verification email sent to " +
+					newEmail +
+					". Please check your inbox and verify your new email address. " +
+					"Your current email will remain active until verification is complete.",
+			};
+		} catch (error: any) {
+			console.error("Email update error:", error);
+			if (error.code === "auth/requires-recent-login") {
+				throw new Error("Please log in again and retry");
+			} else if (error.code === "auth/email-already-in-use") {
+				throw new Error("This email is already registered");
+			}
+			throw new Error(error.message || "Failed to update email");
+		}
+	}
+
+	// Update the syncEmailWithFirestore method to be more robust
+	static async syncEmailWithFirestore() {
+		const user = auth.currentUser;
+		if (!user || !user.email) {
+			throw new Error("No authenticated user found");
+		}
+
+		try {
+			const userDocRef = doc(db, "users", user.uid);
+
+			// Get current user data first
+			const userData = await getDoc(userDocRef);
+			if (!userData.exists()) {
+				throw new Error("User document not found");
+			}
+
+			// Update only email and updatedAt fields
+			await updateDoc(userDocRef, {
+				email: user.email,
+				updatedAt: Timestamp.now(),
+			});
+
+			return true;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	static async updateUserPassword(
+		currentPassword: string,
+		newPassword: string
+	) {
+		try {
+			const user = auth.currentUser;
+			if (!user || !user.email) throw new Error("No user logged in");
+
+			// Re-authenticate user before changing password
+			const credential = EmailAuthProvider.credential(
+				user.email,
+				currentPassword
+			);
+			await reauthenticateWithCredential(user, credential);
+
+			// Update password
+			await updatePassword(user, newPassword);
+
+			return true;
+		} catch (error: any) {
+			if (error.code === "auth/wrong-password") {
+				throw new Error("Current password is incorrect");
+			}
+			throw error;
+		}
+	}
+
+	static async updateUserTheme(userId: string, theme: ThemeType) {
+		await updateDoc(doc(db, "users", userId), { theme });
+	}
+
+	static async getUserSettings(userId: string) {
+		try {
+			const userDoc = await getDoc(doc(db, "users", userId));
+			return userDoc.data();
+		} catch (error) {
+			console.error("Error getting user settings:", error);
+			throw error;
+		}
+	}
+
+	static async updateUserSettings(userId: string, settings: Partial<any>) {
+		try {
+			const userRef = doc(db, "users", userId);
+			const userDoc = await getDoc(userRef);
+
+			if (userDoc.exists()) {
+				await updateDoc(userRef, settings);
+			} else {
+				await setDoc(userRef, settings);
+			}
+		} catch (error) {
+			console.error("Error updating user settings:", error);
 			throw error;
 		}
 	}
