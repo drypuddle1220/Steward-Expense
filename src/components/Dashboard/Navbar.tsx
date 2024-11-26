@@ -3,6 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import {
+	LayoutDashboard, // Dashboard icon
+	Receipt, // Transactions icon
+	Target, // Goals icon
+	Settings, // Settings icon
+} from "lucide-react";
 
 const Navbar: React.FC = () => {
 	const location = useLocation();
@@ -19,7 +25,8 @@ const Navbar: React.FC = () => {
 								: ""
 						}
 					>
-						Dashboard
+						<LayoutDashboard size={20} />
+						<span>Dashboard</span>
 					</Link>
 				</li>
 				<li>
@@ -31,7 +38,8 @@ const Navbar: React.FC = () => {
 								: ""
 						}
 					>
-						Transactions
+						<Receipt size={20} />
+						<span>Transactions</span>
 					</Link>
 				</li>
 				<li>
@@ -43,7 +51,8 @@ const Navbar: React.FC = () => {
 								: ""
 						}
 					>
-						Goals Tracker
+						<Target size={20} />
+						<span>Goals Tracker</span>
 					</Link>
 				</li>
 				<li>
@@ -55,7 +64,8 @@ const Navbar: React.FC = () => {
 								: ""
 						}
 					>
-						Settings
+						<Settings size={20} />
+						<span>Settings</span>
 					</Link>
 				</li>
 			</ul>

@@ -50,9 +50,7 @@ interface PresetAvatar {
 
 const Settings: React.FC = () => {
 	const { theme, setTheme } = useTheme();
-	const [selectedTheme, setSelectedTheme] = useState<ThemeType>(
-		theme as ThemeType
-	);
+	const [selectedTheme, setSelectedTheme] = useState<ThemeType>(theme);
 	const [userProfile, setUserProfile] = useState<UserSettings>({
 		firstName: "",
 		lastName: "",
@@ -239,13 +237,11 @@ const Settings: React.FC = () => {
 							currentUser.uid
 						);
 						if (userData) {
-							if (userData.theme) {
+							setUserProfile(userData as UserSettings);
+							if (userData.theme && !theme) {
 								setSelectedTheme(userData.theme as ThemeType);
 								await setTheme(userData.theme as ThemeType);
 							}
-							setUserProfile(userData as UserSettings);
-						} else {
-							setError("User data is null");
 						}
 					} catch (error) {
 						setError("Failed to load user profile");
@@ -258,7 +254,7 @@ const Settings: React.FC = () => {
 		};
 
 		loadUserProfile();
-	}, [setTheme]);
+	}, []);
 
 	useEffect(() => {
 		const handleEmailVerification = async () => {
@@ -344,6 +340,10 @@ const Settings: React.FC = () => {
 			avatar: avatarUrl,
 		});
 	};
+
+	useEffect(() => {
+		setSelectedTheme(theme);
+	}, [theme]);
 
 	return (
 		<div className={styles.settings}>
@@ -645,15 +645,18 @@ const Settings: React.FC = () => {
 						</h2>
 						<div className={styles.supportCard}>
 							<div className={styles.settingInfo}>
-								<h3>Contact Support</h3>
+								<h3>Contact Developer</h3>
+								<p className={styles.developerContact}>
+									Email:
+									<a href='mailto:chrislinflhs@gmail.com'>
+										chrislinflhs@gmail.com
+									</a>
+								</p>
 							</div>
-							<ChevronRight size={20} />
-						</div>
-						<div className={styles.supportCard}>
-							<div className={styles.settingInfo}>
-								<h3>Report a Problem</h3>
-							</div>
-							<ChevronRight size={20} />
+							<ChevronRight
+								color='var(--text-secondary)'
+								size={20}
+							/>
 						</div>
 					</section>
 				</div>

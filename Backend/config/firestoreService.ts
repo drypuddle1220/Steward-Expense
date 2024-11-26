@@ -8,6 +8,7 @@ import {
 	getDoc,
 	deleteDoc,
 	updateDoc,
+	deleteField,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { auth } from "./firebaseConfig";
@@ -621,6 +622,20 @@ export class FirestoreService {
 			}
 		} catch (error) {
 			console.error("Error updating user settings:", error);
+			throw error;
+		}
+	}
+
+	static async clearUserTheme() {
+		try {
+			const user = auth.currentUser;
+			if (user) {
+				await updateDoc(doc(db, "users", user.uid), {
+					theme: deleteField(),
+				});
+			}
+		} catch (error) {
+			console.error("Error clearing user theme:", error);
 			throw error;
 		}
 	}

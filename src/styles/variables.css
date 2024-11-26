@@ -2,6 +2,8 @@
 	height: 100vh; /* Ensure the root container takes full height */
 	/* Background Colors */
 	--bg-primary: #000000e0; /* Login page, Modal background */
+	--bg-landing: #000000e0;
+	--bg-landing-transparent: rgba(0, 0, 0, 0.2);
 	--bg-primary-transparent: rgba(
 		0,
 		0,
@@ -90,6 +92,8 @@
 :root[data-theme="dark"] {
 	/* Background Colors - Rich blacks with subtle warmth */
 	--bg-primary: #161618; /* Deep charcoal */
+	--bg-landing: #000000e0;
+	--bg-landing-transparent: rgba(0, 0, 0, 0.2);
 	--bg-secondary: #1c1c1f; /* Slightly lighter charcoal */
 	--bg-white: #27272a; /* Dark gray for cards */
 	--bg-input: #2d2d30; /* Input background */
@@ -185,6 +189,7 @@
 	/* Background Colors - Warm gradients */
 	--bg-primary: #2d1b2d; /* Deep purple-brown */
 	--bg-secondary: #1f1418; /* Dark burgundy */
+	--bg-landing: #000000e0;
 	--bg-white: #2a1f23; /* Warm dark gray */
 	--bg-input: #382830; /* Muted purple */
 	--bg-footer: #2d1b2d;
@@ -276,6 +281,8 @@
 :root[data-theme="Ocean"] {
 	/* Background Colors - Deep ocean tones */
 	--bg-primary: #1a2634; /* Deep ocean blue */
+	--bg-landing: #000000e0;
+	--bg-landing-transparent: rgba(0, 0, 0, 0.2);
 	--bg-secondary: #15202b; /* Dark navy */
 	--bg-white: #1e2a35; /* Steel blue-gray */
 	--bg-input: #263545; /* Lighter navy */

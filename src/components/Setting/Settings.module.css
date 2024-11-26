@@ -667,3 +667,14 @@
 	justify-content: center;
 	margin-top: 1rem;
 }
+
+.developerContact {
+	font-size: 0.875rem;
+	margin: 0;
+}
+
+.developerContact a {
+	color: var(--text-secondary);
+	text-decoration: none;
+	margin: 0;
+}
