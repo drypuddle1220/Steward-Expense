@@ -104,7 +104,7 @@ const BarChart: React.FC = () => {
 		<div className={`${styles.card}`}>
 			<h3>Expense Categories</h3>
 			<div className={styles.chartContainer}>
-				<ResponsiveContainer width='100%' height='100%'>
+				<ResponsiveContainer width='100%' height='98%'>
 					<RechartsBarChart data={barChartData} barSize={45}>
 						<defs>
 							<linearGradient

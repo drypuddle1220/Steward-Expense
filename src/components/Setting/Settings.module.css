@@ -268,27 +268,6 @@
 	border-color: var(--btn-primary);
 }
 
-/* Color Options */
-.blue {
-	background: linear-gradient(135deg, #60a5fa, #3b82f6);
-}
-
-.purple {
-	background: linear-gradient(135deg, #a78bfa, #8b5cf6);
-}
-
-.green {
-	background: linear-gradient(135deg, #4ade80, #22c55e);
-}
-
-.orange {
-	background: linear-gradient(135deg, #fb923c, #f97316);
-}
-
-.red {
-	background: linear-gradient(135deg, #f87171, #ef4444);
-}
-
 /* Account Form Styles */
 .accountForm {
 	display: flex;
@@ -677,4 +656,94 @@
 	color: var(--text-secondary);
 	text-decoration: none;
 	margin: 0;
+}
+
+/* Tablet styles */
+@media screen and (max-width: 1024px) {
+	.settings {
+		grid-template-columns: 1fr;
+		height: 100vh;
+		overflow: hidden;
+	}
+
+	.settingsContent {
+		padding: 1.5rem;
+		padding-top: 60px;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+		height: calc(100vh - 60px);
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.accountColumn,
+	.customizationColumn {
+		gap: 1rem;
+	}
+
+	.settingCard {
+		padding: 1.25rem;
+	}
+
+	.themeOptions {
+		gap: 0.5rem;
+	}
+}
+
+/* Mobile styles */
+@media screen and (max-width: 480px) {
+	.settings {
+		height: 100vh;
+		overflow: hidden;
+	}
+
+	.settingsContent {
+		padding: 1rem;
+		padding-top: 60px;
+		height: calc(100vh - 60px);
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.settingsSection {
+		padding: 1rem;
+		background: var(--bg-white);
+		border: 1px solid var(--border-light);
+		border-radius: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	/* Make cards more compact */
+	.settingCard {
+		padding: 1rem;
+		margin-bottom: 0.5rem;
+	}
+
+	/* Ensure form elements are properly spaced */
+	.settingForm {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	/* Theme cards adjustments */
+	.themeOptions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.themeCard {
+		padding: 0.75rem;
+	}
+
+	/* Support section adjustments */
+	.supportCard {
+		margin-bottom: 2rem;
+	}
+
+	/* Ensure last items have bottom margin */
+	.settingsContent > *:last-child {
+		margin-bottom: 2rem;
+	}
 }

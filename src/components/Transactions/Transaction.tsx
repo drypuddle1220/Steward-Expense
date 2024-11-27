@@ -70,6 +70,19 @@ const Transaction: React.FC = () => {
 	// Add this ref at the top of your component with other state declarations
 	const inputButtonRef = useRef<HTMLDivElement>(null);
 
+	// Add this state to track screen width
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+	// Add this useEffect to handle window resizing
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 480);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -319,6 +332,70 @@ const Transaction: React.FC = () => {
 		return localDate.toLocaleDateString();
 	};
 
+	// Update the DatePickerMobile component
+	const DatePickerMobile = () => {
+		return (
+			<div className={styles.mobileDatePicker}>
+				<div className={styles.datePickerHeader}>
+					<h3>Select Date Range</h3>
+					<button
+						className={styles.closeButton}
+						onClick={() => setShowDatePicker(false)}
+					>
+						✕
+					</button>
+				</div>
+				<div className={styles.dateInputGroup}>
+					<label>Start Date</label>
+					<input
+						type='date'
+						value={
+							dateRange[0].startDate.toISOString().split("T")[0]
+						}
+						max={dateRange[0].endDate.toISOString().split("T")[0]}
+						onChange={(e) => {
+							const start = new Date(e.target.value);
+							start.setHours(0, 0, 0, 0);
+							setDateRange([
+								{
+									...dateRange[0],
+									startDate: start,
+									key: "selection",
+								},
+							]);
+						}}
+					/>
+				</div>
+				<div className={styles.dateInputGroup}>
+					<label>End Date</label>
+					<input
+						type='date'
+						value={dateRange[0].endDate.toISOString().split("T")[0]}
+						min={dateRange[0].startDate.toISOString().split("T")[0]}
+						max={new Date().toISOString().split("T")[0]}
+						onChange={(e) => {
+							const end = new Date(e.target.value);
+							end.setHours(23, 59, 59, 999);
+							setDateRange([
+								{
+									...dateRange[0],
+									endDate: end,
+									key: "selection",
+								},
+							]);
+						}}
+					/>
+				</div>
+				<button
+					className={styles.applyDateBtn}
+					onClick={() => setShowDatePicker(false)}
+				>
+					Apply
+				</button>
+			</div>
+		);
+	};
+
 	// Component Render
 	// ---------------
 	return (
@@ -357,51 +434,92 @@ const Transaction: React.FC = () => {
 								Date Range
 							</button>
 							{showDatePicker && (
-								<div
-									ref={datePickerRef}
-									className={styles.datePickerContainer}
-								>
-									<DateRangePicker
-										ranges={dateRange}
-										onChange={(item: any) => {
-											if (
-												item.selection.startDate &&
-												item.selection.endDate
-											) {
-												// Set start date to beginning of day in local timezone
-												const start = new Date(
-													item.selection.startDate
-												);
-												start.setHours(0, 0, 0, 0);
-
-												// Set end date to end of day in local timezone
-												const end = new Date(
-													item.selection.endDate
-												);
-												end.setHours(23, 59, 59, 999);
-
-												setDateRange([
-													{
-														startDate: start,
-														endDate: end,
-														key: "selection",
-													},
-												]);
-												setShowDatePicker(false);
+								<>
+									{isMobile ? (
+										// Mobile version
+										<>
+											<div
+												className={`${styles.overlay} ${
+													showDatePicker
+														? styles.visible
+														: ""
+												}`}
+												onClick={() =>
+													setShowDatePicker(false)
+												}
+											/>
+											<div
+												ref={datePickerRef}
+												className={
+													styles.datePickerContainer
+												}
+											>
+												<DatePickerMobile />
+											</div>
+										</>
+									) : (
+										// Desktop/Tablet version
+										<div
+											ref={datePickerRef}
+											className={
+												styles.datePickerContainer
 											}
-										}}
-										months={2}
-										direction='vertical' // Changed to horizontal for better desktop layout
-										editableDateInputs={true}
-										rangeColors={["#0052cc"]} // Custom primary color
-										showPreview={true}
-										moveRangeOnFirstSelection={false}
-										showMonthAndYearPickers={true}
-										showDateDisplay={true}
-										minDate={new Date(2020, 0, 1)} // Prevent selecting dates too far in the past
-										maxDate={new Date()} // Prevent selecting future dates
-									/>
-								</div>
+										>
+											<DateRangePicker
+												ranges={dateRange}
+												onChange={(item: any) => {
+													if (
+														item.selection
+															.startDate &&
+														item.selection.endDate
+													) {
+														const start = new Date(
+															item.selection.startDate
+														);
+														start.setHours(
+															0,
+															0,
+															0,
+															0
+														);
+														const end = new Date(
+															item.selection.endDate
+														);
+														end.setHours(
+															23,
+															59,
+															59,
+															999
+														);
+														setDateRange([
+															{
+																startDate:
+																	start,
+																endDate: end,
+																key: "selection",
+															},
+														]);
+														setShowDatePicker(
+															false
+														);
+													}
+												}}
+												months={2}
+												direction='vertical'
+												editableDateInputs={true}
+												rangeColors={["#0052cc"]}
+												showPreview={true}
+												moveRangeOnFirstSelection={
+													false
+												}
+												showMonthAndYearPickers={true}
+												showDateDisplay={true}
+												minDate={new Date(2020, 0, 1)}
+												maxDate={new Date()}
+											/>
+										</div>
+									)}
+								</>
 							)}
 							<button
 								className={`${styles.filterBtn} ${

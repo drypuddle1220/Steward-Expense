@@ -184,9 +184,9 @@ const PieChart: React.FC = () => {
 		<div className={`${styles.card}`}>
 			<h3>Expense Breakdown</h3>
 			<div className={styles.chartContainer}>
-				<ResponsiveContainer width='100%' height='100%'>
+				<ResponsiveContainer width='100%' height='98%'>
 					<RechartsPieChart
-						margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+						margin={{ top: 20, right: 20, bottom: 20, left: 45 }}
 					>
 						<defs>
 							<filter

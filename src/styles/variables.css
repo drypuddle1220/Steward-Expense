@@ -1,5 +1,7 @@
 :root {
-	height: 100vh; /* Ensure the root container takes full height */
+	height: 100vh; /* Ensure the root container takes 
+	full height */
+	--border-radius: 1rem;
 	/* Background Colors */
 	--bg-primary: #000000e0; /* Login page, Modal background */
 	--bg-landing: #000000e0;
@@ -91,6 +93,7 @@
 
 :root[data-theme="dark"] {
 	/* Background Colors - Rich blacks with subtle warmth */
+	--border-radius: 1rem;
 	--bg-primary: #161618; /* Deep charcoal */
 	--bg-landing: #000000e0;
 	--bg-landing-transparent: rgba(0, 0, 0, 0.2);
@@ -187,6 +190,7 @@
 
 :root[data-theme="Sunset"] {
 	/* Background Colors - Warm gradients */
+	--border-radius: 1rem;
 	--bg-primary: #2d1b2d; /* Deep purple-brown */
 	--bg-secondary: #1f1418; /* Dark burgundy */
 	--bg-landing: #000000e0;
@@ -280,6 +284,7 @@
 
 :root[data-theme="Ocean"] {
 	/* Background Colors - Deep ocean tones */
+	--border-radius: 1rem;
 	--bg-primary: #1a2634; /* Deep ocean blue */
 	--bg-landing: #000000e0;
 	--bg-landing-transparent: rgba(0, 0, 0, 0.2);
@@ -374,6 +379,7 @@
 
 :root[data-theme="Olivia"] {
 	/* Background Colors - Deep blacks with pink accents */
+	--border-radius: 1rem;
 	--bg-primary: #1c1b1b; /* Deep black */
 	--bg-secondary: #242323; /* Slightly lighter black */
 	--bg-white: #2c2b2b; /* Dark gray */

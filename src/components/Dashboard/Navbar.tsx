@@ -1,14 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import {
-	LayoutDashboard, // Dashboard icon
-	Receipt, // Transactions icon
-	Target, // Goals icon
-	Settings, // Settings icon
-} from "lucide-react";
+import { LayoutDashboard, Receipt, Target, Settings } from "lucide-react";
 
 const Navbar: React.FC = () => {
 	const location = useLocation();

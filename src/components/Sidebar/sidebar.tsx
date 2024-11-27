@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import nav from "../Dashboard/Navbar.module.css";
 import Navbar from "../Dashboard/Navbar";
-import styles from "../Transactions/Transaction.module.css";
+import styles from "./Sidebar.module.css";
 import { FirestoreService } from "../../../Backend/config/firestoreService";
 import { auth } from "../../../Backend/config/firebaseConfig";
 import { ThemeType, useTheme } from "../../contexts/ThemeContext";
-import { Moon, Sun } from "lucide-react"; // Import icons
+import { Moon, Sun, Menu } from "lucide-react"; // Import icons
 
 const Sidebar: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const [avatar, setAvatar] = useState<string>("");
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
 
 	const fetchAvatarData = async () => {
 		const userSettings = await FirestoreService.getUserSetting(
@@ -40,47 +41,110 @@ const Sidebar: React.FC = () => {
 		fetchUserData();
 	}, []);
 
-	return (
-		<aside className={nav.sidebar}>
-			<div className={nav.logo}>
-				<img
-					src='src/assets/steward_logo.png'
-					alt='Steward Logo'
-					className={nav.stewardlogo}
-				/>
-			</div>
-			<nav className={nav.navigation}>
-				<Navbar />
-			</nav>
+	// Check screen size on mount and resize
+	useEffect(() => {
+		const checkScreenSize = () => {
+			setIsMobileOrTablet(window.innerWidth <= 1024);
+		};
 
-			<div className={nav.userInfo}>
-				{userData ? (
-					<>
-						<div className={nav.avatar}>
-							<img
-								src={avatar}
-								alt='profile picture'
-								className={nav.stewardlogo}
-							/>
+		// Initial check
+		checkScreenSize();
+
+		// Add resize listener
+		window.addEventListener("resize", checkScreenSize);
+
+		// Cleanup
+		return () => window.removeEventListener("resize", checkScreenSize);
+	}, []);
+
+	const toggleSidebar = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+		// Prevent body scroll when sidebar is open
+		document.body.style.overflow = !isSidebarOpen ? "hidden" : "auto";
+	};
+
+	return (
+		<>
+			{isMobileOrTablet && (
+				<>
+					<header className={styles.mobileHeader}>
+						<div className={styles.mobileHeaderContent}>
+							<button
+								className={styles.mobileMenuBtn}
+								onClick={toggleSidebar}
+								aria-label='Toggle menu'
+							>
+								<Menu size={24} />
+							</button>
+							<div className={styles.logo}>
+								<img
+									src='src/assets/steward_logo.png'
+									alt='Steward Logo'
+									className={styles.stewardlogo}
+								/>
+							</div>
 						</div>
-						<div className={nav.userInfoText}>
-							<h5>
-								{userData.firstName} {userData.lastName}
-							</h5>
-							<p>{userData.email}</p>
-						</div>
-					</>
-				) : (
-					<>
-						<div
-							className={`${styles.skeleton} ${nav.avatarSkeleton}`}
-						></div>
-						<div className={styles.skeleton}></div>
-						<div className={styles.skeleton}></div>
-					</>
+					</header>
+
+					{/* Overlay */}
+					<div
+						className={`${styles.sidebarOverlay} ${
+							isSidebarOpen ? styles.active : ""
+						}`}
+						onClick={toggleSidebar}
+					/>
+				</>
+			)}
+
+			{/* Sidebar - Don't conditionally render based on mobile */}
+			<aside
+				className={`${styles.sidebar} ${
+					isSidebarOpen ? styles.active : ""
+				}`}
+			>
+				{!isMobileOrTablet && (
+					<div className={styles.logo}>
+						<img
+							src='src/assets/steward_logo.png'
+							alt='Steward Logo'
+							className={styles.stewardlogo}
+						/>
+					</div>
 				)}
-			</div>
-		</aside>
+
+				<div className={styles.navigation}>
+					<Navbar />
+				</div>
+
+				<div className={styles.userInfo}>
+					{userData ? (
+						<>
+							<div className={styles.avatar}>
+								<img
+									src={avatar}
+									alt='profile picture'
+									className={styles.stewardlogo}
+								/>
+							</div>
+							<div className={styles.userInfoText}>
+								<h5>
+									{userData.firstName} {userData.lastName}
+								</h5>
+								<p>{userData.email}</p>
+							</div>
+						</>
+					) : (
+						<>
+							<div
+								className={`${styles.skeleton} ${styles.avatarSkeleton}`}
+							></div>
+							<div className={styles.skeleton}></div>
+							<div className={styles.skeleton}></div>
+						</>
+					)}
+				</div>
+			</aside>
+		</>
 	);
 };
 

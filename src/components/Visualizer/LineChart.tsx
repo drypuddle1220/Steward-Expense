@@ -86,7 +86,7 @@ const LineChart: React.FC = () => {
 		<div className={styles.card}>
 			<h3>Income vs. Expenses</h3>
 			<div className={styles.chartContainer}>
-				<ResponsiveContainer width='100%' height='100%'>
+				<ResponsiveContainer width='100%' height='98%'>
 					<RechartsLineChart data={lineChartData}>
 						<defs>
 							<linearGradient

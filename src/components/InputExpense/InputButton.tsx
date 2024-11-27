@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction, useState, useRef, useEffect } from "react";
 import styles from "./InputButton.module.css";
 import TransactionCard from "./TransactionCard";
 
@@ -20,30 +20,51 @@ export default function InputButton({
 	const [transactionType, setTransactionType] = useState<
 		"income" | "expense"
 	>("income");
+	const optionsRef = useRef<HTMLDivElement>(null);
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
-	const handleAddTransaction = (type: "income" | "expense") => {
+	const handleAddIncome = () => {
 		setShowDropdown(false);
-		setTransactionType(type);
+		setTransactionType("income");
 		setShowTransactionForm(true);
 	};
+
+	const handleAddExpense = () => {
+		setShowDropdown(false);
+		setTransactionType("expense");
+		setShowTransactionForm(true);
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				optionsRef.current &&
+				!optionsRef.current.contains(event.target as Node) &&
+				!buttonRef.current?.contains(event.target as Node)
+			) {
+				setShowDropdown(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () =>
+			document.removeEventListener("mousedown", handleClickOutside);
+	}, [setShowDropdown]);
 
 	return (
 		<div className={styles.container}>
 			<button
 				className={styles.addButton}
 				onClick={() => setShowDropdown(!showDropdown)}
+				ref={buttonRef}
 			>
 				Add Transaction
 			</button>
 
 			{showDropdown && (
-				<div className={styles.optionsMenu}>
-					<button onClick={() => handleAddTransaction("income")}>
-						Add Income
-					</button>
-					<button onClick={() => handleAddTransaction("expense")}>
-						Add Expense
-					</button>
+				<div className={styles.optionsMenu} ref={optionsRef}>
+					<button onClick={handleAddIncome}>Add Income</button>
+					<button onClick={handleAddExpense}>Add Expense</button>
 				</div>
 			)}
 
