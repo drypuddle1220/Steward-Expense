@@ -1,0 +1,107 @@
+{
+  "hash": "66a71e2c",
+  "browserHash": "f16b8616",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "29dcd5c8",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "67ed5a6c",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "46d4c95f",
+      "needsInterop": false
+    },
+    "firebase/app": {
+      "src": "../../node_modules/firebase/app/dist/esm/index.esm.js",
+      "file": "firebase_app.js",
+      "fileHash": "8ea17709",
+      "needsInterop": false
+    },
+    "firebase/auth": {
+      "src": "../../node_modules/firebase/auth/dist/esm/index.esm.js",
+      "file": "firebase_auth.js",
+      "fileHash": "1af6728b",
+      "needsInterop": false
+    },
+    "firebase/database": {
+      "src": "../../node_modules/firebase/database/dist/esm/index.esm.js",
+      "file": "firebase_database.js",
+      "fileHash": "1781c0b7",
+      "needsInterop": false
+    },
+    "firebase/firestore": {
+      "src": "../../node_modules/firebase/firestore/dist/esm/index.esm.js",
+      "file": "firebase_firestore.js",
+      "fileHash": "783439fc",
+      "needsInterop": false
+    },
+    "react-firebase-hooks/auth": {
+      "src": "../../node_modules/react-firebase-hooks/auth/dist/index.esm.js",
+      "file": "react-firebase-hooks_auth.js",
+      "fileHash": "0772802a",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "4580a24d",
+      "needsInterop": false
+    },
+    "@mui/icons-material": {
+      "src": "../../node_modules/@mui/icons-material/esm/index.js",
+      "file": "@mui_icons-material.js",
+      "fileHash": "fd2880db",
+      "needsInterop": false
+    },
+    "react-date-range": {
+      "src": "../../node_modules/react-date-range/dist/index.js",
+      "file": "react-date-range.js",
+      "fileHash": "c57c5501",
+      "needsInterop": true
+    },
+    "react-confetti": {
+      "src": "../../node_modules/react-confetti/dist/react-confetti.min.js",
+      "file": "react-confetti.js",
+      "fileHash": "fcba40d7",
+      "needsInterop": true
+    },
+    "recharts": {
+      "src": "../../node_modules/recharts/es6/index.js",
+      "file": "recharts.js",
+      "fileHash": "06ee72d5",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-EU7EINW7": {
+      "file": "chunk-EU7EINW7.js"
+    },
+    "chunk-OUWHVP2J": {
+      "file": "chunk-OUWHVP2J.js"
+    },
+    "chunk-KTKPYBYG": {
+      "file": "chunk-KTKPYBYG.js"
+    },
+    "chunk-P4I6WM76": {
+      "file": "chunk-P4I6WM76.js"
+    },
+    "chunk-Z6TKOXE7": {
+      "file": "chunk-Z6TKOXE7.js"
+    },
+    "chunk-KGMYOD7E": {
+      "file": "chunk-KGMYOD7E.js"
+    },
+    "chunk-2GTGKKMZ": {
+      "file": "chunk-2GTGKKMZ.js"
+    }
+  }
+}
