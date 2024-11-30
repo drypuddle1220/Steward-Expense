@@ -22,14 +22,14 @@ body {
 .container {
 	display: flex;
 	flex-direction: column;
-	margin: 2rem;
+	margin: 1rem;
+	justify-content: center;
 	background-color: var(--bg-white);
 	border-radius: 1rem;
 	border: 1px solid var(--border-light);
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	align-items: center;
-	max-height: 90vh;
-	height: inherit;
+	max-height: 95vh;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	padding-right: 1rem;

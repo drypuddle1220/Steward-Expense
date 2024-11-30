@@ -162,6 +162,7 @@
 		overflow-y: auto;
 		display: flex;
 		flex-direction: column;
+		scrollbar-gutter: stable;
 	}
 
 	.sidebar.active {
@@ -274,4 +275,19 @@
 		position: absolute;
 		bottom: 1%;
 	}
+}
+
+/* Add these styles for consistent scrollbar appearance */
+.sidebar::-webkit-scrollbar {
+	width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+	background: var(--text-secondary);
+	opacity: 0.2;
+	border-radius: 2px;
 }
